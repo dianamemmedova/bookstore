@@ -1,0 +1,29 @@
+          <!-- <div className="mb-8 p-6 rounded-xl" style={{ background: '#f5f0e8' }}>
+            <p className="text-xs uppercase tracking-widest font-bold mb-1" style={{ color: ACCENT }}>
+              Redaktor Seçimi
+            </p>
+            <h3 className="text-lg font-bold text-gray-900 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
+              Bu Ay Mütləq Oxuyun
+            </h3>
+            <div className="grid grid-cols-3 gap-4">
+              {bestsellers.slice(0, 3).map((book) => (
+                <div key={book.id} className="flex gap-3 items-start">
+                  <img
+                    src={book.coverUrl ?? 'https://placehold.co/60x90/e8e4dc/9ca3af?text=K'}
+                    alt={book.title}
+                    className="rounded shadow flex-shrink-0 object-cover"
+                    style={{ width: 56, height: 80 }}
+                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/56x80/e8e4dc/9ca3af?text=K' }}
+                  />
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900 line-clamp-2 leading-snug">
+                      {book.title}
+                    </p>
+                    {book.authors?.[0] && (
+                      <p className="text-xs mt-1" style={{ color: PRIMARY }}>{book.authors[0]}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div> -->

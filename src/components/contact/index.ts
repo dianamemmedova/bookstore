@@ -1,0 +1,5 @@
+export { default as ContactInfo } from './ContactInfo'
+export { default as WorkingHours } from './WorkingHours'
+export { default as SocialLinks } from './SocialLinks'
+export { default as NewsletterCard } from './NewsletterCard'
+export { default as ContactForm } from './ContactForm'
