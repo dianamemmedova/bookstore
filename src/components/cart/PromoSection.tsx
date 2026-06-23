@@ -11,7 +11,10 @@ export default function PromoSection({
     <>
       {!appliedPromo && !suggestionDismissed && (
         <div className="mb-4 p-3 rounded-sm border border-dashed border-amber-300 bg-amber-50 relative">
-          <button onClick={() => setSuggestionDismissed(true)} className="absolute top-2 right-2 text-amber-400 hover:text-amber-600 text-xs leading-none">✕</button>
+          <button onClick={() => setSuggestionDismissed(true)}
+           className="absolute top-2 right-2 text-amber-400 hover:text-amber-600 text-xs leading-none">
+            ✕
+          </button>
           <p className="text-xs font-bold text-amber-700 mb-0.5">🎁 İlk Alışa Özel!</p>
           <p className="text-xs text-amber-600 mb-2">ILKALIS20 kodu ilə 20% endirim qazanın</p>
           <button

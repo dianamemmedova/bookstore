@@ -10,13 +10,7 @@ export function LoadingScreen({ message = 'Yüklənir...' }: { message?: string 
   )
 }
 
-export function ErrorScreen({
-  message,
-  onRetry = () => window.location.reload(),
-}: {
-  message: string
-  onRetry?: () => void
-}) {
+export function ErrorScreen({message , onRetry = () => window.location.reload()}: {  message: string ,onRetry?: () => void}) {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center text-red-600">

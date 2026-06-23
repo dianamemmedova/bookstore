@@ -4,7 +4,6 @@ import { PromoCardGrid } from '../components/home/PromoCardGrid'
 import { GenreNav }     from '../components/home/GenreNav'
 import { ServiceNav }   from '../components/home/ServiceNav'
 import { AboutSection }  from '../components/home/AboutSection'
-import { Footer } from '../components/home/Footer'
 import { Link }      from 'react-router-dom'
 import { homeSections } from '../data/sections'
 import  AudiobooksSlider from '../components/home/AudiobooksSlider'
@@ -34,7 +33,6 @@ export default function HomePage() {
       <AudiobooksSlider />
       <AboutSection />
       <ServiceNav />   
-      <Footer />
     </div>
   )
 }

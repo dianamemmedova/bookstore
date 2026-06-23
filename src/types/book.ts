@@ -77,6 +77,13 @@ export interface DiscountedBook extends Book {
   discountPercent: number
 }
 
+export interface StatItem {
+  value: string
+  label: string
+}
+
+
+
 export type BooksSortOption = 'default' | 'title' | 'rating-desc' | 'year-desc'
 
 export interface BookSectionProps {

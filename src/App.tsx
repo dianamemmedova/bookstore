@@ -40,7 +40,6 @@ function App() {
           <Route path="/fiction" element={<FictionPage />} />
           <Route path="/nonfiction" element={<NonFictionPage />} />
           <Route path="/ebooks" element={<ComingSoonPage title="E-Kitablar" />} />
-          <Route path="/ya" element={<ComingSoonPage title="Gənclər & YA" />} />
           <Route path="/kids" element={<ComingSoonPage title="Uşaqlar" />} />
           <Route path="/toys-games" element={<ComingSoonPage title="Oyuncaqlar & Oyunlar" />} />
           <Route path="/music-movies" element={<ComingSoonPage title="Musiqi & Film" />} />

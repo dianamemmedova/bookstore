@@ -5,6 +5,7 @@ import SignInModal from '../auth/SignInModal'
 import RegisterModal from '../auth/RegisterModal'
 import ForgotPasswordModal from '../auth/ForgotPasswordModal'
 import ProfileModal from '../auth/ProfileModal' 
+import { Footer } from '../home/Footer'
 
 interface LayoutProps {
   children: ReactNode
@@ -42,6 +43,7 @@ export default function Layout({ children }: LayoutProps) {
 
 
       <main>{children}</main>
+      <Footer />
     </div>
   )
 }

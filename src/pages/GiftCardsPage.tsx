@@ -1,242 +1,84 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PRIMARY, ACCENT, BEIGE_BG, BLUE_GRAY_BG, LIGHT_BLUE_BG } from '../constants/theme'
-import { BROWSE_LINKS, SUBJECTS, CUSTOMER_FAV, SPECIAL } from '../data/nonfiction'
-import { useNonfictionData } from '../hooks/useNonfictionData'
-import { CarouselSection } from '../components/shared/CarouselSection'
-import { Sidebar } from '../components/shared/Sidebar'
+import { categories, topNav } from '../data/giftCards'
+import { CategorySection } from '../components/giftCards/CategorySection'
+import { BalanceChecker } from '../components/giftCards/BalanceChecker'
 
-export default function NonfictionPage() {
-  const { data, loading } = useNonfictionData()
+export default function GiftCardsPage() {
+  const [selected, setSelected] = useState<Set<number>>(new Set())
 
-  const {
-    bestsellers, newNonfic, history,
-    selfHelp, biography, paperbacks,
-    bannerBook, monthPick,
-  } = data
+  const toggleCard = (id: number) => {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   return (
     <div className="min-h-screen bg-white">
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 text-xs text-gray-500 flex gap-2">
-        <Link to="/" className="hover:underline" style={{ color: PRIMARY }}>Ana Səhifə</Link>
-        <span>›</span>
-        <Link to="/books" className="hover:underline" style={{ color: PRIMARY }}>Kitablar</Link>
-        <span>›</span>
-        <span className="text-gray-900 font-medium">Qeyri-Bədii Ədəbiyyat</span>
-      </div>
+      <section className="relative text-white overflow-hidden bg-gradient-to-br from-[#3d5a6b] via-[#2e4455] to-[#1a2e3d] min-h-[280px]">
+        <div className="absolute -top-14 -right-14 w-64 h-64 rounded-full bg-[#c9a454]/10" />
+        <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-[#c9a454]/10" />
+        <div className="relative max-w-4xl mx-auto px-6 py-14 text-center">
+          <p className="text-xs uppercase tracking-widest mb-3 text-[#c9a454]/80 font-semibold">
+            Book & Store
+          </p>
+          <h1 className="text-4xl font-bold mb-4">Hədiyyə Kartları</h1>
+          <p className="text-lg opacity-80 max-w-xl mx-auto">
+            Ailə və dostlarınıza həqiqətən istədikləri hədiyyəni verin. Poçtla və ya <br />e-poçtla göndərilə bilər.
+          </p>
+          <a
+            href="#"
+            className="inline-block mt-4 text-xs text-[#c9a454] border-b border-[#c9a454]/40 pb-px hover:border-[#c9a454] transition-colors"
+          >
+            Hədiyyə Kartı Şərtləri və Qaydaları
+          </a>
+        </div>
+      </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-4 text-center">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Qeyri-Bədii Kitablar</h1>
-        <p className="text-sm text-gray-600 max-w-2xl mx-auto">
-          Mətbəxdən cinayət yerinə, evdən açıq dənizlərə — qeyri-bədii ədəbiyyat öyrənmək istədiyiniz
-          bütün mövzuları əhatə edir.
-        </p>
-      </div>
+      <div className="max-w-5xl mx-auto px-6 py-10">
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-
-        <div
-          className="relative overflow-hidden rounded-lg mb-8 flex flex-col sm:flex-row items-center py-4 sm:py-0 sm:h-[200px]"
-          style={{ background:  BEIGE_BG  }}
-        >
-          <div className="hidden sm:flex items-end gap-2 px-6 h-full py-4 flex-shrink-0">
-            {bestsellers.slice(0, 6).map((book, i) => (
-              <img
-                key={book.id}
-                src={book.coverUrl ?? `https://placehold.co/60x90/e8e4dc/9ca3af?text=K`}
-                alt={book.title}
-                className="rounded shadow object-cover flex-shrink-0"
-                style={{
-                  width: 52,
-                  height: i % 2 === 0 ? 80 : 70,
-                  objectFit: 'cover',
-                  opacity: loading.bestsellers ? 0 : 1,
-                  transition: 'opacity 0.3s',
-                }}
-                onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/52x80/e8e4dc/9ca3af?text=K` }}
-              />
-            ))}
-          </div>
-
-          <div className="flex-1 px-4 sm:px-8 text-center sm:text-left">
-            <p className="text-xs uppercase tracking-widest font-bold mb-1" style={{ color: ACCENT }}>
-              Həmişə Oxumaq İstədiyiniz
-            </p>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 leading-tight">
-              Qeyri-Bədii Ədəbiyyat
-            </h2>
-            <Link
-              to="/books"
-              className="inline-block px-5 py-2 text-sm font-bold text-white rounded hover:opacity-90 transition-opacity"
-              style={{ background: PRIMARY }}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
+          {topNav.map((nav) => (
+            <button
+              key={nav.label}
+              className="flex flex-col items-center gap-2.5 py-4 px-3 bg-white rounded-2xl border border-gray-200 hover:border-[#3d5a6b] transition-colors cursor-pointer"
             >
-              İNDİ AL
-            </Link>
-          </div>
-
-          {bannerBook?.coverUrl && (
-            <div className="hidden md:flex px-8 flex-shrink-0 items-center gap-5">
-              <img
-                src={bannerBook.coverUrl}
-                alt={bannerBook.title}
-                className="rounded shadow-lg object-cover"
-                style={{ width: 90, height: 130 }}
-                onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/90x130/e8e4dc/9ca3af?text=K` }}
-              />
-              <div className="max-w-xs">
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">May Seçimimiz</p>
-                <p className="text-base font-bold text-gray-900 leading-snug mb-1">{bannerBook.title}</p>
-                {bannerBook.authors?.[0] && (
-                  <p className="text-sm text-gray-600 mb-2">{bannerBook.authors[0]}</p>
-                )}
-                <p className="text-xs text-gray-500 italic leading-snug line-clamp-2">
-                  {bannerBook.description ?? 'Bu ay redaktorlarımızın ən sevdiyi seçim.'}
-                </p>
-              </div>
-            </div>
-          )}
+              <span
+                className="w-11 h-11 rounded-full flex items-center justify-center"
+                style={{ background: nav.color + '1a' }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={nav.color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  {nav.icon === 'credit-card' && <><rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" /></>}
+                  {nav.icon === 'mail' && <><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></>}
+                  {nav.icon === 'building-store' && <><path d="M3 9l1-6h16l1 6" /><path d="M3 9a2 2 0 0 0 4 0m4 0a2 2 0 0 0 4 0m4 0a2 2 0 0 0 4 0" /><path d="M5 9v11h14V9" /></>}
+                  {nav.icon === 'gift' && <><polyline points="20 12 20 22 4 22 4 12" /><rect x="2" y="7" width="20" height="5" /><line x1="12" y1="22" x2="12" y2="7" /><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" /><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" /></>}
+                </svg>
+              </span>
+              <span className="text-xs font-semibold text-gray-500 tracking-wide">{nav.label}</span>
+            </button>
+          ))}
         </div>
 
-        <div className="flex gap-10">
-          <Sidebar sections={[
-            { title: 'Qeyri-Bədiiyə Bax',    links: BROWSE_LINKS },
-            { title: 'Qeyri-Bədii Mövzular', links: SUBJECTS     },
-            { title: 'Oxucu Sevimlisi',      links: CUSTOMER_FAV },
-            { title: 'Xüsusi Kolleksiyalar', links: SPECIAL      },
-          ]} />
+        {categories.map((cat) => (
+          <CategorySection
+            key={cat.title}
+            category={cat}
+            selected={selected}
+            onToggle={toggleCard}
+          />
+        ))}
 
-          <div className="flex-1 min-w-0">
+        <BalanceChecker />
 
-            <CarouselSection
-              title="Qeyri-Bədii Bestsellerlər"
-              subtitle="Hamısına bax"
-              seeAllTo="/books"
-              books={bestsellers}
-              loading={loading.bestsellers}
-            />
-
-            <div className="relative overflow-hidden rounded-lg mb-10 h-[140px] sm:h-[180px]" style={{ background: BLUE_GRAY_BG }}>
-              <div className="absolute inset-0 flex">
-                <div className="hidden sm:flex items-center gap-1 px-4 flex-shrink-0">
-                  {biography.slice(0, 5).map((book, i) => (
-                    <img
-                      key={book.id}
-                      src={book.coverUrl ?? `https://placehold.co/50x75/d4dde4/9ca3af?text=K`}
-                      alt=""
-                      className="rounded shadow object-cover"
-                      style={{ width: 48, height: i % 2 === 0 ? 72 : 64, objectFit: 'cover' }}
-                      onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/48x72/d4dde4/9ca3af?text=K` }}
-                    />
-                  ))}
-                </div>
-                <div className="flex-1 flex flex-col justify-center px-4 sm:px-6">
-                  <h3 className="text-base sm:text-xl font-bold text-gray-900 mb-2">
-                    Həmişə Oxumaq İstədiyiniz Qeyri-Bədii Əsərlər
-                  </h3>
-                  <Link
-                    to="/books"
-                    className="self-start inline-block px-4 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white rounded hover:opacity-90 transition-opacity"
-                    style={{ background: PRIMARY }}
-                  >
-                    İNDİ AL
-                  </Link>
-                </div>
-                <div className="hidden sm:flex items-center gap-1 px-4 flex-shrink-0">
-                  {selfHelp.slice(0, 5).map((book, i) => (
-                    <img
-                      key={book.id}
-                      src={book.coverUrl ?? `https://placehold.co/50x75/d4dde4/9ca3af?text=K`}
-                      alt=""
-                      className="rounded shadow object-cover"
-                      style={{ width: 48, height: i % 2 === 0 ? 64 : 72, objectFit: 'cover' }}
-                      onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/48x72/d4dde4/9ca3af?text=K` }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <CarouselSection
-              title="Ən Yaxşı Yeni Qeyri-Bədii"
-              subtitle="Hamısına bax"
-              seeAllTo="/books"
-              books={newNonfic}
-              loading={loading.newNonfic}
-            />
-            <CarouselSection
-              title="Tezliklə Çıxacaq Qeyri-Bədii"
-              subtitle="Hamısına bax"
-              seeAllTo="/books"
-              books={history}
-              loading={loading.history}
-            />
-
-            <div
-              className="relative overflow-hidden rounded-lg mb-10 flex flex-col sm:flex-row items-center px-4 sm:px-10 py-4 sm:py-0 gap-4 sm:gap-8 sm:h-[200px]"
-              style={{ background: LIGHT_BLUE_BG }}
-            >
-              {monthPick?.coverUrl && (
-                <img
-                  src={monthPick.coverUrl}
-                  alt={monthPick.title}
-                  className="h-28 sm:h-44 rounded shadow-lg flex-shrink-0 object-cover"
-                  style={{ width: 70 }}
-                  onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/110x176/e8e4dc/9ca3af?text=K` }}
-                />
-              )}
-              <div className="text-center sm:text-left min-w-0">
-                <p className="text-xs uppercase tracking-widest mb-1 font-bold" style={{ color: ACCENT }}>
-                  B&N Kitab Klubu — Aylıq Seçim
-                </p>
-                <h3 className="text-base sm:text-xl font-bold text-gray-900 mb-1">
-                  {monthPick?.title ?? 'Bu Ayın Seçimi'}
-                </h3>
-                {monthPick?.authors?.[0] && (
-                  <p className="text-sm text-gray-600 mb-1">{monthPick.authors[0]}</p>
-                )}
-                {monthPick?.description && (
-                  <p className="text-xs text-gray-500 mb-3 line-clamp-2">{monthPick.description}</p>
-                )}
-                <Link
-                  to={monthPick?.id ? `/books/${monthPick.id}` : '/books'}
-                  className="inline-block px-4 sm:px-5 py-1.5 sm:py-2 text-xs font-bold text-white rounded hover:opacity-90 transition-opacity"
-                  style={{ background: PRIMARY }}
-                >
-                  ƏTRAFLƏ BAX
-                </Link>
-              </div>
-            </div>
-
-            <CarouselSection
-              title="Özünüinkişaf & Münasibətlər"
-              subtitle="Hamısına bax"
-              seeAllTo="/books"
-              books={selfHelp}
-              loading={loading.selfHelp}
-            />
-            <CarouselSection
-              title="Bioqrafiya & Xatirələr"
-              subtitle="Hamısına bax"
-              seeAllTo="/books"
-              books={biography}
-              loading={loading.biography}
-            />
-            <CarouselSection
-              title="Ən Yaxşı Cib Kitabları"
-              subtitle="Hamısına bax"
-              seeAllTo="/books"
-              books={paperbacks}
-              loading={loading.paperbacks}
-            />
-
-          </div>
+        <div className="mt-8 text-center">
+          <Link to="/" className="text-xs text-gray-400 hover:text-gray-600 hover:underline transition-colors">
+            ← Ana səhifəyə qayıt
+          </Link>
         </div>
-      </div>
-
-      <div className="text-center py-10 border-t border-gray-100 mt-10">
-        <Link to="/" className="text-sm text-gray-400 hover:text-gray-600 hover:underline">
-          ← Ana səhifəyə qayıt
-        </Link>
       </div>
     </div>
   )

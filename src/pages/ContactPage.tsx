@@ -1,11 +1,8 @@
-import SuccessModal from '../components/ui/SuccessModal'
 import FaqAccordion from '../components/shared/FaqAccordion'
 import { ContactInfo, WorkingHours, SocialLinks, NewsletterCard, ContactForm } from '../components/contact'
-import { useContactForm } from '../hooks/useContactForm'
 import { FAQ_ITEMS } from '../data/contactData'
 
 export default function ContactPage() {
-  const { isModalOpen, closeModal } = useContactForm()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -59,13 +56,6 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <SuccessModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        title="Mesaj göndərildi!"
-        message="Mesajınız uğurla göndərildi. Ən qısa zamanda sizinlə əlaqə saxlayacağıq."
-        buttonText="Bağla"
-      />
     </div>
   )
 }

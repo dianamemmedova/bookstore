@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { PRIMARY, ACCENT } from '../constants/theme'
+import { PRIMARY, ACCENT, BEIGE_BG, BLUE_GRAY_BG, LIGHT_BLUE_BG } from '../constants/theme'
 import { BROWSE_LINKS, SUBJECTS, CUSTOMER_FAV, SPECIAL } from '../data/nonfiction'
 import { useNonfictionData } from '../hooks/useNonfictionData'
 import { CarouselSection } from '../components/shared/CarouselSection'
@@ -37,7 +37,7 @@ export default function NonfictionPage() {
 
         <div
           className="relative overflow-hidden rounded-lg mb-8 flex flex-col sm:flex-row items-center py-4 sm:py-0 sm:h-[200px]"
-          style={{ background: '#f5f0e8' }}
+          style={{ background:  BEIGE_BG  }}
         >
           <div className="hidden sm:flex items-end gap-2 px-6 h-full py-4 flex-shrink-0">
             {bestsellers.slice(0, 6).map((book, i) => (
@@ -115,7 +115,7 @@ export default function NonfictionPage() {
               loading={loading.bestsellers}
             />
 
-            <div className="relative overflow-hidden rounded-lg mb-10 h-[140px] sm:h-[180px]" style={{ background: '#e8eef2' }}>
+            <div className="relative overflow-hidden rounded-lg mb-10 h-[140px] sm:h-[180px]" style={{ background: BLUE_GRAY_BG }}>
               <div className="absolute inset-0 flex">
                 <div className="hidden sm:flex items-center gap-1 px-4 flex-shrink-0">
                   {biography.slice(0, 5).map((book, i) => (
@@ -173,7 +173,7 @@ export default function NonfictionPage() {
 
             <div
               className="relative overflow-hidden rounded-lg mb-10 flex flex-col sm:flex-row items-center px-4 sm:px-10 py-4 sm:py-0 gap-4 sm:gap-8 sm:h-[200px]"
-              style={{ background: '#f0f4f6' }}
+              style={{ background: LIGHT_BLUE_BG }}
             >
               {monthPick?.coverUrl && (
                 <img

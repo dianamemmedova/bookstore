@@ -1,7 +1,4 @@
-interface StatItem {
-  value: string
-  label: string
-}
+import type { StatItem } from "../../types/book"
 
 function StatCard({ value, label }: StatItem) {
   return (

@@ -1,4 +1,4 @@
-import { BACKGROUND_SOFT, PRIMARY } from '../../constants/theme'
+import { BACKGROUND_SOFT, PRIMARY, PRIMARY_DARK } from '../../constants/theme'
 import { formatDateAz } from '../../utils/date'
 import type { Succes } from '../../types/checkout'
 
@@ -28,7 +28,7 @@ export default function CheckoutSuccess({ deliveryDate, onOrders, onBooks }: Suc
         <button onClick={onOrders}
           className="w-full py-3 text-sm font-bold tracking-wider text-white transition-colors rounded-md"
           style={{ background: PRIMARY }}
-          onMouseEnter={e => (e.currentTarget.style.background = '#2e4455')}
+          onMouseEnter={e => (e.currentTarget.style.background = PRIMARY_DARK)}
           onMouseLeave={e => (e.currentTarget.style.background = PRIMARY)}>
           SİFARİŞLƏRİMƏ BAX
         </button>

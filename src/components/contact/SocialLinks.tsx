@@ -11,10 +11,7 @@ export default function SocialLinks() {
             href={href}
             aria-label={label}
             className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200"
-            style={{
-              color,
-              backgroundColor: `${bgColor}1a`,
-            }}
+            style={{ color, backgroundColor: `${bgColor}1a` }}
             onMouseEnter={e => {
               e.currentTarget.style.backgroundColor = bgColor
               e.currentTarget.style.color = '#ffffff'

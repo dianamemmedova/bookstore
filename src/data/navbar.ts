@@ -5,7 +5,7 @@
   { label: "Qeyri-Bədii", to: "/nonfiction" },
   { label: "E-Kitablar", to: "/ebooks" },
   { label: "Səsli Kitablar", to: "/audiobooks" },
-  { label: "Gənclər & YA", to: "/ya" },
+  { label: "Endirimli Kitablar", to: "/clearance" },
   { label: "Uşaqlar", to: "/kids" },
   { label: "Oyuncaqlar & Oyunlar", to: "/toys-games" },
   { label: "Musiqi & Film", to: "/music-movies" },

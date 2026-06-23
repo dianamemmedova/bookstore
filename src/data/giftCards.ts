@@ -50,7 +50,7 @@ export const categories: CardCategory[] = [
     icon: 'mail',
     cards: [
       { id: 5,  title: 'Ani E-Kart',       sub: 'Dərhal göndərilir',   amount: '10₼ – 500₼',  colorIndex: 5 },
-      { id: 6,  title: 'Korporativ E-Kart', sub: 'Şirkət hədiyyəsi',    amount: '100₼ – 1000₼', colorIndex: 0 },
+      { id: 6,  title: 'Korporativ E-Kart', sub: 'Şirkət hədiyyəsi',   amount: '100₼ – 1000₼', colorIndex: 0 },
       { id: 7,  title: 'Tətil E-Kartı',    sub: 'Bayramlara xüsusi',   amount: '25₼ – 250₼',  colorIndex: 2 },
       { id: 8,  title: 'Oxucu E-Kartı',    sub: 'Kitabsevərlər üçün',  amount: '15₼ – 100₼',  colorIndex: 1 },
     ],
@@ -63,6 +63,7 @@ export const categories: CardCategory[] = [
       { id: 10, title: 'Məzuniyyət Kartı',   sub: 'Uğurlar diləyin',   amount: '25₼ – 200₼',  colorIndex: 2 },
       { id: 11, title: 'Yeni Ev Bərəkəti',   sub: 'Ev sahibləri üçün', amount: '30₼ – 300₼',  colorIndex: 5 },
       { id: 12, title: 'Uşaq Hədiyyəsi',     sub: 'Körpə qönçələr',    amount: '10₼ – 100₼',  colorIndex: 3 },
+      { id: 13, title: 'Uşaq Hədiyyəsi',     sub: 'Körpə qönçələr',    amount: '10₼ – 100₼',  colorIndex: 5 },
     ],
   },
 ]

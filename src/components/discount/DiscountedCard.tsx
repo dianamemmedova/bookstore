@@ -1,4 +1,4 @@
-import { GREEN_DARK, PRIMARY } from '../../constants/theme'
+import { GREEN_ACCENT2, PRIMARY } from '../../constants/theme'
 import { FALLBACK_COVER } from '../../constants/link'
 import { formatAuthors } from '../../utils/discountUtils'
 import type { DiscountedBook } from '../../types/book'
@@ -42,7 +42,7 @@ export default function DiscountedCard({ book }: Props) {
           <button
             className="text-xs font-medium text-white px-4 py-1.5 rounded-full w-full text-center"
             style={{ background: PRIMARY }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = GREEN_DARK)}
+            onMouseEnter={(e) => (e.currentTarget.style.background = GREEN_ACCENT2)}
             onMouseLeave={(e) => (e.currentTarget.style.background = PRIMARY)}
           >
             Səbətə əlavə et
