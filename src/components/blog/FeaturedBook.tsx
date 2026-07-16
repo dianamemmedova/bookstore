@@ -35,7 +35,8 @@ export function FeaturedBook({ book, loading }: { book: Book | null; loading: bo
       </div>
 
       <div className="flex flex-col justify-start pt-1">
-        <CategoryLabel label={book.subjects?.[0] ?? 'TREND'} />
+        <CategoryLabel label={book.subjects?.[0] ?? 'TREND'} /> 
+          {/* Categgorylabel sadəcə kitabın kataqoriyasını yazdırır */}
         <h2 className="text-lg sm:text-xl font-bold text-gray-900 group-hover:text-[#3d5a6b] transition-colors leading-snug mb-1">
           {book.title}
         </h2>

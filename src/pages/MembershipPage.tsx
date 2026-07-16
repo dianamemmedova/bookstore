@@ -1,5 +1,6 @@
 import { rewardsBenefits, premiumBenefits, comparisonRows, faqs } from '../data/membership'
 import FaqAccordion from '../components/shared/FaqAccordion'
+import { PlanCard } from '../components/membership/PlanCard'
 
 export default function MembershipPage() {
 
@@ -23,64 +24,27 @@ export default function MembershipPage() {
       </section>
 
       <section className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-
-          <div className="border border-gray-200 rounded-2xl p-6 sm:p-8 flex flex-col">
-            <div className="mb-6">
-              <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">Standart</span>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-1">
-                Rewards
-              </h2>
-              <div className="flex items-end gap-1 mt-3">
-                <span className="text-3xl sm:text-4xl font-bold text-gray-900">PULSUZ</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+                <PlanCard
+                  variant="standard"
+                  badge="Standart"
+                  title="Rewards"
+                  price="PULSUZ"
+                  priceNote="İllik ödəniş yoxdur"
+                  benefits={rewardsBenefits}
+                  buttonText="Rewards-a Qoşul"
+                />
+                <PlanCard
+                  variant="premium"
+                  badge="Premium"
+                  title="Premium Membership"
+                  price="39,99 AZN"
+                  priceNote="İldə bir dəfə · Rewards daxildir"
+                  benefits={premiumBenefits}
+                  buttonText="Premium-a Qoşul"
+                  ribbon="Tövsiyə edilir"
+                />
               </div>
-              <p className="text-sm text-gray-400 mt-1">İllik ödəniş yoxdur</p>
-            </div>
-            <ul className="space-y-3 flex-1 mb-8">
-              {rewardsBenefits.map((b) => (
-                <li key={b.text} className="flex items-start gap-3 text-sm text-gray-600">
-                  <span className="flex items-start gap-2">
-                    <span className="text-[#2e6b4f] font-bold">✓</span>
-                    {b.text}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <button className="w-full py-3 rounded-xl border-2 border-[#3d5a6b] text-[#3d5a6b] font-semibold text-sm hover:bg-gray-50 transition-colors">
-              Rewards-a Qoşul
-            </button>
-          </div>
-
-          <div className="bg-[#3d5a6b] rounded-2xl p-6 sm:p-8 flex flex-col relative overflow-hidden">
-            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-[#c9a454]/10" />
-            <div className="absolute top-4 sm:top-5 right-4 sm:right-5 text-[10px] sm:text-xs font-bold uppercase tracking-widest px-2.5 sm:px-3 py-1 rounded-full bg-[#c9a454] text-white z-10">
-              Tövsiyə edilir
-            </div>
-            <div className="mb-6 relative">
-              <span className="text-xs font-semibold uppercase tracking-widest text-white/60">Premium</span>
-              <h2 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                Premium Membership
-              </h2>
-              <div className="flex items-end gap-1 mt-3">
-                <span className="text-3xl sm:text-4xl font-bold text-white">39,99 AZN</span>
-              </div>
-              <p className="text-sm mt-1 text-white/60">İldə bir dəfə · Rewards daxildir</p>
-            </div>
-            <ul className="space-y-3 flex-1 mb-8 relative">
-              {premiumBenefits.map((b) => (
-                <li key={b.text} className="flex items-start gap-3 text-sm text-white/90">
-                  <span className="flex items-start gap-2">
-                    <span className="text-white font-bold">✓</span>
-                    {b.text}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <button className="w-full py-3 rounded-xl bg-[#c9a454] text-white font-bold text-sm hover:opacity-90 transition-opacity relative">
-              Premium-a Qoşul
-            </button>
-          </div>
-        </div>
       </section>
 
       <section className="max-w-3xl mx-auto px-4 sm:px-6 pb-12 sm:pb-16">
