@@ -30,15 +30,7 @@ export default function MobileAppPage() {
             </a>
 
             <a href="#" className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-colors">
-          <svg width="24" height="24" viewBox="0 0 512 512" className="sm:w-7 sm:h-7 flex-shrink-0">
-            <path fill="#32BBFF" d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z"/>
-            <path fill="#32BBFF" d="M47.5 0C34 0 24 4.2 18 11.4l-1.9 1.9 220.8 220.7 60.1-60.1L47.5 0z"/>
-            <path fill="#32BBFF" d="M256 256L18.1 493.9c5.9 5.9 14.5 9.1 24.4 9.1 6.7 0 13.4-1.7 19.6-4.9l280.8-161.2-60.1-60.1z"/>
-            <path fill="#32BBFF" d="M404.4 174.2L325.3 234.3 60.1 233.1 47.5 0l356.9 174.2z"/>
-            <path fill="#FFD500" d="M404.4 337.8L325.3 277.7 18.1 493.9c5.9 5.9 14.5 9.1 24.4 9.1 6.7 0 13.4-1.7 19.6-4.9l342.3-160.3z"/>
-            <path fill="#FF3333" d="M16.1 18.1C13.3 24.2 11.7 31 11.7 38.3v435.4c0 7.3 1.6 14.1 4.4 20.2l223.8-223.9L16.1 18.1z"/>
-            <path fill="#00C853" d="M460.4 234.3l-56-32.5L325.3 277.7l79.1 60.1 56-32.5c14.5-8.4 23.2-23.4 23.2-39.3 0-15.9-8.7-30.9-23.2-39.3z"/>
-          </svg>
+             <img src="google-play.png" alt="Google Play" className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0" />
           <div className="text-left">
             <span className="block text-[10px] sm:text-xs text-gray-400">Get it on</span>
             <span className="block text-xs sm:text-sm font-semibold text-gray-900">Google Play</span>
