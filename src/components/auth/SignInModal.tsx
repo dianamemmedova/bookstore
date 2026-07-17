@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { useAuthModal } from '../../context/useAuthModal'
+import { useAuthModal } from '../../context/AuthModalContext'
 import { useToast } from '../../hooks/useToast'
 import { ToastContainer } from '../ui/ToastContainer'
 import { Eye, EyeOff } from 'lucide-react'

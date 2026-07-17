@@ -9,3 +9,5 @@ export function applySort(books: Book[], sort: BooksSortOption): Book[] {
     default:            return arr
   }
 }
+
+// kitab siyahısını müxtəlif meyarlara görə sıralayır sort edir .

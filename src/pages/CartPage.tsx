@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { useAuthModal } from '../context/useAuthModal'
+import { useAuthModal } from '../context/AuthModalContext'
 import { useCart } from '../context/CartContext'
 import { usePromo } from '../hooks/usePromo'
 import { calcFinalTotal } from '../utils/cartCalc'

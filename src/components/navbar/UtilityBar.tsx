@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { AccountIcon, ChevronDownIcon, HeartIcon, LocationIcon } from '../../icons'
 import { useAuth } from '../../context/AuthContext'
-import { useAuthModal } from '../../context/useAuthModal'
+import { useAuthModal } from '../../context/AuthModalContext'
 import { useNavbar } from '../../hooks/useNavbar'
 import { utilityLinks } from '../../data/navbar'
 

@@ -1,5 +1,6 @@
 import { createContext, useState } from 'react'
 import type { ReactNode } from 'react'
+import { useContext } from 'react'
 
 /* eslint-disable react-refresh/only-export-components */
 
@@ -50,3 +51,6 @@ export function AuthModalProvider({ children }: { children: ReactNode }) {
     </AuthModalContext.Provider>
   )
 }
+// eslint-disable-next-line react-refresh/only-export-components
+export const useAuthModal = () => useContext(AuthModalContext)
+// eyni anda 4 modaldan sadəcə 1 nin açıq olmasını təmin edir

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import Navbar from '../navbar/Navbar'
-import { useAuthModal } from '../../context/useAuthModal'
+import { useAuthModal } from '../../context/AuthModalContext'
 import SignInModal from '../auth/SignInModal'
 import RegisterModal from '../auth/RegisterModal'
 import ForgotPasswordModal from '../auth/ForgotPasswordModal'

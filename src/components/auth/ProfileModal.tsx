@@ -1,5 +1,5 @@
 import { useAuth } from '../../context/AuthContext'
-import { useAuthModal } from '../../context/useAuthModal'
+import { useAuthModal } from '../../context/AuthModalContext'
 import { GREEN_STRONG, PRIMARY, RED_TEXT, DARK_BLUE } from '../../constants/theme'
 
 export default function ProfileModal() {

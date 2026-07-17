@@ -1,5 +1,5 @@
 import { PRIMARY, PRIMARY_DARK } from '../../constants/theme'
-import { useAuthModal } from '../../context/useAuthModal'
+import { useAuthModal } from '../../context/AuthModalContext'
 
 export default function EmptyState() {
   const { openLogin } = useAuthModal()

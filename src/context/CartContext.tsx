@@ -4,16 +4,20 @@ import type { CartItem } from '../types/cart'
 function getKey(email?: string) {
   return email ? `bookstore_cart_${email}` : 'bookstore_cart_guest'
 }
+// hər isdifadəçi üçün key yaradırıq emailinden isdifade edirek eger 
+// emaili yoxdusa guest acari isdifade edir
 
 function loadCart(email?: string): CartItem[] {
   try {
     return JSON.parse(localStorage.getItem(getKey(email)) || '[]')
   } catch { return [] }
 }
+// loacaldan goturub cartiteme yaziriq stringi
 
 function saveCart(items: CartItem[], email?: string) {
   localStorage.setItem(getKey(email), JSON.stringify(items))
 }
+//massivi stringe çevirib uyğun açarla birlikdə saxlayırıq localda
 
 interface CartContextValue {
   items: CartItem[]
@@ -35,11 +39,16 @@ export function CartProvider({ children, userEmail }: { children: ReactNode; use
   useEffect(() => {
     setItems(loadCart(userEmail))
   }, [userEmail])
+  // isdifadeçi giriş çıxış edende userEmail deyisende mehsullar yeniden localStorageden yuklenir
+
 
   useEffect(() => {
     saveCart(items, userEmail)
   }, [items, userEmail])
+  // əgər userEmail yada mehsullarda deyisiklik olsa ls avdomatik yenilənir
 
+  //Omit<CartItem , 'quantity' > ts nən utility type - dır 
+  //Cartİtem tipinden quantity sahəsini çıxarıb yeni tip yaradır
   const addToCart = useCallback((item: Omit<CartItem, 'quantity'>) => {
     setItems(prev => {
       const existing = prev.find(i => i.id === item.id)
@@ -49,6 +58,7 @@ export function CartProvider({ children, userEmail }: { children: ReactNode; use
       return [...prev, { ...item, quantity: 1 }]
     })
   }, [])
+  // useCallback funksiyanı yadda saxlayır hər renderdə yeni funksiya referansı yaranmasın
 
   const removeFromCart = useCallback((id: string) => {
     setItems(prev => prev.filter(i => i.id !== id))

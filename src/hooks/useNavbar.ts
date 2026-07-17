@@ -4,9 +4,10 @@ export function useNavbar() {
   const [booksOpen,   setBooksOpen]   = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  // ayrı açıq/qapalı vəziyyət: kitablar dropdownu, hesab dropdownu, mobil menyu
   const navRef     = useRef<HTMLDivElement>(null)
   const accountRef = useRef<HTMLDivElement>(null)
-
+  //kənara klik edende bağlamaq
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (navRef.current     && !navRef.current.contains(e.target as Node))     setBooksOpen(false)
@@ -15,7 +16,7 @@ export function useNavbar() {
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
-
+  // mobil menyu açıqkən scroll-u bloklamaq
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden'

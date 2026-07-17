@@ -9,3 +9,4 @@ export function toDiscountedBooks(books: DiscountedBook[]): DiscountedBook[] {
     return { ...book, discountedPrice, discountPercent }
   })
 }
+// kitab siyahısına saxda endirim əlavə edir 

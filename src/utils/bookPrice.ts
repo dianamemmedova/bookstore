@@ -8,3 +8,7 @@ export function getBookPrice(id: string): number {
   return steps[hash % steps.length]
 }
  
+
+// Bu funksiya kitabın id- sinə əsasən sabit  qiymət yaradır 
+// yəni real api - dən qiymət gəlmir ama bizə satış üçün qiymət lazımdır,
+//  hər kitab id - si üçün həmişə eyni qiyməti hesablayan - bir üsuldur

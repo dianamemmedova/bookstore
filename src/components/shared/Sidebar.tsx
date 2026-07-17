@@ -23,3 +23,5 @@ export function Sidebar({ sections }: SidebarProps) {
     </aside>
   )
 }
+
+// nonfinction ve finction seyfesinin sidebari

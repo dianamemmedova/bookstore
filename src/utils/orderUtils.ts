@@ -15,3 +15,5 @@ export function getOrderAddress(delivery: {
     delivery.apartment && `Mənzil ${delivery.apartment}`,
   ].filter(Boolean).join(', ')
 }
+
+// unvan sətirini dinamik şəkildə qururuq
