@@ -36,7 +36,6 @@ export default function AudiobooksSlider() {
           </button>
         </div>
 
-        {/* Slider */}
         <div className="relative">
           <button onClick={() => scroll('left')}
             className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-shadow">

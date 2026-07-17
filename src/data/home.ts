@@ -42,15 +42,15 @@ export const footerLinks = {
 
 
 export const genres = [
-  { label: 'MYSTERY & THRILLER', to: '/books?genre=mystery',    icon:  MysteryIcon   },
-  { label: 'SCI-FI & FANTASY',   to: '/books?genre=scifi',      icon:  ScifiIcon     },
-  { label: 'ROMANCE',            to: '/books?genre=romance',    icon:  RomanceIcon   },
-  { label: 'HISTORY',            to: '/books?genre=history',    icon:  HistoryIcon   },
-  { label: 'BIOGRAPHY & MEMOIR', to: '/books?genre=biography',  icon:  BiographyIcon },
-  { label: 'TEENS & YA',         to: '/books?genre=ya',         icon:  TeensIcon     },
-  { label: 'KIDS',               to: '/books?genre=children',   icon:  KidsIcon      },
-  { label: 'SCIENCE',            to: '/books?genre=science',    icon:  ScienceIcon   },
-  { label: 'ADVENTURE',          to: '/books?genre=adventure',  icon:  AdventureIcon },
+  { label: 'DETEKTİV VƏ TRİLLER', to: '/books?genre=mystery',    icon:  MysteryIcon   },
+  { label: 'FANTASİYA', to: '/books?genre=scifi',      icon:  ScifiIcon     },
+  { label: 'ROMANTİKA',            to: '/books?genre=romance',    icon:  RomanceIcon   },
+  { label: 'TARİX',            to: '/books?genre=history',    icon:  HistoryIcon   },
+  { label: 'BİOQRAFİYA VƏ MEMUAR', to: '/books?genre=biography',  icon:  BiographyIcon },
+  { label: 'GƏNCLƏR', to: '/books?genre=ya',         icon:  TeensIcon     },
+  { label: 'UŞAQLAR',                to: '/books?genre=children',   icon:  KidsIcon      },
+  { label: 'ELM',            to: '/books?genre=science',    icon:  ScienceIcon   },
+  { label: 'MACƏRA',          to: '/books?genre=adventure',  icon:  AdventureIcon },
 ]
 
 export const services = [

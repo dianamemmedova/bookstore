@@ -40,14 +40,8 @@ export default function MobileAppPage() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 border border-gray-200 rounded-xl overflow-hidden bg-white mb-8 sm:mb-10">
-          {stats.map((s, i) => (
-            <div
-              key={s.label}
-              className="text-center py-4 sm:py-5"
-              style={{
-                borderRight: (i % 2 === 0 && i < stats.length - 1) || (i % 4 !== 3 && i < stats.length - 1) ? undefined : undefined,
-              }}
-            >
+          {stats.map((s) => (
+            <div  key={s.label}  className="text-center py-4 sm:py-5">
               <p className="text-xl sm:text-2xl font-semibold" style={{ color: PRIMARY }}>{s.num}</p>
               <p className="text-xs text-gray-400 mt-1">{s.label}</p>
             </div>
