@@ -6,6 +6,25 @@ Müasir, tam funksional onlayn kitab mağazası. React, TypeScript və Tailwind 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
+![License](https://img.shields.io/badge/License-Educational-lightgrey)
+
+> 🎓 **Bu layihə Bakı Mühəndislik Universiteti, Kompüter Mühəndisliyi ixtisası üzrə buraxılış (diplom) layihəsi kimi hazırlanmışdır.**
+
+---
+
+## 📑 Mündəricat
+
+- [Haqqında](#-haqqında)
+- [Əsas Xüsusiyyətlər](#-əsas-xüsusiyyətlər)
+- [İstifadə Olunan Texnologiyalar](#️-istifadə-olunan-texnologiyalar)
+- [Layihə Strukturu](#-layihə-strukturu)
+- [Quraşdırma](#️-quraşdırma)
+- [Skriptlər](#-skriptlər)
+- [Arxitektura Qərarları](#️-arxitektura-qərarları)
+- [Əsas Funksional Axınlar](#-əsas-funksional-axınlar)
+- [Ekran Görüntüləri](#-ekran-görüntüləri)
+- [Məlum Məhdudiyyətlər və Gələcək Planlar](#-məlum-məhdudiyyətlər-və-gələcək-planlar)
+- [Müəllif](#-müəllif)
 
 ---
 
@@ -13,7 +32,7 @@ Müasir, tam funksional onlayn kitab mağazası. React, TypeScript və Tailwind 
 
 Book & Store — Barnes & Noble tərzində dizayn edilmiş, real dünya e-ticarət saytının demək olar bütün funksionallığını əhatə edən bir layihədir. Layihə sıfırdan qurulub, Open Library açıq mənbə API-si ilə inteqrasiya olunub və tam responsiv dizaynla hazırlanıb.
 
-Layihənin məqsədi — React, TypeScript, state idarəetməsi, autentifikasiya, localStorage ilə data persistasiyası və mürəkkəb UI komponentlərinin qurulması bacarıqlarını real ölçülü bir layihədə nümayiş etdirməkdir.
+Layihənin məqsədi — React, TypeScript, state idarəetməsi, autentifikasiya, localStorage ilə data persistensiyası və mürəkkəb UI komponentlərinin qurulması bacarıqlarını real ölçülü bir layihədə nümayiş etdirməkdir.
 
 ---
 
@@ -70,18 +89,18 @@ Layihənin məqsədi — React, TypeScript, state idarəetməsi, autentifikasiya
 
 ---
 
-## 🛠️ İsdifadə olunan Texnologiyalar
+## 🛠️ İstifadə Olunan Texnologiyalar
 
-| Kateqoriya         |                     Texnologiya                    |
-|------------------------------------------------------------------------ |
-| Frontend Framework |                       React 19                     |
-| Dil                |                      TypeScript                    |
-| Build Tool         |                         Vite                       |
-| Stillər            |                      Tailwind CSS                  |
-| Routing            |                   React Router DOM                 |
-| HTTP Client        |                         Axios                      |
-| API                |                    Open Library API                |
-| Data Saxlama       | localStorage (auth, cart, wishlist, orders, promo) |
+| Kateqoriya | Texnologiya |
+|---|---|
+| Frontend Framework | React 19 |
+| Dil | TypeScript |
+| Build Tool | Vite |
+| Stillər | Tailwind CSS |
+| Routing | React Router DOM |
+| HTTP Client | Axios |
+| API | Open Library API |
+| Data Saxlama | localStorage (auth, cart, wishlist, orders, promo) |
 
 ---
 
@@ -118,6 +137,12 @@ src/
 
 ## ⚙️ Quraşdırma
 
+### Tələblər
+- Node.js 18+ (tövsiyə olunur: 20 LTS)
+- npm 9+
+
+### Addımlar
+
 ```bash
 # Repozitoriyanı klonlayın
 git clone https://github.com/dianamemmedova/bookstore.git
@@ -133,6 +158,19 @@ npm run dev
 ```
 
 Brauzerdə açın: **http://localhost:5173**
+
+> API açarı tələb olunmur — Open Library açıq mənbə API-si olduğu üçün layihə heç bir `.env` konfiqurasiyası olmadan işə düşür.
+
+---
+
+## 📜 Skriptlər
+
+| Əmr | Təsvir |
+|---|---|
+| `npm run dev` | Development serverini işə salır (hot-reload ilə) |
+| `npm run build` | Production üçün optimallaşdırılmış build yaradır |
+| `npm run preview` | Production build-i lokal olaraq önizləyir |
+| `npm run lint` | ESLint ilə kod keyfiyyətini yoxlayır |
 
 ---
 
@@ -154,6 +192,24 @@ Brauzerdə açın: **http://localhost:5173**
 **Kitab Kəşfi → Sevimlilərə Əlavə → Sevimlilər Səhifəsi → Səbətə Köçürmə**
 
 **Promo Kod Tətbiqi → Sifariş Tamamlama → Promo Kodun Bağlanması (bir dəfəlik istifadə)**
+
+---
+
+## 🖼️ Ekran Görüntüləri
+
+> _Aşağıya layihənin əsas səhifələrindən (Ana səhifə, Kitab siyahısı, Səbət, Checkout) skrinşot əlavə et — müdafiə zamanı vizual təqdimatı asanlaşdırır._
+
+| Ana Səhifə | Kitab Detalı | Səbət |
+|---|---|---|
+| _skrinşot əlavə et_ | _skrinşot əlavə et_ | _skrinşot əlavə et_ |
+
+---
+
+## 🚧 Məlum Məhdudiyyətlər və Gələcək Planlar
+
+- Backend/verilənlər bazası yoxdur — bütün istifadəçi datası (auth, səbət, sifariş, wishlist) `localStorage`-da saxlanılır; real production üçün bu, backend (Node/Express + verilənlər bazası) ilə əvəz olunmalıdır
+- Ödəniş sistemi simulyasiyadır — real ödəniş provayderi (Stripe, PayPal və s.) inteqrasiyası yoxdur
+- Kitab qiymətləri Open Library API-də mövcud olmadığı üçün ID-yə əsaslanan deterministik alqoritmlə generasiya olunur
 
 ---
 

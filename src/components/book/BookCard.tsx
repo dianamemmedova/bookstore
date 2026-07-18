@@ -58,7 +58,7 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
   return (
     <div className="bg-white border border-gray-100 rounded-lg overflow-hidden hover:shadow-md transition-shadow group flex flex-col h-full">
 
-      {/* Cover */}
+
      <Link
         to={`/books/${bookId}`}
         className="relative block overflow-hidden flex-shrink-0 aspect-[2/3]"
@@ -73,7 +73,6 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
           }}
         />
 
-        {/* Wishlist düyməsi */}
         <button
           onClick={handleWishlist}
           title="İstək siyahısına əlavə et"
@@ -95,7 +94,6 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
           </svg>
         </button>
 
-        {/* Pulsuz badge */}
         {book.ebookAccess === 'public_domain' && (
           <span className="absolute top-2 left-2 text-xs font-semibold text-green-800 bg-green-100 px-2 py-0.5 rounded-full">
             Pulsuz
@@ -103,13 +101,9 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
         )}
       </Link>
 
-      {/* Məlumat */}
       <div className="p-4 flex flex-col flex-1">
         <Link to={`/books/${bookId}`}>
-          <h3
-            className="text-sm font-semibold text-gray-900 hover:text-[#3d5a6b] transition-colors line-clamp-2 mb-1 leading-snug"
-            style={{ fontFamily: 'Georgia, serif' }}
-          >
+          <h3  className="text-sm font-semibold text-gray-900 hover:text-[#3d5a6b] transition-colors line-clamp-2 mb-1 leading-snug" >
             {book.title}
           </h3>
         </Link>
@@ -118,7 +112,6 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
           {book.authors[0] ?? 'Naməlum müəllif'}
         </p>
 
-        {/* Janr badge — yalnız prop gəlsə göstər */}
         {genreLabel && (
           <span
             className="self-start text-xs px-2 py-0.5 rounded-full font-medium mb-1"

@@ -8,7 +8,7 @@
   { label: "Endirimli Kitablar", to: "/clearance" },
   { label: "Uşaqlar", to: "/kids" },
   { label: "Oyuncaqlar & Oyunlar", to: "/toys-games" },
-  { label: "Musiqi & Film", to: "/music-movies" },
+  { label: "MobileApp", to: "/app" },
 ]
 
 export const infoMessages = [
