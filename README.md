@@ -195,15 +195,7 @@ Brauzerdə açın: **http://localhost:5173**
 
 ---
 
-## 🖼️ Ekran Görüntüləri
 
-> _Aşağıya layihənin əsas səhifələrindən (Ana səhifə, Kitab siyahısı, Səbət, Checkout) skrinşot əlavə et — müdafiə zamanı vizual təqdimatı asanlaşdırır._
-
-| Ana Səhifə | Kitab Detalı | Səbət |
-|---|---|---|
-| _skrinşot əlavə et_ | _skrinşot əlavə et_ | _skrinşot əlavə et_ |
-
----
 
 ## 🚧 Məlum Məhdudiyyətlər və Gələcək Planlar
 
