@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { useToast } from '../../hooks/useToast'
-import { useUsers } from '../../hooks/useUsers'
+import { useAuth } from '../../context/AuthContext'
+import { ApiError } from '../../lib/api'
 import { validate, registerRules } from '../../hooks/useFormValidation'
 import { ToastContainer } from '../ui/ToastContainer'
 import PasswordStrength from '../ui/PasswordStrength'
-import CustomDropdown from '../ui/CustomDropdown'
 import { PRIMARY, PRIMARY_DARK, TEAL_GRADIENT_START, TEAL_GRADIENT_END } from '../../constants/theme'
 
 interface Props {
@@ -17,7 +17,6 @@ interface Props {
 const INITIAL = {
   firstName: '', lastName: '', email: '',
   password: '', confirmPassword: '',
-  securityQuestion: '', securityAnswer: '',
 }
 
 function Field({ label, type = 'text', value, onChange, error, children }: {
@@ -101,30 +100,50 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
   const [passwordFocused, setPasswordFocused] = useState(false)
 
   const toast = useToast()
-  const { addUser, emailExists } = useUsers()
+  const { register } = useAuth()
+  const [submitting, setSubmitting] = useState(false)
 
   const set = (field: string) => (val: string) => {
     setValues(v => ({ ...v, [field]: val }))
     if (errors[field]) setErrors(e => ({ ...e, [field]: '' }))
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (submitting) return
     const errs = validate(values, registerRules)
-    if (!errs.email && emailExists(values.email)) {
-      errs.email = 'Bu email artıq qeydiyyatdan keçib.'
-    }
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
       toast.error('Zəhmət olmasa bütün xanaları düzgün doldurun.')
       return
     }
-    addUser({
-      firstName: values.firstName.trim(),
-      lastName: values.lastName.trim(),
-      email: values.email.trim(),
-      password: values.password,
-    })
-    setSuccess(true)
+    setSubmitting(true)
+    try {
+      await register({
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        email: values.email.trim(),
+        password: values.password,
+        marketingOptIn: promo,
+      })
+      setSuccess(true)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.status === 409) {
+          setErrors({ email: 'Bu email artıq qeydiyyatdan keçib.' })
+        } else if (error.status === 400) {
+          // Backend-in sahə xətaları: { email: '...', password: '...' }
+          setErrors(error.fieldErrors())
+        } else if (error.status === 429) {
+          toast.error('Çox sayda cəhd oldu. Bir az sonra yenidən cəhd edin.')
+        } else {
+          toast.error(error.message)
+        }
+      } else {
+        toast.error('Xəta baş verdi. Yenidən cəhd edin.')
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (!isOpen) return <ToastContainer toasts={toast.toasts} />
@@ -196,20 +215,6 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
                   </button>
                 </Field>
 
-                <CustomDropdown
-                  value={values.securityQuestion}
-                  onChange={set('securityQuestion')}
-                  placeholder="Təhlükəsizlik sualı seçin..."
-                  options={[
-                    { value: 'Ananızın qızlıq soyadı nədir?', label: 'Ananızın qızlıq soyadı nədir?' },
-                    { value: 'İlk məktəbinizin adı nədir?',   label: 'İlk məktəbinizin adı nədir?'   },
-                    { value: 'İlk ev heyvanınızın adı nədir?', label: 'İlk ev heyvanınızın adı nədir?' },
-                    { value: 'Doğulduğunuz şəhər nədir?',     label: 'Doğulduğunuz şəhər nədir?'     },
-                  ]}
-                />
-
-                <Field label="Təhlükəsizlik cavabı" name="securityAnswer" value={values.securityAnswer} onChange={set('securityAnswer')} error={errors.securityAnswer} />
-
                 <label className="flex items-start gap-3 my-5 cursor-pointer">
                   <input type="checkbox" checked={promo} onChange={e => setPromo(e.target.checked)} className="mt-0.5 w-4 h-4 rounded border-gray-300 text-[#3d5a6b] focus:ring-[#3d5a6b]/20 flex-shrink-0" />
                   <span className="text-sm text-gray-600 leading-relaxed">
@@ -232,12 +237,13 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
                   </button>
                   <button
                     onClick={handleSubmit}
-                    className="flex-1 px-6 py-3 text-sm font-bold tracking-wide text-white rounded-xl transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm"
+                    disabled={submitting}
+                    className="flex-1 px-6 py-3 text-sm font-bold tracking-wide text-white rounded-xl transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm disabled:opacity-60"
                     style={{ background: PRIMARY }}
                     onMouseEnter={e => (e.currentTarget.style.background = PRIMARY_DARK)}
                     onMouseLeave={e => (e.currentTarget.style.background = PRIMARY)}
                   >
-                    HESAB YARAT
+                    {submitting ? 'GÖZLƏYİN...' : 'HESAB YARAT'}
                   </button>
                 </div>
               </div>

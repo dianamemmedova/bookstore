@@ -53,7 +53,7 @@ function StickyBar({ book, onRead }: { book: Book; onRead: () => void }) {
     return () => window.removeEventListener('scroll', h)
   }, [])
 
-  const readerUrl = `https://openlibrary.org/works/${book.id}`
+  const readerUrl = book.externalId ? `https://openlibrary.org/works/${book.externalId}` : '#'
 
   return (
     <div
@@ -136,7 +136,7 @@ export default function BookDetailPage() {
     )
   }
 
-  const readerUrl  = `https://openlibrary.org/works/${book.id}`
+  const readerUrl  = book.externalId ? `https://openlibrary.org/works/${book.externalId}` : '#'
   const author     = book.authors[0] ?? 'Naməlum müəllif'
   const rawSubject = book.subjects[0] ?? 'Fiction'
   const genreSlug  = subjectToSlug(rawSubject)

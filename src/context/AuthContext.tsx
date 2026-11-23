@@ -1,61 +1,91 @@
-import { createContext, useContext, useState } from "react";
-import type { ReactNode } from "react";
-import { mockUsers } from "../data/users";
-import type { MockUser } from "../data/users";
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
+import { api, ApiError, AUTH_EXPIRED_EVENT, tokenStore } from '../lib/api'
 
-function loadStoredUsers() {
-  try {
-    return JSON.parse(localStorage.getItem("app_users") || "[]") as MockUser[];
-  } catch {
-    return [];
-  }
+export interface AuthUser {
+  id: number
+  email: string
+  firstName: string
+  lastName: string
+  role: 'USER' | 'ADMIN'
+  createdAt: string
 }
+
+export interface RegisterInput {
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  marketingOptIn?: boolean
+}
+
+interface AuthResult { user: AuthUser; token: string }
 
 interface AuthContextType {
-  user: MockUser | null;
-  login: (email: string, password: string) => boolean;
-  logout: (onLogout?: () => void) => void;
+  user: AuthUser | null
+  loading: boolean // səhifə açılanda token yoxlanana qədər true
+  login: (email: string, password: string) => Promise<void> // xəta olsa ApiError atır
+  register: (input: RegisterInput) => Promise<void>
+  logout: (onLogout?: () => void) => void
 }
+
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  login: () => false,
+  loading: false,
+  login: async () => {},
+  register: async () => {},
   logout: () => {},
-});
+})
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<MockUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null)
+  // Token varsa əvvəl onu yoxlayırıq, yoxdursa gözləməyə ehtiyac yoxdur
+  const [loading, setLoading] = useState(() => tokenStore.get() !== null)
 
-  const login = (email: string, password: string): boolean => {
-    const mockFound = mockUsers.find(
-      (u) => u.email === email && u.password === password,
-    );
-    if (mockFound) {
-      setUser(mockFound);
-      return true;
-    }
+  // Səhifə yenilənəndə girişi bərpa et
+  useEffect(() => {
+    if (!tokenStore.get()) return
+    let cancelled = false
+    api<AuthUser>('/me')
+      .then((me) => { if (!cancelled) setUser(me) })
+      .catch((error) => {
+        // Yalnız token etibarsızdırsa sil; server söndürülübsə token qalsın
+        if (error instanceof ApiError && error.status === 401) tokenStore.clear()
+      })
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
+  }, [])
 
-    const registeredUsers = loadStoredUsers();
-    const registered = registeredUsers.find(
-      (u) => u.email === email && u.password === password,
-    );
-    if (registered) {
-      setUser(registered);
-      return true;
-    }
+  // Başqa sorğuda 401 gəlsə (token vaxtı bitib) istifadəçini çıxar
+  useEffect(() => {
+    const onExpired = () => setUser(null)
+    window.addEventListener(AUTH_EXPIRED_EVENT, onExpired)
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, onExpired)
+  }, [])
 
-    return false;
-  };
+  const login = useCallback(async (email: string, password: string) => {
+    const res = await api<AuthResult>('/auth/login', { method: 'POST', body: { email, password }, auth: false })
+    tokenStore.set(res.token)
+    setUser(res.user)
+  }, [])
 
-  const logout = (onLogout?: () => void) => {
-    setUser(null);
-    onLogout?.();
-  };
+  const register = useCallback(async (input: RegisterInput) => {
+    const res = await api<AuthResult>('/auth/register', { method: 'POST', body: input, auth: false })
+    tokenStore.set(res.token)
+    setUser(res.user)
+  }, [])
+
+  const logout = useCallback((onLogout?: () => void) => {
+    tokenStore.clear()
+    setUser(null)
+    onLogout?.()
+  }, [])
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
-  );
+  )
 }
 // eslint-disable-next-line react-refresh/only-export-components
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => useContext(AuthContext)

@@ -1,152 +1,86 @@
-import axios from 'axios'
-import type { Book, OLBook, OLSearchResponse, OLSubjectResponse, OLWorkAuthorEntry ,OLWorkEntry } from '../types/book'
-import { getBookPrice } from '../utils/bookPrice'
+import { api, API_URL } from '../lib/api'
+import type { Book } from '../types/book'
 
-const BASE = 'https://openlibrary.org'
-const COVERS_BASE = 'https://covers.openlibrary.org/b'
-
-export function getCoverUrl(coverId: number | undefined, size: 'S' | 'M' | 'L' = 'M'): string | null {
-  if (!coverId) return null
-  return `${COVERS_BASE}/id/${coverId}-${size}.jpg`
+// Backend-in kitab formatı (GET /books, GET /books/:id)
+interface ApiBook {
+  id: number
+  externalId: string | null
+  title: string
+  author: string
+  description: string | null
+  coverUrl: string | null
+  year: number | null
+  pages: number | null
+  subjects: string[]
+  priceCents: number
+  price: number
+  inStock: boolean
 }
 
-export function mapBook(doc: OLBook & { author_name?: string[] }): Book {
-  const rawKey = doc.key ?? ''
-  const id = rawKey.replace('/works/', '')
+interface ApiBookList {
+  items: ApiBook[]
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
 
-  let authorNames: string[] = []
-  if (doc.author_name && doc.author_name.length) {
-    authorNames = doc.author_name
-  } else if (doc.authors && doc.authors.length) {
-    authorNames = doc.authors.map(a => a.name).filter(Boolean)
-  }
+// Admin-in yüklədiyi cover nisbi gəlir (/uploads/covers/...), onu backend ünvanı ilə tamamlayırıq
+function coverOf(url: string | null): string | null {
+  if (!url) return null
+  return url.startsWith('/') ? `${API_URL}${url}` : url
+}
 
+// Backend kitabını front-un Book tipinə çevirir. id mətn kimi saxlanır (route/səbət kodu string gözləyir).
+export function mapBook(b: ApiBook): Book {
   return {
-    id,
-    title: doc.title ?? 'Başlıqsız',
-    authors: authorNames,
-    coverUrl: getCoverUrl(doc.cover_i),
-    firstPublishYear: doc.first_publish_year,
-    subjects: doc.subject?.slice(0, 5) ?? [],
-    editionCount: doc.edition_count,
-    ebookAccess: doc.ebook_access ?? 'unknown',
-    ratingsAverage: doc.ratings_average,
-    ratingsCount: doc.ratings_count,
-    pages: doc.number_of_pages_median,
-    description:
-      typeof doc.description === 'string'
-        ? doc.description
-        : (doc.description as { value?: string } | undefined)?.value,
-    price: getBookPrice(id),
+    id: String(b.id),
+    externalId: b.externalId ?? undefined,
+    title: b.title,
+    authors: b.author ? [b.author] : [],
+    coverUrl: coverOf(b.coverUrl),
+    firstPublishYear: b.year ?? undefined,
+    subjects: b.subjects,
+    ebookAccess: 'unknown',
+    description: b.description ?? undefined,
+    pages: b.pages ?? undefined,
+    price: b.price,
+    inStock: b.inStock,
   }
 }
 
-export async function searchBooks(
-  query: string,
-  limit = 20,
-  page = 1
-): Promise<Book[]> {
-  const response = await axios.get<OLSearchResponse>(`${BASE}/search.json`, {
-    params: {
-      q: query,
-      limit,
-      page,
-      fields: 'key,title,author_name,cover_i,first_publish_year,subject,edition_count,ebook_access,ratings_average,ratings_count'
-    }
-  })
+async function list(query: Record<string, string | number | undefined>): Promise<Book[]> {
+  const data = await api<ApiBookList>('/books', { query, auth: false })
+  return data.items.map(mapBook)
+}
 
-  const mapped = response.data.docs.map((doc) => 
-    mapBook(doc as OLBook & { author_name?: string[] })
-  )
+// Backend limit ən çox 100 qəbul edir
+const clamp = (limit: number) => Math.min(Math.max(limit, 1), 100)
 
-  const seen = new Set<string>()
-  return mapped.filter(book => {
-    if (seen.has(book.id)) return false
-    seen.add(book.id)
-    return true
-  })
+export async function searchBooks(query: string, limit = 20, page = 1): Promise<Book[]> {
+  return list({ q: query, limit: clamp(limit), page })
 }
 
 export async function fetchBySubject(subject: string, limit = 20): Promise<Book[]> {
-  const slug = subject.toLowerCase().replace(/\s+/g, '_')
-  const response = await axios.get<OLSubjectResponse>(`${BASE}/subjects/${slug}.json`, {
-    params: { limit }
-  })
-
-  return response.data.works.map((work) => {
-    const book = mapBook(work)
-    if (!book.coverUrl) {
-      const w = work as OLBook & { cover_id?: number; covers?: number[] }
-      const fallbackId = w.cover_id ?? w.covers?.[0]
-      if (fallbackId) {
-        return { ...book, coverUrl: getCoverUrl(fallbackId) }
-      }
-    }
-    return book
-  })
+  const books = await list({ subject: subject.toLowerCase(), limit: clamp(limit) })
+  // Bu mövzu teqi ilə kitab yoxdursa, söz kimi axtarırıq (başlıq/müəllif/teq)
+  return books.length > 0 ? books : searchBooks(subject, limit)
 }
 
 export async function fetchTrending(limit = 20): Promise<Book[]> {
-  return searchBooks('bestseller fiction nonfiction', limit)
+  return list({ sort: 'newest', limit: clamp(limit) })
 }
-export async function fetchBookDetail(workId: string): Promise<Book | null> {
+
+export async function fetchBookDetail(id: string): Promise<Book | null> {
   try {
-    const response = await axios.get(`${BASE}/works/${workId}.json`)
-    const data = response.data
-
-    const authorNames: string[] = []
-    if (Array.isArray(data.authors)) {
-      await Promise.all(
-        (data.authors as OLWorkAuthorEntry[]).slice(0, 3).map(async (a) => {
-          const authorKey = a.author?.key ?? ''
-          if (!authorKey) return
-          try {
-            const aRes = await axios.get(`${BASE}${authorKey}.json`)
-            const aData = aRes.data as { name?: string }
-            if (aData.name) authorNames.push(aData.name)
-          } catch {
-            // ignore
-          }
-        })
-      )
-    }
-
-    return mapBook({
-      key: `/works/${workId}`,
-      title: data.title,
-      cover_i: data.covers?.[0],
-      subject: data.subjects,
-      description: typeof data.description === 'string' ? data.description : data.description?.value,
-      number_of_pages_median: data.number_of_pages_median,
-      authors: authorNames.map(name => ({ key: '', name })),
-    } as OLBook & { author_name?: string[] })
+    return mapBook(await api<ApiBook>(`/books/${encodeURIComponent(id)}`, { auth: false }))
   } catch {
     return null
   }
 }
 
-export async function fetchEditions(workId: string, limit = 5) {
-  const response = await axios.get(`${BASE}/works/${workId}/editions.json`, {
-    params: { limit }
-  })
-  return response.data.entries ?? []
-}
-
-
-
-export async function fetchAuthorBooks(authorKey: string, limit = 10): Promise<Book[]> {
-  const response = await axios.get(`${BASE}/authors/${authorKey}/works.json`, {
-    params: { limit }
-  })
-  const data = response.data as { entries?: OLWorkEntry[] }
-  return (data.entries ?? []).map((entry) =>
-    mapBook({
-      key: entry.key,
-      title: entry.title,
-      cover_i: entry.covers?.[0],
-      subject: entry.subjects,
-    } as OLBook)
-  )
+export async function fetchAuthorBooks(author: string, limit = 10): Promise<Book[]> {
+  return searchBooks(author, limit)
 }
 
 export const FEATURED_QUERIES = {

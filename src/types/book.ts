@@ -37,6 +37,7 @@ export interface OLBook {
 }
 
 export interface Book {
+  externalId?: string // Open Library work id (varsa)
   id: string                 
   title: string
   authors: string[]
@@ -50,6 +51,7 @@ export interface Book {
   description?: string
   pages?: number
   price?: number 
+  inStock?: boolean // backend: stokda var (limitsiz və ya > 0)
 }
 
 export interface OLSearchResponse {

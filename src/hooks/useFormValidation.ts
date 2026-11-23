@@ -46,13 +46,13 @@ export function validate<T extends Record<string, string>>(
 export const registerRules: Rules = {
   firstName: {
     required: true,
-    minLength: 3,
+    minLength: 2,
     maxLength: 50,
     pattern: { regex: /^[a-zA-ZığüşöçƏəİıĞÜŞÖÇ\s-]+$/, message: 'Yalnız hərf istifadə edin.' },
   },
   lastName: {
     required: true,
-    minLength: 5,
+    minLength: 2,
     maxLength: 50,
     pattern: { regex: /^[a-zA-ZığüşöçƏəİıĞÜŞÖÇ\s-]+$/, message: 'Yalnız hərf istifadə edin.' },
   },
@@ -63,22 +63,13 @@ export const registerRules: Rules = {
   },
   password: {
     required: true,
-    minLength: 6,
+    minLength: 8,
   },
   confirmPassword: {
     required: true,
     custom: (val, all) =>
       val !== all?.password ? 'Şifrələr uyğun gəlmir.' : null,
   },
-  securityQuestion: {
-    required: true,
-  },
-  securityAnswer: {
-    required: true,
-    minLength: 2,
-    maxLength: 100,
-  },
-
 }
   export const checkoutRules: Rules = {
   fullName: { required: true, minLength: 3, maxLength: 50 },

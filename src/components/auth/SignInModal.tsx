@@ -6,6 +6,7 @@ import { ToastContainer } from '../ui/ToastContainer'
 import { Eye, EyeOff } from 'lucide-react'
 import Input from '../ui/Input'
 import { signInRules, validate } from '../../hooks/useFormValidation'
+import { ApiError } from '../../lib/api'
 
 interface Props {
   isOpen: boolean
@@ -15,31 +16,43 @@ interface Props {
 }
 
 export default function SignInModal({ isOpen, onClose, onSwitchToRegister, onForgotPassword }: Props) {
-  const [email, setEmail] = useState('aynur@mail.com')
-  const [password, setPassword] = useState('123456')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [remember, setRemember] = useState(true)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  
+  const [submitting, setSubmitting] = useState(false)
+
 
   const { login } = useAuth()
   const { closeAll } = useAuthModal()
   const toast = useToast()
 
   if (!isOpen) return <ToastContainer toasts={toast.toasts} />
-    const handleSubmit = () => {
-  const newErrors = validate({ email, password }, signInRules)
-  setErrors(newErrors)
-  if (Object.keys(newErrors).length > 0) return
+  const handleSubmit = async () => {
+    if (submitting) return
+    const newErrors = validate({ email, password }, signInRules)
+    setErrors(newErrors)
+    if (Object.keys(newErrors).length > 0) return
 
-  const ok = login(email, password)
-  if (ok) {
-    toast.success(`Xoş gəldiniz, ${email.split('@')[0]}! Uğurla daxil oldunuz.`)
-    closeAll()
-  } else {
-    toast.error('Email və ya şifrə yanlışdır.')
+    setSubmitting(true)
+    try {
+      await login(email.trim(), password)
+      toast.success(`Xoş gəldiniz, ${email.split('@')[0]}! Uğurla daxil oldunuz.`)
+      setPassword('')
+      closeAll()
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 429) {
+        toast.error('Çox sayda uğursuz cəhd. Bir az sonra yenidən cəhd edin.')
+      } else if (error instanceof ApiError && error.status === 401) {
+        toast.error('Email və ya şifrə yanlışdır.')
+      } else {
+        toast.error(error instanceof ApiError ? error.message : 'Xəta baş verdi. Yenidən cəhd edin.')
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
-}
 
   return (
     <>
@@ -53,7 +66,7 @@ export default function SignInModal({ isOpen, onClose, onSwitchToRegister, onFor
             Daxil ol və ya Hesab Yarat
           </h2>
 
-          <div className="space-y-4">
+          <div className="space-y-4" onKeyDown={e => e.key === 'Enter' && handleSubmit()}>
             <Input
               label="Email"
               type="email"
@@ -98,10 +111,10 @@ export default function SignInModal({ isOpen, onClose, onSwitchToRegister, onFor
 
           <button
             onClick={handleSubmit}
-            onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-            className="w-full bg-[#2e6b4f] hover:bg-[#245840] text-white rounded-lg py-3 mb-3 font-medium transition-colors"
+            disabled={submitting}
+            className="w-full bg-[#2e6b4f] hover:bg-[#245840] disabled:opacity-60 text-white rounded-lg py-3 mb-3 font-medium transition-colors"
           >
-            Daxil ol
+            {submitting ? 'Gözləyin...' : 'Daxil ol'}
           </button>
 
           <button
