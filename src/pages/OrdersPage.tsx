@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useOrders } from '../context/OrderContext'
 import { useAuth } from '../context/AuthContext'
@@ -5,8 +6,11 @@ import OrderCard from '../components/orders/OrderCard'
 import EmptyOrdersState from '../components/orders/EmptyOrdersState'
 
 export default function OrdersPage() {
-  const { orders } = useOrders()
+  const { orders, loading, reloadOrders } = useOrders()
   const { user } = useAuth()
+
+  // Səhifə açılanda yenilənir: admin statusu dəyişmiş ola bilər
+  useEffect(() => { void reloadOrders() }, [reloadOrders])
 
   if (!user) return <EmptyOrdersState variant="no-auth" />
 
@@ -17,7 +21,7 @@ export default function OrdersPage() {
           <div>
             <h1 className="text-3xl font-semibold text-gray-900">Sifarişlərim</h1>
             <p className="text-sm text-gray-400 mt-1">
-              {orders.length > 0 ? `${orders.length} sifariş tapıldı` : 'Hələ sifariş yoxdur'}
+              {orders.length > 0 ? `${orders.length} sifariş tapıldı` : loading ? 'Yüklənir...' : 'Hələ sifariş yoxdur'}
             </p>
           </div>
           <Link to="/books"
@@ -26,7 +30,7 @@ export default function OrdersPage() {
           </Link>
         </div>
 
-        {orders.length === 0 ? (
+        {orders.length === 0 && loading ? null : orders.length === 0 ? (
           <EmptyOrdersState variant="no-orders" />
         ) : (
           <div className="space-y-4">

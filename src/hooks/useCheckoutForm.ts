@@ -1,18 +1,17 @@
 import { useState } from 'react'
 import { validate, checkoutRules } from './useFormValidation'
+import { api, ApiError } from '../lib/api'
 import { useOrders } from '../context/OrderContext'
+import type { ApiOrder } from '../context/OrderContext'
 import { useCart } from '../context/CartContext'
 import { useNavigate } from 'react-router-dom'
 import { getMinDate } from '../utils/date'
 import type { CheckoutFormProps } from '../types/checkout'
 
-interface UseCheckoutFormProps extends CheckoutFormProps {
-  confirmPromoUsed: () => void
-}
+type UseCheckoutFormProps = CheckoutFormProps
 
 export function useCheckoutForm({
-  subtotal, discountAmount, deliveryFee, finalTotal,
-  appliedPromo, onSuccess, confirmPromoUsed,
+  appliedPromo, onSuccess,
 }: UseCheckoutFormProps) {
   const [step, setStep] = useState<'form' | 'success'>('form')
   const [payMethod, setPayMethod] = useState<'card' | 'cash'>('card')
@@ -22,9 +21,12 @@ export function useCheckoutForm({
     deliveryDate: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [submitting, setSubmitting] = useState(false)
+  const [serverError, setServerError] = useState('')
+  const [orderId, setOrderId] = useState<number | null>(null)
 
-  const { addOrder } = useOrders()
-  const { items } = useCart()
+  const { reloadOrders } = useOrders()
+  const { reloadCart } = useCart()
   const navigate = useNavigate()
 
   const minDate = getMinDate(5)
@@ -62,27 +64,44 @@ export function useCheckoutForm({
     return Object.keys(errs).length === 0
   }
 
-  const handleSubmit = () => {
-    if (!validateForm()) return
+  // Məbləğləri server özü səbətdən və bazadakı qiymətlərdən hesablayır, biz yalnız çatdırılma məlumatını göndəririk.
+  // Kart məlumatı heç vaxt serverə getmir (real ödəniş inteqrasiyası yoxdur).
+  const handleSubmit = async () => {
+    if (submitting || !validateForm()) return
+    setSubmitting(true)
+    setServerError('')
 
-    addOrder({
-      items: items.map(i => ({
-        id: i.id, title: i.title, author: i.author,
-        cover: i.cover, price: i.price, quantity: i.quantity,
-      })),
-      subtotal, discountAmount, deliveryFee, finalTotal,
-      promoCode: appliedPromo?.code ?? null,
-      payMethod,
-      deliveryDate: form.deliveryDate,
-      delivery: {
-        fullName: form.fullName, phone: form.phone, city: form.city,
-        street: form.street, building: form.building, apartment: form.apartment,
-      },
-    })
-
-    confirmPromoUsed()
-     onSuccess() 
-    setStep('success')
+    try {
+      const order = await api<ApiOrder>('/orders', {
+        method: 'POST',
+        body: {
+          payMethod: payMethod === 'card' ? 'CARD' : 'CASH',
+          ...(appliedPromo && { promoCode: appliedPromo.code }),
+          fullName: form.fullName.trim(),
+          phone: form.phone.trim(),
+          city: form.city.trim(),
+          street: form.street.trim(),
+          ...(form.building.trim() && { building: form.building.trim() }),
+          ...(form.apartment.trim() && { apartment: form.apartment.trim() }),
+          deliveryDate: form.deliveryDate,
+        },
+      })
+      setOrderId(order.id)
+      setStep('success')
+      // Server səbəti təmizləyib: səbət və sifariş siyahısı yenilənir
+      void reloadCart()
+      void reloadOrders()
+    } catch (e) {
+      if (e instanceof ApiError) {
+        const fields = e.fieldErrors()
+        if (Object.keys(fields).length) setErrors(fields)
+        setServerError(Object.keys(fields).length ? 'Xanalardakı xətaları düzəldin' : e.message)
+      } else {
+        setServerError('Gözlənilməz xəta baş verdi')
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const handleSuccessNavigate = (to: string) => {
@@ -91,7 +110,7 @@ export function useCheckoutForm({
   }
 
   return {
-    step, form, errors, payMethod, minDate,
+    step, form, errors, payMethod, minDate, submitting, serverError, orderId,
     setPayMethod, inp, clearErr, inputClass,
     formatCard, formatExpiry,
     handleSubmit, handleSuccessNavigate,

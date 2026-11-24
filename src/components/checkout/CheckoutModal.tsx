@@ -8,16 +8,16 @@ import type { CheckoutModal as CheckoutModalProps } from '../../types/checkout'
 
 export function CheckoutModal({
   subtotal, discountAmount, deliveryFee, finalTotal,
-  appliedPromo, onClose, onSuccess, confirmPromoUsed,
+  appliedPromo, onClose, onSuccess,
 }: CheckoutModalProps) {
   const {
-    step, form, errors, payMethod, minDate,
+    step, form, errors, payMethod, minDate, submitting, serverError, orderId,
     setPayMethod, inp, clearErr, inputClass,
     formatCard, formatExpiry,
     handleSubmit, handleSuccessNavigate,
   } = useCheckoutForm({
     subtotal, discountAmount, deliveryFee, finalTotal,
-    appliedPromo, onSuccess, confirmPromoUsed,
+    appliedPromo, onSuccess,
   })
 
   return (
@@ -28,6 +28,7 @@ export function CheckoutModal({
         {step === 'success' ? (
           <CheckoutSuccess
             deliveryDate={form.deliveryDate}
+            orderId={orderId}
             onOrders={() => handleSuccessNavigate('/orders')}
             onBooks={() => handleSuccessNavigate('/books')}
           />
@@ -59,6 +60,10 @@ export function CheckoutModal({
                 appliedPromo={appliedPromo} deliveryDate={form.deliveryDate}
               />
 
+              {serverError && (
+                <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-sm">{serverError}</p>
+              )}
+
               <div className="flex gap-3 pb-2">
                 <button
                   onClick={onClose}
@@ -68,12 +73,13 @@ export function CheckoutModal({
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="flex-1 py-3 text-sm font-bold tracking-wider text-white transition-colors rounded-sm"
+                  disabled={submitting}
+                  className="flex-1 py-3 text-sm font-bold tracking-wider text-white transition-colors rounded-sm disabled:opacity-60"
                   style={{ background: PRIMARY }}
                   onMouseEnter={e => (e.currentTarget.style.background = PRIMARY_DARK)}
                   onMouseLeave={e => (e.currentTarget.style.background = PRIMARY)}
                 >
-                  TƏSDİQLƏ
+                  {submitting ? 'GÖNDƏRİLİR...' : 'TƏSDİQLƏ'}
                 </button>
               </div>
             </div>

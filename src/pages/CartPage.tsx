@@ -13,7 +13,7 @@ import CartItem from '../components/cart/CartItem'
 import OrderSummary from '../components/cart/OrderSummary'
 
 export default function CartPage() {
-  const { items, removeFromCart, updateQty, clearCart, total, count, loading } = useCart()
+  const { items, removeFromCart, updateQty, clearCart, total, count, loading, reloadCart } = useCart()
   const { toasts, error: showError } = useToast()
   const { user } = useAuth()
   const { openLogin } = useAuthModal()
@@ -25,7 +25,6 @@ export default function CartPage() {
     promoError, setPromoError,
     suggestionDismissed, setSuggestionDismissed, suggestionAvailable,
     applying, applyPromo, removePromo,
-    confirmPromoUsed,
   } = usePromo()
 
   const { discountAmount, deliveryFee, finalTotal } = calcFinalTotal(total, appliedPromo?.discount ?? 0)
@@ -36,31 +35,30 @@ export default function CartPage() {
     if (err) showError(err)
   }
 
-  if (loading && items.length === 0) {
-    return <div className="min-h-[50vh] flex items-center justify-center text-sm text-gray-400">Səbət yüklənir...</div>
+  // Sifariş verilən kimi server səbəti boşaldır; modal açıq qalmalıdır ki, istifadəçi "Sifarişi qəbul edildi" ekranını görsün
+  const closeCheckout = () => {
+    setShowCheckout(false)
+    void reloadCart()
   }
 
-  if (items.length === 0) return <EmptyCart />
+  const checkoutModal = showCheckout && (
+    <CheckoutModal
+      subtotal={total}
+      discountAmount={discountAmount}
+      deliveryFee={deliveryFee}
+      finalTotal={finalTotal}
+      appliedPromo={appliedPromo}
+      onClose={closeCheckout}
+      onSuccess={closeCheckout}
+    />
+  )
 
-  return (
-    <>
-      <ToastContainer toasts={toasts} />
-      {showCheckout && (
-        <CheckoutModal
-          subtotal={total}
-          discountAmount={discountAmount}
-          deliveryFee={deliveryFee}
-          finalTotal={finalTotal}
-          appliedPromo={appliedPromo}
-          onClose={() => setShowCheckout(false)}
-          onSuccess={() => {
-            setShowCheckout(false)
-            void clearCart()
-          }}
-          confirmPromoUsed={confirmPromoUsed}
-        />
-      )}
-
+  // Modal həmişə eyni yerdə render olunur: səbət boşalanda (sifariş verilən an) modal sıfırlanmasın
+  const content = items.length === 0
+    ? (loading && !showCheckout
+        ? <div className="min-h-[50vh] flex items-center justify-center text-sm text-gray-400">Səbət yüklənir...</div>
+        : <EmptyCart />)
+    : (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 py-6 sm:py-10">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 sm:mb-8">
@@ -130,6 +128,13 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+    )
+
+  return (
+    <>
+      <ToastContainer toasts={toasts} />
+      {checkoutModal}
+      {content}
     </>
   )
 }

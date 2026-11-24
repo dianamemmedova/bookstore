@@ -15,6 +15,7 @@ export interface CheckoutFormProps {
 
 export interface Succes {
   deliveryDate: string
+  orderId?: number | null
   onOrders: () => void
   onBooks: () => void
 }
@@ -63,5 +64,4 @@ export interface CheckoutModal {
   appliedPromo: AppliedPromo | null
   onClose: () => void
   onSuccess: () => void
-   confirmPromoUsed: () => void
 }

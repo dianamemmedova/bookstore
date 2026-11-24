@@ -64,9 +64,6 @@ export function usePromo() {
     setPromoError('')
   }, [])
 
-  // Sifariş yaradılanda server promo istifadəsini özü qeyd edir. Köhnə checkout kodu üçün boş funksiya qalır.
-  const confirmPromoUsed = useCallback(() => {}, [])
-
   return {
     promoInput,      setPromoInput,
     appliedPromo,
@@ -76,6 +73,5 @@ export function usePromo() {
     applying,
     applyPromo,
     removePromo,
-    confirmPromoUsed,
   }
 }

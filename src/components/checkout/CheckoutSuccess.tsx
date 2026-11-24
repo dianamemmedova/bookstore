@@ -4,7 +4,7 @@ import type { Succes } from '../../types/checkout'
 
 
 
-export default function CheckoutSuccess({ deliveryDate, onOrders, onBooks }: Succes) {
+export default function CheckoutSuccess({ deliveryDate, orderId, onOrders, onBooks }: Succes) {
   return (
     <div className="flex flex-col items-center justify-center py-14 px-8 text-center">
       <div className="w-20 h-20 rounded-full flex items-center justify-center mb-5" style={{ background: BACKGROUND_SOFT }}>
@@ -12,7 +12,8 @@ export default function CheckoutSuccess({ deliveryDate, onOrders, onBooks }: Suc
           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
         </svg>
       </div>
-      <h2 className="text-2xl font-semibold text-gray-900 mb-3">Sifarişiniz Təsdiqləndi!</h2>
+      <h2 className="text-2xl font-semibold text-gray-900 mb-3">Sifarişiniz Qəbul Edildi!</h2>
+      {orderId !== null && <p className="text-sm text-gray-400 mb-2">Sifariş №{orderId}</p>}
       <p className="text-sm text-gray-500 leading-relaxed mb-1">
         Sifarişiniz uğurla qəbul edildi. Tezliklə sizinlə əlaqə saxlanılacaq.
       </p>
@@ -22,7 +23,7 @@ export default function CheckoutSuccess({ deliveryDate, onOrders, onBooks }: Suc
         </p>
       )}
       <p className="text-xs text-gray-400 mb-8">
-        Sifariş təfərrüatları telefon nömrənizə SMS vasitəsilə göndəriləcək.
+        Sifarişin vəziyyətini «Sifarişlərim» səhifəsində izləyə bilərsiniz.
       </p>
       <div className="flex flex-col gap-3 w-full max-w-xs">
         <button onClick={onOrders}

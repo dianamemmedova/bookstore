@@ -26,7 +26,7 @@ interface ApiBookList {
 }
 
 // Admin-in yüklədiyi cover nisbi gəlir (/uploads/covers/...), onu backend ünvanı ilə tamamlayırıq
-function coverOf(url: string | null): string | null {
+export function coverOf(url: string | null): string | null {
   if (!url) return null
   return url.startsWith('/') ? `${API_URL}${url}` : url
 }
