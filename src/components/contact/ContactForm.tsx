@@ -4,7 +4,7 @@ import SuccessModal from '../ui/SuccessModal'
 import { PRIMARY, PRIMARY_DARK, PRIMARY_DISABLED } from '../../constants/theme'
 
 export default function ContactForm() {
-  const { form, errors, isModalOpen, closeModal, isSubmitting, handleChange, handleSubmit } = useContactForm()
+  const { form, errors, isModalOpen, closeModal, isSubmitting, serverError, handleChange, handleSubmit } = useContactForm()
 
   return (
     <>
@@ -97,6 +97,8 @@ export default function ContactForm() {
               )}
             </div>
           </div>
+
+          {serverError && <p className="text-red-500 text-sm">{serverError}</p>}
 
           <button
             type="submit"

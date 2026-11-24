@@ -1,9 +1,15 @@
 import { useState } from 'react'
+import { ApiError } from '../../lib/api'
+import { checkGiftCardBalance } from '../../services/contactService'
 
 export function BalanceChecker() {
   const [value, setValue] = useState('')
   const [touched, setTouched] = useState(false)
-  const [result, setResult] = useState<'idle' | 'found' | 'notfound'>('idle')
+  const [result, setResult] = useState<'idle' | 'found' | 'notfound' | 'error'>('idle')
+  const [balance, setBalance] = useState(0)
+  const [expiresAt, setExpiresAt] = useState<string | null>(null)
+  const [checking, setChecking] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
   const digits = value.replace(/\D/g, '')
   const formatted = digits.slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ').trim()
@@ -18,10 +24,25 @@ export function BalanceChecker() {
     if (!touched) setTouched(true)
   }
 
-  const handleCheck = () => {
+  const handleCheck = async () => {
     setTouched(true)
-    if (!isValid) return
-    setResult(digits.startsWith('4521') ? 'found' : 'notfound')
+    if (!isValid || checking) return
+    setChecking(true)
+    try {
+      const res = await checkGiftCardBalance(digits)
+      setBalance(res.balance)
+      setExpiresAt(res.expiresAt)
+      setResult('found')
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        setResult('notfound')
+      } else {
+        setErrorMsg(e instanceof ApiError ? e.message : 'Xəta baş verdi')
+        setResult('error')
+      }
+    } finally {
+      setChecking(false)
+    }
   }
 
   return (
@@ -65,19 +86,30 @@ export function BalanceChecker() {
 
           <button
             onClick={handleCheck}
-            disabled={!isValid}
+            disabled={!isValid || checking}
             className={`w-full py-3 text-sm font-bold rounded-xl transition-all ${
               isValid ? 'bg-[#c9a454] text-[#1a2e3d] hover:opacity-90' : 'bg-white/10 text-white/30 cursor-not-allowed'
             }`}
           >
-            Yoxla
+            {checking ? 'Yoxlanılır...' : 'Yoxla'}
           </button>
 
           {result === 'found' && (
             <div className="mt-4 bg-green-500/15 border border-green-400/30 rounded-xl px-4 py-3 text-left">
               <p className="text-green-300 text-sm font-semibold mb-1">✓ Kart tapıldı</p>
               <p className="text-white/70 text-xs">Mövcud balans:</p>
-              <p className="text-white text-2xl font-bold mt-1">₼ 150.00</p>
+              <p className="text-white text-2xl font-bold mt-1">₼ {balance.toFixed(2)}</p>
+              {expiresAt && (
+                <p className="text-white/50 text-xs mt-1">
+                  Etibarlıdır: {new Date(expiresAt).toLocaleDateString('en-GB').replace(/\//g, '.')}-dək
+                </p>
+              )}
+            </div>
+          )}
+          {result === 'error' && (
+            <div className="mt-4 bg-red-500/15 border border-red-400/30 rounded-xl px-4 py-3 text-left">
+              <p className="text-red-300 text-sm font-semibold">✗ Yoxlama alınmadı</p>
+              <p className="text-white/50 text-xs mt-1">{errorMsg}</p>
             </div>
           )}
           {result === 'notfound' && (

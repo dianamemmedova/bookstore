@@ -19,7 +19,7 @@ export function StoreCard({ store , selected , onClick }: {
     >
       <div className="relative w-full overflow-hidden h-[200px]" style={{  background: selected ? `${PRIMARY}18` : BEIGE_BG }}>
         <img
-          src={`/stores/store-${store.id}.jpg`}
+          src={store.image}
           alt={store.name}
           className="w-full h-full object-cover"
           onError={(e) => {
@@ -31,7 +31,7 @@ export function StoreCard({ store , selected , onClick }: {
         />
         <div className="absolute inset-0 items-center justify-center hidden">
           <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow" style={{ background: selected ? PRIMARY : '#94a3b8' }} >
-            {store.id}
+            {store.num}
           </div>
         </div>
 

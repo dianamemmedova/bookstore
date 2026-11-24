@@ -1,18 +1,19 @@
 import { BEIGE_BG, GRAY_TEXT, PRIMARY, PURPLE, TEXT_DARK } from '../../constants/theme'
 import { MONTHS_SHORT } from '../../utils/date'
 import { EVENT_COLORS } from '../../constants/theme'
-import type { events } from '../../data/stores'
+import type { StoreEvent } from '../../types/store'
 
 
-export function EventCard({ event }: { event: typeof events[0] }) {
+export function EventCard({ event }: { event: StoreEvent }) {
   const colors = EVENT_COLORS[event.type] ?? { bg: BEIGE_BG, text: TEXT_DARK    , dot: GRAY_TEXT }
-  const d = new Date(event.date)
+  const [y, m, day] = event.date.split('-').map(Number)
+  const d = new Date(y, m - 1, day)
   const dateStr = `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`
 
   return (
     <div className="flex flex-row bg-white border border-gray-100 rounded-2xl overflow-hidden transition-all shadow-sm hover:shadow-md">
       <div className="relative flex-shrink-0 bg-gray-100 overflow-hidden w-[230px] min-h-[130px]">
-        <img src={`/events/event-${event.id}.jpg`} alt={event.title}
+        <img src={event.image} alt={event.title}
          className="w-full h-full object-cover absolute inset-0" />
         <div className="absolute bottom-2 left-2 rounded-lg px-1.5 py-0.5 text-center"
           style={{ background: PRIMARY }}>

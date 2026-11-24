@@ -1,32 +1,31 @@
 import { useState, useCallback, useMemo } from 'react';
-import { events } from '../data/stores';
-import { isSameWeek, isThisMonth } from '../utils/date';
-import type { EventFilters, EventFilterSetters } from '../types/store';
+import { isAfterNextMonth, isInMonth, isSameWeek, todayIso } from '../utils/date';
+import type { EventFilters, EventFilterSetters, StoreEvent } from '../types/store';
 
-export function useEventFilters(initialStoreId: number | null = null) {
+// events serverdən gəlir; selectedStoreId seçilibsə yalnız o mağazanın tədbirləri qalır
+export function useEventFilters(events: StoreEvent[], selectedStoreId: number | null = null) {
   const [filterToday,    setFilterToday]    = useState(true);
   const [filterThisWeek, setFilterThisWeek] = useState(true);
-  const [filterMay,      setFilterMay]      = useState(true);
-  const [filterJune,     setFilterJune]     = useState(false);
-  const [filterJuly,     setFilterJuly]     = useState(false);
+  const [filterThisMonth, setFilterThisMonth] = useState(true);
+  const [filterNextMonth, setFilterNextMonth] = useState(true);
+  const [filterLater,    setFilterLater]    = useState(true);
   const [filterAuthor,   setFilterAuthor]   = useState(true);
   const [filterKids,     setFilterKids]     = useState(true);
   const [filterOther,    setFilterOther]    = useState(true);
   const [filterVirtual,  setFilterVirtual]  = useState(true);
   const [filterInStore,  setFilterInStore]  = useState(true);
   const [sortBy,         setSortBy]         = useState<'Tarix' | 'Mağaza'>('Tarix');
-  const [selectedStoreId, setSelectedStoreId] = useState<number | null>(initialStoreId);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayIso();
 
   const filteredEvents = useMemo(() => {
     const result = events.filter((e) => {
       const dateOk =
         (filterToday    && e.date === today) ||
         (filterThisWeek && isSameWeek(e.date)) ||
-        (filterMay      && isThisMonth(e.date, 4)) ||
-        (filterJune     && isThisMonth(e.date, 5)) ||
-        (filterJuly     && isThisMonth(e.date, 6));
+        (filterThisMonth && isInMonth(e.date, 0)) ||
+        (filterNextMonth && isInMonth(e.date, 1)) ||
+        (filterLater    && isAfterNextMonth(e.date));
       if (!dateOk) return false;
 
       const typeOk =
@@ -50,19 +49,19 @@ export function useEventFilters(initialStoreId: number | null = null) {
         : a.storeName.localeCompare(b.storeName)
     );
     return result;
-  }, [filterToday, filterThisWeek, filterMay, filterJune, filterJuly,
+  }, [events, filterToday, filterThisWeek, filterThisMonth, filterNextMonth, filterLater,
       filterAuthor, filterKids, filterOther, filterVirtual, filterInStore,
       selectedStoreId, sortBy, today]);
 
   const resetAllFilters = useCallback(() => {
-    setFilterToday(true); setFilterThisWeek(true); setFilterMay(true);
-    setFilterJune(false); setFilterJuly(false); setFilterAuthor(true);
+    setFilterToday(true); setFilterThisWeek(true); setFilterThisMonth(true);
+    setFilterNextMonth(true); setFilterLater(true); setFilterAuthor(true);
     setFilterKids(true); setFilterOther(true); setFilterVirtual(true);
     setFilterInStore(true); setSortBy('Tarix');
   }, []);
 
-  const filters: EventFilters = { filterToday, filterThisWeek, filterMay, filterJune, filterJuly, filterAuthor, filterKids, filterOther, filterVirtual, filterInStore, sortBy };
-  const setters: EventFilterSetters = { setFilterToday, setFilterThisWeek, setFilterMay, setFilterJune, setFilterJuly, setFilterAuthor, setFilterKids, setFilterOther, setFilterVirtual, setFilterInStore, setSortBy };
+  const filters: EventFilters = { filterToday, filterThisWeek, filterThisMonth, filterNextMonth, filterLater, filterAuthor, filterKids, filterOther, filterVirtual, filterInStore, sortBy };
+  const setters: EventFilterSetters = { setFilterToday, setFilterThisWeek, setFilterThisMonth, setFilterNextMonth, setFilterLater, setFilterAuthor, setFilterKids, setFilterOther, setFilterVirtual, setFilterInStore, setSortBy };
 
-  return { filters, setters, selectedStoreId, setSelectedStoreId, filteredEvents, resetAllFilters };
+  return { filters, setters, filteredEvents, resetAllFilters };
 }

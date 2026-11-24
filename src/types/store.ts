@@ -6,6 +6,8 @@ export interface Store {
   lng: number
   phone: string
   hours: string
+  num: number    // siyahıdakı sıra (1, 2, 3...), kartda nömrə kimi görünür
+  image: string  // /stores/store-N.jpg
 }
 
 export type EventType = 'Müəllif Tədbiri' | 'Uşaq Tədbiri' | 'Digər'
@@ -20,14 +22,15 @@ export interface StoreEvent {
   time: string
   title: string
   type: EventType
+  image: string  // /events/event-N.jpg
 }
 
 export interface EventFilters {
   filterToday: boolean
   filterThisWeek: boolean
-  filterMay: boolean
-  filterJune: boolean
-  filterJuly: boolean
+  filterThisMonth: boolean
+  filterNextMonth: boolean
+  filterLater: boolean
   filterAuthor: boolean
   filterKids: boolean
   filterOther: boolean
@@ -39,9 +42,9 @@ export interface EventFilters {
 export interface EventFilterSetters {
   setFilterToday: (v: boolean) => void
   setFilterThisWeek: (v: boolean) => void
-  setFilterMay: (v: boolean) => void
-  setFilterJune: (v: boolean) => void
-  setFilterJuly: (v: boolean) => void
+  setFilterThisMonth: (v: boolean) => void
+  setFilterNextMonth: (v: boolean) => void
+  setFilterLater: (v: boolean) => void
   setFilterAuthor: (v: boolean) => void
   setFilterKids: (v: boolean) => void
   setFilterOther: (v: boolean) => void

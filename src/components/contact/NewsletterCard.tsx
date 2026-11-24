@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { useNewsletter } from '../../hooks/useNewsletter'
 
 export default function NewsletterCard() {
-  const [email, setEmail] = useState('')
-  const [subscribed, setSubscribed] = useState(false)
+  const { email, setEmail, submitting, subscribed, error, submit } = useNewsletter()
 
   return (
     <div className="bg-gradient-to-r from-[#3d5a6b] to-[#2e4455] rounded-lg p-5 text-white">
@@ -15,7 +14,7 @@ export default function NewsletterCard() {
       {subscribed ? (
         <div className="mt-1">
           <p className="text-xs text-green-300 mb-1">✓ Abunəliyiniz qeydə alındı!</p>
-          <p className="text-xs text-white/60">Yeni kitablar və endirimlər haqqında bildiriş almaq üçün Gmail hesabınızı yoxlayın. 📬</p>
+          <p className="text-xs text-white/60">Yeni kitablar və endirimlər haqqında bildirişləri e-poçtunuza göndərəcəyik. 📬</p>
         </div>
       ) : (
         <>
@@ -25,20 +24,19 @@ export default function NewsletterCard() {
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') submit() }}
               placeholder="Email ünvanı"
               className="flex-1 px-3 py-2 rounded-lg text-xs bg-white/10 text-white placeholder:text-white/50 outline-none border border-white/20 focus:border-white/40"
             />
             <button
-              onClick={() => {
-                if (!email) return
-                setSubscribed(true)
-                setEmail('')
-              }}
-              className="bg-[#c9a454] hover:bg-[#b8943a] text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors"
+              onClick={submit}
+              disabled={submitting}
+              className="bg-[#c9a454] hover:bg-[#b8943a] text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors disabled:opacity-60"
             >
-              Abunə
+              {submitting ? '...' : 'Abunə'}
             </button>
           </div>
+          {error && <p className="text-xs text-red-300 mt-2">{error}</p>}
         </>
       )}
     </div>

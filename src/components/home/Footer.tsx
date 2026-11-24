@@ -1,10 +1,10 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { footerLinks } from '../../data/home'
 import { SOCIAL_LINKS } from '../../data/socialLink'
+import { useNewsletter } from '../../hooks/useNewsletter'
 
 export function Footer() {
-  const [email, setEmail] = useState('')
+  const { email, setEmail, submitting, subscribed, error, submit } = useNewsletter()
 
   return (
     <footer className="bg-white border-t border-gray-200 mt-8 sm:mt-12">
@@ -34,21 +34,28 @@ export function Footer() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') submit() }}
                   placeholder="E-poçt ünvanınız"
                   className="flex-1 min-w-0 border border-gray-300 border-r-0 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-500"
                 />
                 <button
-                  onClick={() => { if (email) { alert('Abunə oldunuz!'); setEmail('') } }}
-                  className="flex-shrink-0 bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 transition-colors"
+                  onClick={submit}
+                  disabled={submitting}
+                  aria-label="Abunə ol"
+                  className="flex-shrink-0 bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 transition-colors disabled:opacity-60"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
               </div>
-              <p className="text-xs text-gray-400 mt-2 leading-relaxed">
-                Yeni kitablar, endirim və kampaniyalardan ilk siz xəbərdar olun.
-              </p>
+              {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
+              {subscribed && <p className="text-xs text-green-600 mt-2">✓ Abunəliyiniz qeydə alındı!</p>}
+              {!error && !subscribed && (
+                <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+                  Yeni kitablar, endirim və kampaniyalardan ilk siz xəbərdar olun.
+                </p>
+              )}
             </div>
 
             <div>

@@ -1,16 +1,16 @@
 // src/components/stores/FeaturedEventCard.tsx
 import { PRIMARY, ACCENT } from '../../constants/theme'
 import { formatDate } from '../../utils/date'
-import type { events } from '../../data/stores'
+import type { StoreEvent } from '../../types/store'
 
-type Event = typeof events[0]
+type Event = StoreEvent
 
 export default function FeaturedEventCard({ event }: { event: Event }) {
   return (
     <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-md bg-white">
       <div className="relative overflow-hidden h-[]250px" >
         <img
-          src={`/events/event-${event.id}.jpg`}
+          src={event.image}
           alt={event.title}
           className="w-full h-full object-cover"
         />

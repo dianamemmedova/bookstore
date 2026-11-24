@@ -2,7 +2,7 @@
 import { useState, useMemo } from 'react'
 import { useEventFilters } from '../hooks/useEventFilter.ts'
 import { PRIMARY, BACKGROUND_LIGHT, BACKGROUND_SOFT } from '../constants/theme'
-import { stores, events } from '../data/stores.ts'
+import { useStoresData } from '../hooks/useStoresData'
 import type { Store } from '../types/store'
 import { StoreMap }        from '../components/stores/StoreMap'
 import { StoreCard }       from '../components/stores/StoreCard'
@@ -16,14 +16,27 @@ export default function StoresPage() {
   const [search,        setSearch]        = useState('')
   const [selectedStore, setSelectedStore] = useState<Store | null>(null)
 
-  const { filters, setters, filteredEvents, resetAllFilters } = useEventFilters(selectedStore?.id ?? null)
+  const { stores, events, loading, error, reload } = useStoresData()
+  const { filters, setters, filteredEvents, resetAllFilters } = useEventFilters(events, selectedStore?.id ?? null)
+
+  // Önə çıxan tədbir: ən yaxın müəllif tədbiri (yoxdursa ən yaxın tədbir). Siyahı tarixə görə gəlir
+  const featuredEvent = events.find((e) => e.type === 'Müəllif Tədbiri') ?? events[0] ?? null
 
 
   const filteredStores = useMemo(() =>
     stores.filter(s =>
       s.name.toLowerCase().includes(search.toLowerCase()) ||
       s.address.toLowerCase().includes(search.toLowerCase())
-    ), [search])
+    ), [stores, search])
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3" style={{ background: BACKGROUND_LIGHT }}>
+        <p className="text-gray-500">Mağazalar yüklənmədi</p>
+        <button onClick={reload} className="text-sm underline" style={{ color: PRIMARY }}>Yenidən cəhd et</button>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen" style={{ background: BACKGROUND_LIGHT }}>
@@ -52,12 +65,14 @@ export default function StoresPage() {
           </div>
           <div className="space-y-5">
             <h2 className="text-lg font-bold text-gray-900">Önə Çıxan Tədbir</h2>
-            <FeaturedEventCard event={events[5]} />
+            {featuredEvent
+              ? <FeaturedEventCard event={featuredEvent} />
+              : <p className="text-sm text-gray-400">{loading ? 'Yüklənir...' : 'Hələlik tədbir yoxdur.'}</p>}
             {selectedStore && (
               <div className="rounded-2xl p-5 border" style={{ background: BACKGROUND_SOFT, borderColor: `${PRIMARY}33` }}>
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0" style={{ background: PRIMARY }}>
-                    {selectedStore.id}
+                    {selectedStore.num}
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 text-sm">{selectedStore.name}</h3>

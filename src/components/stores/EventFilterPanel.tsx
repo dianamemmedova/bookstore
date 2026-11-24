@@ -16,9 +16,9 @@ export default function EventFilterPanel({ filters, setters, onReset }: Props) {
         {[
           { label: 'Bu gün',   val: filters.filterToday,    set: setters.setFilterToday    },
           { label: 'Bu həftə', val: filters.filterThisWeek, set: setters.setFilterThisWeek },
-          { label: 'May',      val: filters.filterMay,      set: setters.setFilterMay      },
-          { label: 'İyun',     val: filters.filterJune,     set: setters.setFilterJune     },
-          { label: 'İyul',     val: filters.filterJuly,     set: setters.setFilterJuly     },
+          { label: 'Bu ay',     val: filters.filterThisMonth, set: setters.setFilterThisMonth },
+          { label: 'Gələn ay',  val: filters.filterNextMonth, set: setters.setFilterNextMonth },
+          { label: 'Daha sonra', val: filters.filterLater,    set: setters.setFilterLater    },
         ].map((f) => <FilterChip key={f.label} label={f.label} checked={f.val} onChange={f.set} />)}
       </div>
 
