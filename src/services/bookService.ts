@@ -2,7 +2,7 @@ import { api, API_URL } from '../lib/api'
 import type { Book } from '../types/book'
 
 // Backend-in kitab formatı (GET /books, GET /books/:id)
-interface ApiBook {
+export interface ApiBook {
   id: number
   externalId: string | null
   title: string

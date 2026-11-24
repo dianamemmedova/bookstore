@@ -101,7 +101,7 @@ export default function BookDetailPage() {
 
   const { addToCart } = useCart()
   const { wishlists, wishlistModal, setWishlistModal, handleAddToList, handleCreateAndAdd } = useWishlist()
-  const { toasts, success } = useToast()
+  const { toasts, success, error: showError } = useToast()
   const reviewsRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -199,8 +199,8 @@ export default function BookDetailPage() {
             reading={reading}
             onScrollToReviews={() => reviewsRef.current?.scrollIntoView({ behavior: 'smooth' })}
             onRead={() => setReading(true)}
-            onAddToCart={() => {
-              addToCart({
+            onAddToCart={async () => {
+              const err = await addToCart({
                 id: book.id,
                 title: book.title,
                 author: book.authors[0] ?? '',
@@ -212,7 +212,8 @@ export default function BookDetailPage() {
                 year: book.firstPublishYear ?? 0,
                 pages: book.pages ?? 0,
               })
-              success(`"${book.title.slice(0, 28)}" səbətə əlavə edildi`)
+              if (err) showError(err)
+              else success(`"${book.title.slice(0, 28)}" səbətə əlavə edildi`)
             }}
             onAddToWishlist={() => setWishlistModal(book)}
 

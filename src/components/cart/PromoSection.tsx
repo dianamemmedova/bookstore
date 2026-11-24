@@ -4,12 +4,12 @@ import type { PromoSectionProps } from '../../types/cart';
 
 export default function PromoSection({
   promoInput, setPromoInput, promoError, setPromoError,
-  appliedPromo, suggestionDismissed, setSuggestionDismissed,
-  applyPromo, removePromo,
+  appliedPromo, suggestionDismissed, setSuggestionDismissed, suggestionAvailable,
+  applyPromo, applying, removePromo,
 }: PromoSectionProps) {
   return (
     <>
-      {!appliedPromo && !suggestionDismissed && (
+      {!appliedPromo && !suggestionDismissed && suggestionAvailable && (
         <div className="mb-4 p-3 rounded-sm border border-dashed border-amber-300 bg-amber-50 relative">
           <button onClick={() => setSuggestionDismissed(true)}
            className="absolute top-2 right-2 text-amber-400 hover:text-amber-600 text-xs leading-none">
@@ -19,6 +19,7 @@ export default function PromoSection({
           <p className="text-xs text-amber-600 mb-2">ILKALIS20 kodu ilə 20% endirim qazanın</p>
           <button
             onClick={() => { applyPromo(SUGGESTED_CODE); setSuggestionDismissed(true) }}
+            disabled={applying}
             className="w-full text-xs font-bold py-1.5 text-white rounded-sm"
             style={{ background: AMBER_DARK}}
           >
@@ -49,8 +50,8 @@ export default function PromoSection({
                 className="flex-1 border border-gray-300 px-3 py-2 text-xs outline-none focus:border-gray-500 transition-colors tracking-widest"
                 style={{ borderRadius: 2 }}
               />
-              <button onClick={() => applyPromo()} className="px-3 py-2 text-xs font-bold text-white flex-shrink-0 rounded-sm" style={{ background: PRIMARY }}>
-                TƏTBİQ ET
+              <button onClick={() => applyPromo()} disabled={applying} className="px-3 py-2 text-xs font-bold text-white flex-shrink-0 rounded-sm disabled:opacity-60" style={{ background: PRIMARY }}>
+                {applying ? '...' : 'TƏTBİQ ET'}
               </button>
             </div>
             {promoError && <p className="text-xs text-red-500 mt-1.5">{promoError}</p>}

@@ -20,6 +20,7 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
   const { addToCart, isInCart } = useCart()
   const [wishlisted, setWishlisted] = useState(false)
   const [cartAdded, setCartAdded] = useState(false)
+  const [cartError, setCartError] = useState('')
 
   const bookId = String(book.id)
   const inCart = isInCart(bookId)
@@ -31,11 +32,11 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
     onWishlist?.(book)
   }, [user, openLogin, onWishlist, book])
 
-  const handleCart = useCallback((e: React.MouseEvent) => {
+  const handleCart = useCallback(async (e: React.MouseEvent) => {
     e.preventDefault()
     if (!user) { openLogin(); return }
 
-    addToCart({
+    const err = await addToCart({
       id: bookId,
       title: book.title,
       author: book.authors[0] ?? 'Naməlum müəllif',
@@ -48,12 +49,18 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
       price: book.price ?? getBookPrice(String(book.id)),
     })
 
+    // Stok çatmırsa düymədə qısa mesaj göstərilir
+    if (err) {
+      setCartError(err)
+      setTimeout(() => setCartError(''), 2500)
+      return
+    }
     setCartAdded(true)
     setTimeout(() => setCartAdded(false), 2000)
   }, [user, openLogin, addToCart, bookId, book])
 
   const isAdded = cartAdded || inCart
-  const btnBg = isAdded ? '#245840' : PRIMARY
+  const btnBg = cartError ? '#b91c1c' : isAdded ? '#245840' : PRIMARY
 
   return (
     <div className="bg-white border border-gray-100 rounded-lg overflow-hidden hover:shadow-md transition-shadow group flex flex-col h-full">
@@ -144,7 +151,7 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
           onMouseEnter={(e) => (e.currentTarget.style.background = '#2e4455')}
           onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}
         >
-          {isAdded ? '✓ SƏBƏTDƏ' : 'SƏBƏTƏ ƏLAVƏ ET'}
+          {cartError || (isAdded ? '✓ SƏBƏTDƏ' : 'SƏBƏTƏ ƏLAVƏ ET')}
         </button>
       </div>
     </div>

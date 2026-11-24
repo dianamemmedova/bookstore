@@ -10,6 +10,7 @@ export interface CartItem {
   year: number
   pages: number
   quantity: number
+  available?: boolean // false: stok azalıb və ya qurtarıb
 }
 
 export interface PromoCode { discount: number; label: string }
@@ -21,6 +22,7 @@ export interface CartItemProps {
   cover: string
   price: number
   quantity: number
+  available?: boolean
   onInc: () => void
   onDec: () => void
   onRemove: () => void
@@ -39,7 +41,9 @@ export interface OrderSummaryProps {
   setPromoError: (v: string) => void
   suggestionDismissed: boolean
   setSuggestionDismissed: (v: boolean) => void
+  suggestionAvailable?: boolean
   applyPromo: (code?: string) => void
+  applying?: boolean
   removePromo: () => void
   user: unknown
   onCheckout: () => void
@@ -54,6 +58,8 @@ export interface PromoSectionProps {
   appliedPromo: { code: string; discount: number } | null
   suggestionDismissed: boolean
   setSuggestionDismissed: (v: boolean) => void
+  suggestionAvailable?: boolean
   applyPromo: (code?: string) => void
+  applying?: boolean
   removePromo: () => void
 }

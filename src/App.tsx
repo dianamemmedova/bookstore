@@ -1,5 +1,4 @@
 import { Routes, Route } from 'react-router-dom'
-import { useAuth } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import Layout from './components/layout/Layout'
 import HomePage from './pages/HomePage'
@@ -21,10 +20,8 @@ import AudiobooksPage from './pages/AudiobooksPage'
 import DiscountedBooksPage from './pages/DiscountedBooksPage'
 
 function App() {
-  const { user } = useAuth()
-
   return (
-    <CartProvider userEmail={user?.email}>
+    <CartProvider>
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />

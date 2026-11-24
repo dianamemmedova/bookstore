@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext'
 import { useAuthModal } from '../context/AuthModalContext'
 import { useCart } from '../context/CartContext'
 import { usePromo } from '../hooks/usePromo'
+import { useToast } from '../hooks/useToast'
+import { ToastContainer } from '../components/ui/ToastContainer'
 import { calcFinalTotal } from '../utils/cartCalc'
 import { CheckoutModal } from '../components/checkout/CheckoutModal'
 import EmptyCart from '../components/cart/EmptyCart'
@@ -11,7 +13,8 @@ import CartItem from '../components/cart/CartItem'
 import OrderSummary from '../components/cart/OrderSummary'
 
 export default function CartPage() {
-  const { items, removeFromCart, updateQty, clearCart, total, count } = useCart()
+  const { items, removeFromCart, updateQty, clearCart, total, count, loading } = useCart()
+  const { toasts, error: showError } = useToast()
   const { user } = useAuth()
   const { openLogin } = useAuthModal()
   const [showCheckout, setShowCheckout] = useState(false)
@@ -20,17 +23,28 @@ export default function CartPage() {
     promoInput, setPromoInput,
     appliedPromo,
     promoError, setPromoError,
-    suggestionDismissed, setSuggestionDismissed,
-    applyPromo, removePromo,
+    suggestionDismissed, setSuggestionDismissed, suggestionAvailable,
+    applying, applyPromo, removePromo,
     confirmPromoUsed,
   } = usePromo()
 
   const { discountAmount, deliveryFee, finalTotal } = calcFinalTotal(total, appliedPromo?.discount ?? 0)
 
+  // Xəta olsa (məs. stok çatmır) mesaj göstərilir
+  const run = async (action: Promise<string | null>) => {
+    const err = await action
+    if (err) showError(err)
+  }
+
+  if (loading && items.length === 0) {
+    return <div className="min-h-[50vh] flex items-center justify-center text-sm text-gray-400">Səbət yüklənir...</div>
+  }
+
   if (items.length === 0) return <EmptyCart />
 
   return (
     <>
+      <ToastContainer toasts={toasts} />
       {showCheckout && (
         <CheckoutModal
           subtotal={total}
@@ -41,7 +55,7 @@ export default function CartPage() {
           onClose={() => setShowCheckout(false)}
           onSuccess={() => {
             setShowCheckout(false)
-            clearCart()
+            void clearCart()
           }}
           confirmPromoUsed={confirmPromoUsed}
         />
@@ -53,7 +67,7 @@ export default function CartPage() {
             <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
               Səbət <span className="text-base sm:text-lg font-normal text-gray-400 ml-2 sm:ml-3">({count} kitab)</span>
             </h1>
-            <button onClick={clearCart}
+            <button onClick={() => run(clearCart())}
               className="self-start sm:self-auto text-sm text-red-400 hover:text-red-600 border border-red-200 hover:border-red-400 px-4 py-1.5 transition-colors"
               style={{ borderRadius: 2 }}>
               Səbəti təmizlə
@@ -78,9 +92,10 @@ export default function CartPage() {
                     cover={item.cover}
                     price={item.price}
                     quantity={item.quantity}
-                    onInc={() => updateQty(item.id, item.quantity + 1)}
-                    onDec={() => item.quantity > 1 ? updateQty(item.id, item.quantity - 1) : removeFromCart(item.id)}
-                    onRemove={() => removeFromCart(item.id)}
+                    available={item.available}
+                    onInc={() => run(updateQty(item.id, item.quantity + 1))}
+                    onDec={() => run(item.quantity > 1 ? updateQty(item.id, item.quantity - 1) : removeFromCart(item.id))}
+                    onRemove={() => run(removeFromCart(item.id))}
                   />
                 </div>
               ))}
@@ -105,8 +120,8 @@ export default function CartPage() {
                 appliedPromo={appliedPromo}
                 promoInput={promoInput}         setPromoInput={setPromoInput}
                 promoError={promoError}         setPromoError={setPromoError}
-                suggestionDismissed={suggestionDismissed} setSuggestionDismissed={setSuggestionDismissed}
-                applyPromo={applyPromo}         removePromo={removePromo}
+                suggestionDismissed={suggestionDismissed} setSuggestionDismissed={setSuggestionDismissed} suggestionAvailable={suggestionAvailable}
+                applyPromo={applyPromo}         applying={applying}  removePromo={removePromo}
                 user={user}
                 onCheckout={() => setShowCheckout(true)}
                 onLogin={openLogin}

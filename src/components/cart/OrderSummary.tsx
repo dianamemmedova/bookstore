@@ -8,7 +8,7 @@ import { ShieldIcon, CardIcon } from '../../icons/cart'
 export default function OrderSummary({
   items, total, discountAmount, deliveryFee, finalTotal, appliedPromo,
   promoInput, setPromoInput, promoError, setPromoError,
-  suggestionDismissed, setSuggestionDismissed, applyPromo, removePromo,
+  suggestionDismissed, setSuggestionDismissed, suggestionAvailable, applyPromo, applying, removePromo,
   user, onCheckout, onLogin,
 }: OrderSummaryProps) {
   return (
@@ -31,7 +31,8 @@ export default function OrderSummary({
         promoError={promoError} setPromoError={setPromoError}
         appliedPromo={appliedPromo}
         suggestionDismissed={suggestionDismissed} setSuggestionDismissed={setSuggestionDismissed}
-        applyPromo={applyPromo} removePromo={removePromo}
+        suggestionAvailable={suggestionAvailable}
+        applyPromo={applyPromo} applying={applying} removePromo={removePromo}
       />
 
       <div className="space-y-2 mb-4">
