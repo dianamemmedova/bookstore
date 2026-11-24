@@ -15,7 +15,6 @@ export interface WishlistItem {
 export interface WishlistList {
   id: number
   name: string
-  description: string
   privacy: 'public' | 'private'
   items: WishlistItem[]
 }
@@ -49,8 +48,7 @@ export interface ItemCart {
 export interface FormModal {
   mode: 'create' | 'edit'
   initialName?: string
-  initialDesc?: string
   initialPrivacy?: 'public' | 'private'
   onClose: () => void
-  onSave: (name: string, desc: string, privacy: 'public' | 'private') => void
+  onSave: (name: string, privacy: 'public' | 'private') => void
 }

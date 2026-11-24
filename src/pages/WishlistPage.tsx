@@ -1,36 +1,38 @@
 import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
 import { useWishlistPage } from '../hooks/useWishlistPage'
 import { useToast } from '../hooks/useToast'
 import { ToastContainer } from '../components/ui/ToastContainer'
 import { EmptyState, WishlistFormModal, WishlistSidebar, WishlistItemList } from '../components/wishlist'
 
-const CART_KEY = 'bookstore_cart'
-
 export default function WishlistPage() {
   const { user } = useAuth()
   const toast = useToast()
+  const { addToCart } = useCart()
   const {
-    lists, activeListId, setActiveListId, activeList,
+    lists, loading, activeListId, setActiveListId, activeList,
     sortBy, setSortBy, results, setResults,
     showCreateModal, setShowCreateModal,
     showEditModal, setShowEditModal,
     removeItem, createList, editList,
     sortedItems,
-  } = useWishlistPage()
+  } = useWishlistPage(toast.error)
 
-  const handleAddToCart = (itemId: number, title: string) => {
-    try {
-      const raw = localStorage.getItem(CART_KEY)
-      const cart: { id: number; title: string; qty: number }[] = raw ? JSON.parse(raw) : []
-      const existing = cart.find(c => c.id === itemId)
-      if (existing) existing.qty += 1
-      else cart.push({ id: itemId, title, qty: 1 })
-      localStorage.setItem(CART_KEY, JSON.stringify(cart))
-    } catch { /* silent */ }
-    toast.success(`"${title.slice(0, 24)}..." səbətə əlavə edildi`)
+  const handleAddToCart = async (itemId: number, title: string) => {
+    const item = activeList?.items.find((i) => i.id === itemId)
+    if (!item) return
+    const err = await addToCart({
+      id: String(itemId), title, author: item.author, cover: item.cover, price: 0,
+      genre: '', rating: item.rating, description: '', year: 0, pages: 0,
+    })
+    if (err) toast.error(err)
+    else toast.success(`"${title.slice(0, 24)}..." səbətə əlavə edildi`)
   }
 
   if (!user) return <EmptyState />
+  if (!activeList) {
+    return <div className="min-h-[50vh] flex items-center justify-center text-sm text-gray-400">{loading ? 'Yüklənir...' : 'Siyahı tapılmadı'}</div>
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -43,7 +45,6 @@ export default function WishlistPage() {
         <WishlistFormModal
           mode="edit"
           initialName={activeList.name}
-          initialDesc={activeList.description}
           initialPrivacy={activeList.privacy}
           onClose={() => setShowEditModal(false)}
           onSave={editList}

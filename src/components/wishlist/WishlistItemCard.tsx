@@ -6,13 +6,12 @@ import { StarRating } from '../ui/SharedUI'
 
 
 export default function WishlistItemCard({ item, index, onRemove, onAddToCart }: ItemCart) {
-   console.log('item rating:', item.rating, item.title)
   return (
     <div className="flex gap-5 py-6" style={{ borderTop: index === 0 ? 'none' : '1px solid #f3f4f6' }}>
       <Link to={`/books/${item.originalId ?? item.id}`} className="flex-shrink-0">
-        <img src={item.cover || `https://covers.openlibrary.org/b/id/${item.id}-M.jpg`} alt={item.title}
-          className="w-20 h-28 object-cover bg-gray-100 shadow-sm"
-          onError={e => { e.currentTarget.src = `https://www.gutenberg.org/cache/epub/${item.id}/pg${item.id}.cover.medium.jpg`; e.currentTarget.onerror = null }} />
+        {item.cover
+          ? <img src={item.cover} alt={item.title} className="w-20 h-28 object-cover bg-gray-100 shadow-sm" />
+          : <div className="w-20 h-28 bg-gray-100 shadow-sm" />}
       </Link>
 
       <div className="flex-1 min-w-0">
@@ -28,7 +27,7 @@ export default function WishlistItemCard({ item, index, onRemove, onAddToCart }:
           <StarRating rating={item.rating} />
           <span className="text-sm text-gray-600">{item.rating}</span>
           <span className="text-sm text-gray-400">({item.reviewCount})</span>
-          <button className="text-sm text-green-700 hover:underline ml-1">Rəy Yaz</button>
+          <Link to={`/books/${item.originalId ?? item.id}`} className="text-sm text-green-700 hover:underline ml-1">Rəy Yaz</Link>
         </div>
         <p className="text-sm text-gray-700 mb-1 font-medium">{item.format}</p>
         <p className="text-lg font-semibold text-gray-900 mb-3">{item.price}</p>

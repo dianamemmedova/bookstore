@@ -1,68 +1,51 @@
-import { useState, useEffect } from 'react'
-import { useAuth } from '../context/AuthContext'
-import { loadLists, saveLists, DEFAULT_LISTS } from '../utils/wishlistStorage'
-import type { WishlistList } from '../types/wishlistPage'
+import { useState } from 'react'
+import { useWishlistContext } from '../context/WishlistContext'
 
-export function useWishlistPage() {
-  const { user } = useAuth()
+export function useWishlistPage(onError: (msg: string) => void) {
+  const { lists, loading, createList: apiCreate, updateList, removeFromList } = useWishlistContext()
 
-  const [lists, setLists] = useState<WishlistList[]>(() =>
-    loadLists(user?.email) ?? DEFAULT_LISTS()
-  )
-  const [activeListId, setActiveListId] = useState(() =>
-    (loadLists(user?.email) ?? DEFAULT_LISTS())[0].id
-  )
+  const [selectedId, setActiveListId] = useState<number | null>(null)
   const [sortBy, setSortBy] = useState('newest')
   const [results, setResults] = useState('20')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
 
-  useEffect(() => {
-    const fresh = loadLists(user?.email) ?? DEFAULT_LISTS()
-    setLists(fresh)
-    setActiveListId(fresh[0].id)
-  }, [user?.email])
+  // Seçilmiş siyahı silinibsə/yoxdursa birincisi açılır
+  const activeList = lists.find((l) => l.id === selectedId) ?? lists[0]
+  const activeListId = activeList?.id ?? 0
 
-  useEffect(() => {
-    saveLists(user?.email, lists)
-  }, [lists, user?.email])
-
-  const activeList = lists.find(l => l.id === activeListId) ?? lists[0]
-
-  const removeItem = (itemId: number) => {
-    setLists(prev => prev.map(l =>
-      l.id === activeListId ? { ...l, items: l.items.filter(i => i.id !== itemId) } : l
-    ))
+  const removeItem = async (bookId: number) => {
+    if (!activeList) return
+    const err = await removeFromList(activeList.id, bookId)
+    if (err) onError(err)
   }
 
-  const createList = (name: string, desc: string, privacy: 'public' | 'private') => {
-    const newList: WishlistList = { id: Date.now(), name, description: desc, privacy, items: [] }
-    setLists(prev => [...prev, newList])
-    setActiveListId(newList.id)
+  const createList = async (name: string, privacy: 'public' | 'private') => {
+    const res = await apiCreate(name, privacy)
+    if (res.error) { onError(res.error); return }
+    if (res.id !== undefined) setActiveListId(res.id)
     setShowCreateModal(false)
   }
 
-  const editList = (name: string, desc: string, privacy: 'public' | 'private') => {
-    setLists(prev => prev.map(l => l.id === activeListId ? { ...l, name, description: desc, privacy } : l))
+  const editList = async (name: string, privacy: 'public' | 'private') => {
+    if (!activeList) return
+    const err = await updateList(activeList.id, name, privacy)
+    if (err) { onError(err); return }
     setShowEditModal(false)
   }
 
-  const getSortedItems = () => {
-    const items = [...(activeList?.items ?? [])]
-    if (sortBy === 'az') return items.sort((a, b) => a.title.localeCompare(b.title))
-    if (sortBy === 'za') return items.sort((a, b) => b.title.localeCompare(a.title))
-    if (sortBy === 'oldest') return items.sort((a, b) => a.addedDate.localeCompare(b.addedDate))
-    return items.sort((a, b) => b.addedDate.localeCompare(a.addedDate))
-  }
-
-  const sortedItems = getSortedItems().slice(0, parseInt(results))
+  const items = [...(activeList?.items ?? [])]
+  if (sortBy === 'az') items.sort((a, b) => a.title.localeCompare(b.title))
+  else if (sortBy === 'za') items.sort((a, b) => b.title.localeCompare(a.title))
+  else if (sortBy === 'oldest') items.sort((a, b) => a.addedDate.localeCompare(b.addedDate))
+  else items.sort((a, b) => b.addedDate.localeCompare(a.addedDate))
 
   return {
-    lists, activeListId, setActiveListId, activeList,
+    lists, loading, activeListId, setActiveListId, activeList,
     sortBy, setSortBy, results, setResults,
     showCreateModal, setShowCreateModal,
     showEditModal, setShowEditModal,
     removeItem, createList, editList,
-    sortedItems,
+    sortedItems: items.slice(0, parseInt(results)),
   }
 }

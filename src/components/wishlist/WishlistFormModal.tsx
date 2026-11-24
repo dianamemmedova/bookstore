@@ -4,12 +4,10 @@ import { GREEN, GREEN_DARKEST } from '../../constants/theme'
 
 
 export default function WishlistFormModal({
-  mode, initialName = '', initialDesc = '', initialPrivacy = 'private', onClose, onSave
+  mode, initialName = '', initialPrivacy = 'private', onClose, onSave
 }: FormModal) {
   const [name, setName] = useState(initialName)
-  const [desc, setDesc] = useState(initialDesc)
   const [privacy, setPrivacy] = useState<'public' | 'private'>(initialPrivacy)
-  const maxDesc = 250
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={onClose}>
@@ -27,13 +25,6 @@ export default function WishlistFormModal({
             className="w-full pt-6 pb-2 px-3 text-sm text-gray-900 outline-none bg-gray-50" />
         </div>
 
-        <label className="block text-sm text-gray-700 mb-2">Siyahının Təsviri</label>
-        <div className="relative mb-5">
-          <textarea value={desc} onChange={e => setDesc(e.target.value.slice(0, maxDesc))} rows={5}
-            className="w-full border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 outline-none resize-none focus:border-gray-400 transition-colors" />
-          <span className="absolute bottom-2 right-3 text-xs text-gray-400">{maxDesc - desc.length}/{maxDesc}</span>
-        </div>
-
         <p className="text-sm text-gray-700 mb-3">Bu siyahını kim görə bilər?</p>
         <label className="flex items-start gap-3 mb-3 cursor-pointer">
           <input type="radio" name="privacy" checked={privacy === 'public'} onChange={() => setPrivacy('public')} className="mt-0.5 accent-green-800" />
@@ -45,7 +36,7 @@ export default function WishlistFormModal({
         </label>
 
         <div className="flex items-center gap-4">
-          <button onClick={() => { if (name.trim()) onSave(name, desc, privacy) }}
+          <button onClick={() => { if (name.trim()) onSave(name.trim(), privacy) }}
             className="px-7 py-3 text-sm font-medium text-white transition-colors"
             style={{ background: GREEN }}
             onMouseEnter={e => (e.currentTarget.style.background = GREEN_DARKEST)}

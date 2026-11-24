@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { CartProvider } from './context/CartContext'
+import { WishlistProvider } from './context/WishlistContext'
 import Layout from './components/layout/Layout'
 import HomePage from './pages/HomePage'
 import BooksPage from './pages/BooksPage'
@@ -22,6 +23,7 @@ import DiscountedBooksPage from './pages/DiscountedBooksPage'
 function App() {
   return (
     <CartProvider>
+      <WishlistProvider>
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -46,6 +48,7 @@ function App() {
           <Route path="/clearance" element={<DiscountedBooksPage />} />
         </Routes>
       </Layout>
+      </WishlistProvider>
     </CartProvider>
   )
 }
