@@ -2,11 +2,16 @@ import { useState, useRef, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { fetchBookDetail, fetchBySubject } from '../services/bookService'
 import type { Book } from '../types/book'
-import { sampleReviews } from '../data/reviews'
 import { genres } from '../data/genres'
 import { useCart } from '../context/CartContext'
 import { useWishlist } from '../hooks/useWishlist'
 import { useToast } from '../hooks/useToast'
+import { useBookReviews } from '../hooks/useBookReviews'
+import { useAuth } from '../context/AuthContext'
+import { useAuthModal } from '../context/AuthModalContext'
+import ReviewFormModal from '../components/book/ReviewFormModal'
+import { ApiError } from '../lib/api'
+import type { BookReview } from '../types/review'
 import AddToWishlistModal from '../components/wishlist/AddToWishlistModal'
 import { ToastContainer } from '../components/ui/ToastContainer'
 import BookCover from '../components/book/BookCover'
@@ -95,14 +100,31 @@ export default function BookDetailPage() {
   const [error, setError] = useState(false)
   const [reading, setReading] = useState(false)
   const [activeTab, setActiveTab] = useState<'details' | 'author'>('details')
-  const [helpfulVotes, setHelpfulVotes] = useState<Record<number, 'yes' | 'no' | null>>({})
-  const [reviewSort, setReviewSort] = useState('Önə çıxan')
-  const [starFilter, setStarFilter] = useState<number | null>(null)
+  const [reviewForm, setReviewForm] = useState<{ review: BookReview | null } | null>(null)
 
   const { addToCart } = useCart()
   const { wishlists, wishlistModal, setWishlistModal, handleAddToList, handleCreateAndAdd } = useWishlist()
   const { toasts, success, error: showError } = useToast()
   const reviewsRef = useRef<HTMLElement>(null)
+  const { user } = useAuth()
+  const { openLogin } = useAuthModal()
+  const reviews = useBookReviews(id)
+
+  const errMsg = (e: unknown) => (e instanceof ApiError ? e.message : 'Xəta baş verdi. Yenidən cəhd edin')
+
+  const handleWrite = () => {
+    if (!user) { openLogin(); return }
+    // Artıq rəyi varsa (yüklənmiş siyahıda), yeni yox, redaktə açılır
+    const mine = reviews.items.find((r) => r.isMine) ?? null
+    setReviewForm({ review: mine })
+  }
+  const handleVote = async (review: BookReview, v: 'yes' | 'no') => {
+    if (!user) { openLogin(); return }
+    try { await reviews.vote(review, v) } catch (e) { showError(errMsg(e)) }
+  }
+  const handleDelete = async (review: BookReview) => {
+    try { await reviews.deleteReview(review.id); success('Rəy silindi') } catch (e) { showError(errMsg(e)) }
+  }
 
   useEffect(() => {
     if (!id) return
@@ -143,24 +165,22 @@ export default function BookDetailPage() {
   const genreLabel = genres.find((g) => g.slug === genreSlug)?.label ?? rawSubject
   const booksUrl   = `/books?genre=${genreSlug}`
 
-  const avgRating    = sampleReviews.reduce((s, r) => s + r.rating, 0) / sampleReviews.length
-  const totalReviews = sampleReviews.length
-  const ratingCounts = [5, 4, 3, 2, 1].map((s) => ({
-    star: s, count: sampleReviews.filter((r) => r.rating === s).length,
-  }))
-  const recommended = sampleReviews.filter((r) => r.recommended).length
-
-  const filteredReviews = sampleReviews
-    .filter((r) => starFilter == null || r.rating === starFilter)
-    .sort((a, b) => {
-      if (reviewSort === 'Ən yüksək reytinq') return b.rating - a.rating
-      if (reviewSort === 'Ən aşağı reytinq')  return a.rating - b.rating
-      return b.id - a.id
-    })
-
   return (
     <>
       <ToastContainer toasts={toasts} />
+
+      {reviewForm && (
+        <ReviewFormModal
+          bookTitle={book.title}
+          review={reviewForm.review}
+          onClose={() => setReviewForm(null)}
+          onSubmit={async (input) => {
+            if (reviewForm.review) await reviews.updateReview(reviewForm.review.id, input)
+            else await reviews.createReview(input)
+            success(reviewForm.review ? 'Rəy yeniləndi' : 'Rəyin əlavə olundu')
+          }}
+        />
+      )}
 
       {wishlistModal && (
         <AddToWishlistModal
@@ -193,8 +213,8 @@ export default function BookDetailPage() {
             author={author}
             genreLabel={genreLabel}
             booksUrl={booksUrl}
-            avgRating={avgRating}
-            totalReviews={totalReviews}
+            avgRating={reviews.summary.avgRating}
+            totalReviews={reviews.summary.totalReviews}
             readerUrl={readerUrl}
             reading={reading}
             onScrollToReviews={() => reviewsRef.current?.scrollIntoView({ behavior: 'smooth' })}
@@ -232,18 +252,24 @@ export default function BookDetailPage() {
 
         <BookReviews
           ref={reviewsRef}
-          reviews={sampleReviews}
-          filteredReviews={filteredReviews}
-          avgRating={avgRating}
-          totalReviews={totalReviews}
-          recommended={recommended}
-          ratingCounts={ratingCounts}
-          starFilter={starFilter}
-          reviewSort={reviewSort}
-          helpfulVotes={helpfulVotes}
-          onStarFilter={setStarFilter}
-          onSortChange={setReviewSort}
-          onVote={(id, vote) => setHelpfulVotes(prev => ({ ...prev, [id]: prev[id] === vote ? null : vote }))}
+          reviews={reviews.items}
+          summary={reviews.summary}
+          total={reviews.total}
+          loading={reviews.loading}
+          loadingMore={reviews.loadingMore}
+          hasMore={reviews.hasMore}
+          error={reviews.error}
+          starFilter={reviews.star}
+          reviewSort={reviews.sort}
+          loggedIn={!!user}
+          onStarFilter={reviews.changeStar}
+          onSortChange={reviews.changeSort}
+          onVote={handleVote}
+          onWrite={handleWrite}
+          onEdit={(review) => setReviewForm({ review })}
+          onDelete={handleDelete}
+          onLoadMore={reviews.loadMore}
+          onRetry={reviews.reload}
         />
 
         <div className="text-center">
