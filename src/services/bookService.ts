@@ -13,7 +13,10 @@ export interface ApiBook {
   pages: number | null
   subjects: string[]
   priceCents: number
-  price: number
+  price: number // adi qiymət
+  discountPercent: number
+  salePrice: number // endirimli qiymət (endirim yoxdursa price ilə eynidir)
+  isAudiobook: boolean
   inStock: boolean
 }
 
@@ -44,7 +47,9 @@ export function mapBook(b: ApiBook): Book {
     ebookAccess: 'unknown',
     description: b.description ?? undefined,
     pages: b.pages ?? undefined,
-    price: b.price,
+    price: b.salePrice,
+    ...(b.discountPercent > 0 && { originalPrice: b.price, discountPercent: b.discountPercent }),
+    isAudiobook: b.isAudiobook,
     inStock: b.inStock,
   }
 }
@@ -65,6 +70,16 @@ export async function fetchBySubject(subject: string, limit = 20): Promise<Book[
   const books = await list({ subject: subject.toLowerCase(), limit: clamp(limit) })
   // Bu mövzu teqi ilə kitab yoxdursa, söz kimi axtarırıq (başlıq/müəllif/teq)
   return books.length > 0 ? books : searchBooks(subject, limit)
+}
+
+// Admin panelində endirim qoyulmuş kitablar
+export async function fetchDiscounted(limit = 60): Promise<Book[]> {
+  return list({ discounted: 'true', sort: 'newest', limit: clamp(limit) })
+}
+
+// Admin panelində "Audio kitab" işarələnmiş kitablar
+export async function fetchAudiobooks(limit = 60): Promise<Book[]> {
+  return list({ audiobook: 'true', sort: 'newest', limit: clamp(limit) })
 }
 
 export async function fetchTrending(limit = 20): Promise<Book[]> {

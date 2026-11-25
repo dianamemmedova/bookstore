@@ -9,7 +9,6 @@ export interface PromoCard {
 export interface PromoBanner {
   src: string
   alt: string
-  workId?: string   // Open Library work ID
 }
 
 export interface SectionConfig {
@@ -28,7 +27,6 @@ export const homeSections: SectionConfig[] = [
     banner: {
       src: '/promo_banner.jpg',
       alt: 'Ən çox oxunan kitablar',
-      workId: 'OL45804W',
     },
   },
   {

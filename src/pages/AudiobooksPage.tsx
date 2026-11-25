@@ -1,11 +1,13 @@
 import { PRIMARY, PRIMARY_LIGHT_BG } from '../constants/theme'
 import { useAudiobooks } from '../hooks/useAudiobooks'
-import type { Audiobook, StatCardProps } from '../types/audioBooks'
+import { Link } from 'react-router-dom'
+import type { Book } from '../types/book'
 import { FALLBACK_COVER } from '../constants/link'
 
-function getCoverUrl(coverId: number | undefined, size: 'S' | 'M' | 'L' = 'M'): string {
-  if (!coverId) return FALLBACK_COVER
-  return `https://covers.openlibrary.org/b/id/${coverId}-${size}.jpg`
+interface StatCardProps {
+  icon: string
+  value: string | number
+  label: string
 }
 
 export default function AudiobooksPage() {
@@ -52,16 +54,20 @@ export default function AudiobooksPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-          {books.map((book) => (
-            <AudiobookCard key={book.id} book={book} />
-          ))}
-        </div>
+        {books.length === 0 ? (
+          <p className="text-center text-gray-400 py-16">Hələlik audio kitab yoxdur.</p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            {books.map((book) => (
+              <AudiobookCard key={book.id} book={book} />
+            ))}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mt-10 sm:mt-16">
           <StatCard icon="📚" value={books.length} label="Audiokitab" />
-          <StatCard icon="🎧" value="200+" label="Saat dinləmə" />
-          <StatCard icon="🔓" value="Pulsuz" label="Nümunə" />
+          <StatCard icon="💸" value={books.length ? `₼${Math.min(...books.map((b) => b.price ?? 0))}` : '—'} label="Ən aşağı qiymət" />
+          <StatCard icon="🔥" value={books.filter((b) => b.discountPercent != null).length} label="Endirimli" />
         </div>
       </div>
     </div>
@@ -83,32 +89,37 @@ function StatCard({ icon, value, label }: StatCardProps) {
   )
 }
 
-function AudiobookCard({ book }: { book: Audiobook }) {
-  const coverUrl = getCoverUrl(book.coverId, 'M')
-
+function AudiobookCard({ book }: { book: Book }) {
   return (
     <div className="group bg-white rounded-xl shadow hover:shadow-lg transition-all overflow-hidden flex flex-col border border-gray-100">
-      <div className="relative overflow-hidden bg-gray-100 aspect-[2/3]">
+      <Link to={`/books/${book.id}`} className="relative overflow-hidden bg-gray-100 aspect-[2/3] block">
         <img
-          src={coverUrl}
+          src={book.coverUrl ?? FALLBACK_COVER}
           alt={book.title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_COVER }}
         />
-      </div>
+        {book.discountPercent != null && (
+          <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+            -{book.discountPercent}%
+          </span>
+        )}
+      </Link>
       <div className="p-3 sm:p-4 flex flex-col flex-1">
         <h3 className="text-xs sm:text-sm font-bold text-gray-900 line-clamp-2 mb-1">{book.title}</h3>
-        <p className="text-xs text-gray-500 mb-auto">{book.author}</p>
-        <div className="pt-3 flex flex-col sm:flex-row gap-2 sm:gap-0 sm:justify-between sm:items-center">
-          <a href={book.sampleUrl} className="text-xs font-medium hover:underline" style={{ color: PRIMARY }}>
-            🔊 Nümunə
-          </a>
-          <button
+        <p className="text-xs text-gray-500 mb-auto">{book.authors[0] ?? 'Müəllif məlumatı yoxdur'}</p>
+        <div className="pt-3 flex items-center justify-between gap-2">
+          <p className="flex items-baseline gap-1.5">
+            <span className="text-sm font-bold text-gray-900">₼{book.price}</span>
+            {book.originalPrice != null && <span className="text-xs text-gray-400 line-through">₼{book.originalPrice}</span>}
+          </p>
+          <Link
+            to={`/books/${book.id}`}
             className="text-xs font-medium text-white px-3 py-1.5 rounded-full transition-opacity hover:opacity-90"
             style={{ background: PRIMARY }}
           >
-            Dinlə
-          </button>
+            Ətraflı
+          </Link>
         </div>
       </div>
     </div>

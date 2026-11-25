@@ -6,7 +6,6 @@ import { useAuthModal } from '../../context/AuthModalContext'
 import { useCart } from '../../context/CartContext'
 import { LIGHT_GREY, PRIMARY, RED, WHITE } from '../../constants/theme'
 import { COVER_FALLBACK } from '../../constants/theme'
-import { getBookPrice } from '../../utils/bookPrice'
 
 interface BookCardProps {
   book: Book
@@ -46,7 +45,7 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
       description: book.description ?? '',
       year: book.firstPublishYear ?? 0,
       pages: book.pages ?? 0,
-      price: book.price ?? getBookPrice(String(book.id)),
+      price: book.price ?? 0,
     })
 
     // Stok çatmırsa düymədə qısa mesaj göstərilir
@@ -101,7 +100,19 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
           </svg>
         </button>
 
-        {book.ebookAccess === 'public_domain' && (
+        {book.discountPercent != null && (
+          <span className="absolute bottom-2 left-2 text-xs font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">
+            -{book.discountPercent}%
+          </span>
+        )}
+
+        {book.isAudiobook && (
+          <span className="absolute top-2 left-2 text-xs font-semibold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-full">
+            🎧 Audio
+          </span>
+        )}
+
+        {!book.isAudiobook && book.ebookAccess === 'public_domain' && (
           <span className="absolute top-2 left-2 text-xs font-semibold text-green-800 bg-green-100 px-2 py-0.5 rounded-full">
             Pulsuz
           </span>
@@ -144,9 +155,16 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
           </div>
         )}
 
+        {book.price != null && (
+          <p className="mt-auto mb-2 flex items-baseline gap-2">
+            <span className={`text-sm font-bold ${book.originalPrice != null ? 'text-red-600' : 'text-gray-900'}`}>₼{book.price}</span>
+            {book.originalPrice != null && <span className="text-xs text-gray-400 line-through">₼{book.originalPrice}</span>}
+          </p>
+        )}
+
         <button
           onClick={handleCart}
-          className="mt-auto w-full py-2 text-xs font-bold tracking-wider text-white transition-colors"
+          className="w-full w-full py-2 text-xs font-bold tracking-wider text-white transition-colors"
           style={{ background: btnBg }}
           onMouseEnter={(e) => (e.currentTarget.style.background = '#2e4455')}
           onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}

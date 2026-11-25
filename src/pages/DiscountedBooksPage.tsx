@@ -1,26 +1,18 @@
-import { useMemo } from 'react'
 import { useBooks } from '../hooks/useBooks'
-import { searchBooks } from '../services/bookService'
-import { toDiscountedBooks } from '../utils/bookUtils'
+import { fetchDiscounted } from '../services/bookService'
 import { LoadingScreen, ErrorScreen } from '../components/discount/PageStates'
 import { StatsBar } from '../components/discount/StatsBar'
 import DiscountedCard from '../components/discount/DiscountedCard'
-import type { DiscountedBook } from '../types/book'
 import { RED_LIGHT_BG, RED_TEXT } from '../constants/theme'
 
-const STATS = (totalBooks: number) => [
-  { value: `${totalBooks}+`, label: 'Endirimli kitab' },
-  { value: '40%-dək',        label: 'Endirim' },
-  { value: 'Məhdud',         label: 'Vaxt' },
+const STATS = (totalBooks: number, maxPercent: number) => [
+  { value: String(totalBooks), label: 'Endirimli kitab' },
+  { value: `${maxPercent}%-dək`, label: 'Endirim' },
+  { value: 'Məhdud',           label: 'Vaxt' },
 ]
 
 export default function DiscountedBooksPage() {
-  const { books, loading, error } = useBooks(() => searchBooks('fiction', 60), [])
-
-  const discountedBooks = useMemo<DiscountedBook[]>(
-    () => (books.length ? toDiscountedBooks(books as DiscountedBook[]) : []),
-    [books],
-  )
+  const { books, loading, error } = useBooks(() => fetchDiscounted(60), [])
 
   if (loading) return <LoadingScreen message="Endirimli kitablar yüklənir..." />
   if (error)   return <ErrorScreen message={error} />
@@ -38,17 +30,23 @@ export default function DiscountedBooksPage() {
             Endirimli Kitablar
           </h1>
           <p className="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto px-4">
-            Hər kitaba xüsusi endirim – 10%-dən 40%-dək!
+            Seçilmiş kitablara xüsusi endirimlər
           </p>
         </header>
 
-        <main className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-          {discountedBooks.map((book) => (
-            <DiscountedCard key={book.id} book={book} />
-          ))}
-        </main>
+        {books.length === 0 ? (
+          <p className="text-center text-gray-400 py-16">Hazırda endirimli kitab yoxdur.</p>
+        ) : (
+          <>
+            <main className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {books.map((book) => (
+                <DiscountedCard key={book.id} book={book} />
+              ))}
+            </main>
 
-        <StatsBar items={STATS(discountedBooks.length)} />
+            <StatsBar items={STATS(books.length, Math.max(...books.map((b) => b.discountPercent ?? 0)))} />
+          </>
+        )}
       </div>
     </div>
   )

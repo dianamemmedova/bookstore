@@ -50,7 +50,10 @@ export interface Book {
   ratingsCount?: number
   description?: string
   pages?: number
-  price?: number 
+  price?: number // müştərinin ödəyəcəyi qiymət (endirimlə)
+  originalPrice?: number // yalnız endirim varsa: adi qiymət
+  discountPercent?: number // yalnız endirim varsa
+  isAudiobook?: boolean
   inStock?: boolean // backend: stokda var (limitsiz və ya > 0)
 }
 
@@ -72,11 +75,6 @@ export interface CartBook extends Book {
 export interface WishlistItem extends Book {
   addedDate: string
   available: boolean
-}
-
-export interface DiscountedBook extends Book {
-  discountedPrice: number
-  discountPercent: number
 }
 
 export interface StatItem {

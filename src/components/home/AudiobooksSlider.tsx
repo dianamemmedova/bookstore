@@ -2,14 +2,9 @@ import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PRIMARY } from '../../constants/theme';
 import { useAudiobooks } from '../../hooks/useAudiobooks';
-import type { Audiobook } from '../../types/audioBooks';
+import type { Book } from '../../types/book';
 import { FALLBACK_COVER } from '../../constants/link';
 
-
-function getCoverUrl(coverId: number | undefined): string {
-  if (!coverId) return FALLBACK_COVER;
-  return `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
-}
 
 export default function AudiobooksSlider() {
   const { books, loading } = useAudiobooks(10);
@@ -20,6 +15,9 @@ export default function AudiobooksSlider() {
     if (!sliderRef.current) return;
     sliderRef.current.scrollBy({ left: dir === 'right' ? 280 : -280, behavior: 'smooth' });
   };
+
+  // Admin hələ audio kitab əlavə etməyibsə, bölmə göstərilmir
+  if (!loading && books.length === 0) return null;
 
   return (
     <section className="py-12 bg-white">
@@ -60,19 +58,19 @@ export default function AudiobooksSlider() {
   );
 }
 
-function SliderCard({ book }: { book: Audiobook }) {
+function SliderCard({ book }: { book: Book }) {
   const navigate = useNavigate();
 
   return (
-    <div onClick={() => navigate('/audiobooks')}
+    <div onClick={() => navigate(`/books/${book.id}`)}
       className="flex-shrink-0 w-40 cursor-pointer group" >
       <div className="rounded-xl overflow-hidden bg-gray-100 border border-gray-100 group-hover:shadow-md transition-shadow" style={{ aspectRatio: '3/4' }}>
-        <img src={getCoverUrl(book.coverId)} alt={book.title}
+        <img src={book.coverUrl ?? FALLBACK_COVER} alt={book.title}
           className="w-full h-full object-contain group-hover:scale-105 transition-transform"
           onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_COVER; }}/>
       </div>
       <p className="mt-2 text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">{book.title}</p>
-      <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{book.author}</p>
+      <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{book.authors[0] ?? ''}</p>
     </div>
   );
 }

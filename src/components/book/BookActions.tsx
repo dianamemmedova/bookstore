@@ -39,6 +39,12 @@ export default function BookActions({ book, readerUrl, reading, onRead, onAddToC
           <p className="text-sm font-bold text-gray-900">🛒 Səbətə Əlavə Et</p>
           <p className="text-xs text-gray-400 mt-0.5">
             {book.price ? `₼${book.price}` : 'Qiymət yoxdur'}
+            {book.originalPrice != null && (
+              <>
+                <span className="ml-2 line-through">₼{book.originalPrice}</span>
+                <span className="ml-2 font-semibold text-red-600">-{book.discountPercent}%</span>
+              </>
+            )}
           </p>
         </div>
         <span className="text-xs font-semibold text-gray-500 border border-gray-200 px-3 py-1.5 rounded-full">

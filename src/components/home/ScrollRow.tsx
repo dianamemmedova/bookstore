@@ -105,7 +105,7 @@ export function ScrollRow({ section }: { section: SectionConfig }) {
 
       {section.banner && (
         <Link
-          to={section.banner.workId ? `/books/${section.banner.workId}` : '/books'}
+          to="/books"
           className="block w-full mb-2 overflow-hidden"
         >
           <img

@@ -1,10 +1,10 @@
 import { GREEN_ACCENT2, PRIMARY } from '../../constants/theme'
 import { FALLBACK_COVER } from '../../constants/link'
 import { formatAuthors } from '../../utils/discountUtils'
-import type { DiscountedBook } from '../../types/book'
+import type { Book } from '../../types/book'
 
 interface Props {
-  book: DiscountedBook
+  book: Book
 }
 
 export default function DiscountedCard({ book }: Props) {
@@ -13,7 +13,7 @@ export default function DiscountedCard({ book }: Props) {
   return (
     <div className="group bg-white rounded-xl shadow hover:shadow-lg transition-all overflow-hidden flex flex-col border border-red-100 relative">
       <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
-        -{book.discountPercent}%
+        -{book.discountPercent ?? 0}%
       </div>
 
       <div className="relative overflow-hidden bg-gray-100 aspect-[3/4]">
@@ -34,8 +34,10 @@ export default function DiscountedCard({ book }: Props) {
         </div>
 
         <div className="mt-2 flex items-baseline gap-2">
-          <span className="text-base sm:text-lg font-bold text-red-600">{book.discountedPrice} ₼</span>
-          <span className="text-xs sm:text-sm text-gray-400 line-through">{book.price} ₼</span>
+          <span className="text-base sm:text-lg font-bold text-red-600">{book.price} ₼</span>
+          {book.originalPrice != null && (
+            <span className="text-xs sm:text-sm text-gray-400 line-through">{book.originalPrice} ₼</span>
+          )}
         </div>
 
         <div className="mt-auto pt-3">
