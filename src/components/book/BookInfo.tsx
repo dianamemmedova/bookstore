@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { StarRating } from '../ui/SharedUI'
 import { PRIMARY, GOLD } from '../../constants/theme'
 import type { Book } from '../../types/book'
+import AudioSection from './AudioSection'
 
 interface Props {
   book: Book
@@ -124,6 +125,13 @@ export default function BookInfo({
           </div>
         ))}
       </div>
+
+      {/* Audio kitab: dinləmə */}
+      {book.isAudiobook && (
+        <div className="mb-8">
+          <AudioSection book={book} />
+        </div>
+      )}
 
       {/* Kitab haqqında */}
       <section className="mb-8">

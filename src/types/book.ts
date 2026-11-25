@@ -54,6 +54,7 @@ export interface Book {
   originalPrice?: number // yalnız endirim varsa: adi qiymət
   discountPercent?: number // yalnız endirim varsa
   isAudiobook?: boolean
+  hasAudio?: boolean // audio fayl yüklənib (dinləmək üçün kitabı almaq lazımdır)
   inStock?: boolean // backend: stokda var (limitsiz və ya > 0)
 }
 

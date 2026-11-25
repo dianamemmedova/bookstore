@@ -4,7 +4,7 @@ import { categories, booksDropdown } from '../../data/navbar'
 import { useNavbar } from '../../hooks/useNavbar'
 
 const catCls = (active: boolean) =>
-  `relative block px-4 py-3.5 text-[15px] whitespace-nowrap no-underline transition-colors duration-150 border-b-2
+  `relative block px-4 py-2.5 text-[14px] whitespace-nowrap no-underline transition-colors duration-150 border-b-2
   ${active
     ? 'font-semibold text-[#a08c5b] border-[#a08c5b]'
     : 'font-normal text-gray-600 border-transparent hover:text-gray-900 hover:border-[#a08c5b]'}`

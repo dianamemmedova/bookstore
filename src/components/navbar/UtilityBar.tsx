@@ -15,7 +15,7 @@ export default function UtilityBar() {
 
   return (
     <div className="hidden lg:block border-b border-gray-100 bg-white">
-      <div className="max-w-screen-xl mx-auto px-6 py-2.5 flex items-center justify-between">
+      <div className="max-w-screen-xl mx-auto px-6 py-1.5 flex items-center justify-between">
 
         <div className="flex items-center">
           {utilityLinks.map((item, i) => (

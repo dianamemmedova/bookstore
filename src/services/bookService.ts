@@ -17,6 +17,7 @@ export interface ApiBook {
   discountPercent: number
   salePrice: number // endirimli qiymət (endirim yoxdursa price ilə eynidir)
   isAudiobook: boolean
+  hasAudio: boolean // audio fayl yüklənib (faylın özü yalnız alanlara açılır)
   inStock: boolean
 }
 
@@ -50,6 +51,7 @@ export function mapBook(b: ApiBook): Book {
     price: b.salePrice,
     ...(b.discountPercent > 0 && { originalPrice: b.price, discountPercent: b.discountPercent }),
     isAudiobook: b.isAudiobook,
+    hasAudio: b.hasAudio,
     inStock: b.inStock,
   }
 }

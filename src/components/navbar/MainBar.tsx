@@ -23,7 +23,7 @@ export default function MainBar({ onMenuToggle, menuOpen }: Props) {
   }
 
   return (
-    <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-3 sm:py-3.5 flex items-center gap-3 sm:gap-6">
+    <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-2 sm:py-2 flex items-center gap-3 sm:gap-6">
 
       <button
         onClick={onMenuToggle}
@@ -41,7 +41,7 @@ export default function MainBar({ onMenuToggle, menuOpen }: Props) {
         )}
       </button>
 
-      <Link to="/" className="text-lg sm:text-[26px] font-bold tracking-tight text-gray-900 no-underline whitespace-nowrap flex-shrink-0">
+      <Link to="/" className="text-lg sm:text-[24px] font-bold tracking-tight text-gray-900 no-underline whitespace-nowrap flex-shrink-0">
         BOOK <span style={{ color: ACCENT }}>&</span> STORE
       </Link>
 
@@ -51,10 +51,10 @@ export default function MainBar({ onMenuToggle, menuOpen }: Props) {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Başlıq, müəllif, ISBN ilə axtar..."
-          className="flex-1 border border-gray-300 border-r-0 px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-gray-500 rounded-l min-w-0"
+          className="flex-1 border border-gray-300 border-r-0 px-4 py-2 text-sm text-gray-700 outline-none focus:border-gray-500 rounded-l min-w-0"
         />
         <button type="submit"
-          className="flex items-center justify-center px-5 py-2.5 text-white rounded-r transition-colors"
+          className="flex items-center justify-center px-5 py-2 text-white rounded-r transition-colors"
           style={{ background: PRIMARY }}
           onMouseEnter={e => (e.currentTarget.style.background = PRIMARY_DARK)}
           onMouseLeave={e => (e.currentTarget.style.background = PRIMARY)}>

@@ -1,14 +1,9 @@
-import { PRIMARY, PRIMARY_LIGHT_BG } from '../constants/theme'
+import { PRIMARY } from '../constants/theme'
 import { useAudiobooks } from '../hooks/useAudiobooks'
 import { Link } from 'react-router-dom'
 import type { Book } from '../types/book'
 import { FALLBACK_COVER } from '../constants/link'
-
-interface StatCardProps {
-  icon: string
-  value: string | number
-  label: string
-}
+import PageHero from '../components/shared/PageHero'
 
 export default function AudiobooksPage() {
   const { books, loading, error } = useAudiobooks()
@@ -38,52 +33,32 @@ export default function AudiobooksPage() {
     )
   }
 
+  const minPrice = books.length ? `₼${Math.min(...books.map((b) => b.price ?? 0))}` : '—'
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12 lg:py-16">
-        <div className="text-center mb-8 sm:mb-12">
-          <span className="inline-block text-xs sm:text-sm font-semibold px-3 py-1 rounded-full mb-4"
-            style={{ background: PRIMARY_LIGHT_BG, color: PRIMARY }}>
-            🎧 Dinləməyə başla
-          </span>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Səsli Kitablar
-          </h1>
-          <p className="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto px-4">
-            Kitablar daim sizinlə olsun
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#fcfaf6]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 pb-12 sm:pb-16">
+        <PageHero
+          eyebrow="🎧 Dinləməyə başla"
+          title="Səsli Kitablar"
+          subtitle="Kitablar daim sizinlə olsun. Aldığınız audio kitabı birbaşa saytda dinləyin."
+          covers={books.map((b) => b.coverUrl ?? '')}
+          stats={[
+            { value: books.length, label: 'Audiokitab' },
+            { value: minPrice, label: 'Ən aşağı qiymət' },
+            { value: books.filter((b) => b.discountPercent != null).length, label: 'Endirimli' },
+          ]}
+        />
 
         {books.length === 0 ? (
           <p className="text-center text-gray-400 py-16">Hələlik audio kitab yoxdur.</p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
+          <div className="mt-6 sm:mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
             {books.map((book) => (
               <AudiobookCard key={book.id} book={book} />
             ))}
           </div>
         )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mt-10 sm:mt-16">
-          <StatCard icon="📚" value={books.length} label="Audiokitab" />
-          <StatCard icon="💸" value={books.length ? `₼${Math.min(...books.map((b) => b.price ?? 0))}` : '—'} label="Ən aşağı qiymət" />
-          <StatCard icon="🔥" value={books.filter((b) => b.discountPercent != null).length} label="Endirimli" />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function StatCard({ icon, value, label }: StatCardProps) {
-  return (
-    <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-4 sm:p-5 flex items-center gap-3 sm:gap-4 border border-gray-100 hover:border-gray-200">
-      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl flex-shrink-0"
-        style={{ background: PRIMARY_LIGHT_BG, color: PRIMARY }}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-xl sm:text-2xl font-bold text-gray-800">{value}</p>
-        <p className="text-xs text-gray-500">{label}</p>
       </div>
     </div>
   )
@@ -91,36 +66,39 @@ function StatCard({ icon, value, label }: StatCardProps) {
 
 function AudiobookCard({ book }: { book: Book }) {
   return (
-    <div className="group bg-white rounded-xl shadow hover:shadow-lg transition-all overflow-hidden flex flex-col border border-gray-100">
-      <Link to={`/books/${book.id}`} className="relative overflow-hidden bg-gray-100 aspect-[3/4] block">
+    <div className="group flex flex-col overflow-hidden rounded-2xl border border-[#eee5d1] bg-white transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#a08c5b]/10">
+      <Link to={`/books/${book.id}`} className="relative flex h-56 items-center justify-center bg-[#f6efe1] px-5 py-5">
         <img
           src={book.coverUrl ?? FALLBACK_COVER}
           alt={book.title}
-          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+          className="h-full w-auto max-w-full rounded-sm object-contain shadow-lg transition-transform duration-300 group-hover:scale-105"
           onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_COVER }}
         />
+        <span className="absolute left-3 top-3 rounded-full bg-indigo-100 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-800 shadow-sm">
+          🎧 Audio
+        </span>
         {book.discountPercent != null && (
-          <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+          <span className="absolute right-3 top-3 rounded-full bg-red-500 px-2.5 py-0.5 text-[11px] font-bold text-white shadow">
             -{book.discountPercent}%
           </span>
         )}
       </Link>
-      <div className="p-3 sm:p-4 flex flex-col flex-1">
-        <h3 className="text-xs sm:text-sm font-bold text-gray-900 line-clamp-2 mb-1">{book.title}</h3>
-        <p className="text-xs text-gray-500 mb-auto">{book.authors[0] ?? 'Müəllif məlumatı yoxdur'}</p>
-        <div className="pt-3 flex items-center justify-between gap-2">
-          <p className="flex items-baseline gap-1.5">
-            <span className="text-sm font-bold text-gray-900">₼{book.price}</span>
-            {book.originalPrice != null && <span className="text-xs text-gray-400 line-through">₼{book.originalPrice}</span>}
-          </p>
-          <Link
-            to={`/books/${book.id}`}
-            className="text-xs font-medium text-white px-3 py-1.5 rounded-full transition-opacity hover:opacity-90"
-            style={{ background: PRIMARY }}
-          >
-            Ətraflı
-          </Link>
+      <div className="flex flex-1 flex-col p-4">
+        <Link to={`/books/${book.id}`}>
+          <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-snug text-[#1f2a33] hover:underline">{book.title}</h3>
+        </Link>
+        <p className="mt-1 line-clamp-1 text-xs text-gray-500">{book.authors[0] ?? 'Müəllif məlumatı yoxdur'}</p>
+        <div className="mt-3 flex items-baseline gap-2">
+          <span className="text-lg font-bold text-gray-900">₼{book.price}</span>
+          {book.originalPrice != null && <span className="text-xs text-gray-400 line-through">₼{book.originalPrice}</span>}
         </div>
+        <Link
+          to={`/books/${book.id}`}
+          className="mt-3 block w-full rounded-full py-2 text-center text-xs font-bold tracking-wide text-white transition-colors hover:opacity-90"
+          style={{ background: PRIMARY }}
+        >
+          Ətraflı bax
+        </Link>
       </div>
     </div>
   )

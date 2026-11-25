@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { GREEN_ACCENT2, PRIMARY, COVER_FALLBACK } from '../../constants/theme'
+import { PRIMARY, COVER_FALLBACK } from '../../constants/theme'
 import { FALLBACK_COVER } from '../../constants/link'
 import { formatAuthors } from '../../utils/discountUtils'
 import { useAuth } from '../../context/AuthContext'
@@ -51,44 +51,41 @@ export default function DiscountedCard({ book }: Props) {
   }, [user, openLogin, addToCart, book])
 
   return (
-    <div className="group bg-white rounded-xl shadow hover:shadow-lg transition-all overflow-hidden flex flex-col border border-red-100 relative">
-      <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full z-10">
-        -{book.discountPercent ?? 0}%
-      </div>
-
-      <Link to={`/books/${book.id}`} className="relative block overflow-hidden bg-gray-100 aspect-[3/4]">
+    <div className="group flex flex-col overflow-hidden rounded-2xl border border-[#eee5d1] bg-white transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#a08c5b]/10">
+      <Link to={`/books/${book.id}`} className="relative flex h-56 items-center justify-center bg-[#f6efe1] px-5 py-5">
         <img
           src={coverUrl}
           alt={book.title}
-          className="w-full h-full object-contain transition-transform group-hover:scale-105"
+          className="h-full w-auto max-w-full rounded-sm object-contain shadow-lg transition-transform duration-300 group-hover:scale-105"
           onError={(e) => ((e.target as HTMLImageElement).src = FALLBACK_COVER)}
         />
+        <span className="absolute left-3 top-3 rounded-full bg-red-500 px-2.5 py-0.5 text-[11px] font-bold text-white shadow">
+          -{book.discountPercent ?? 0}%
+        </span>
       </Link>
 
-      <div className="p-3 sm:p-4 flex flex-col flex-1">
+      <div className="flex flex-1 flex-col p-4">
         <Link to={`/books/${book.id}`}>
-          <h5 className="text-xs sm:text-sm font-bold text-gray-900 hover:underline line-clamp-2 min-h-[32px] sm:min-h-[40px]">{book.title}</h5>
+          <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-snug text-[#1f2a33] hover:underline">{book.title}</h3>
         </Link>
-        <p className="text-xs text-gray-600 mt-1 line-clamp-1">{formatAuthors(book.authors)}</p>
+        <p className="mt-1 line-clamp-1 text-xs text-gray-500">{formatAuthors(book.authors)}</p>
 
-        <div className="mt-2 flex items-baseline gap-2">
-          <span className="text-sm sm:text-base font-bold text-red-600">{book.price} ₼</span>
+        <div className="mt-3 flex items-baseline gap-2">
+          <span className="text-lg font-bold text-red-600">₼{book.price}</span>
           {book.originalPrice != null && (
-            <span className="text-xs text-gray-400 line-through">{book.originalPrice} ₼</span>
+            <span className="text-xs text-gray-400 line-through">₼{book.originalPrice}</span>
           )}
         </div>
 
-        <div className="mt-auto pt-3">
-          <button
-            onClick={handleCart}
-            className="text-xs font-medium text-white px-3 py-1.5 rounded-full w-full text-center transition-colors"
-            style={{ background: btnBg }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = cartError || isAdded ? btnBg : GREEN_ACCENT2)}
-            onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}
-          >
-            {cartError || (isAdded ? '✓ Səbətdə' : 'Səbətə əlavə et')}
-          </button>
-        </div>
+        <button
+          onClick={handleCart}
+          className="mt-3 w-full rounded-full py-2 text-xs font-bold tracking-wide text-white transition-colors"
+          style={{ background: btnBg }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = cartError || isAdded ? btnBg : '#2e4455')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}
+        >
+          {cartError || (isAdded ? '✓ Səbətdə' : 'Səbətə əlavə et')}
+        </button>
       </div>
     </div>
   )
