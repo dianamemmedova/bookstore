@@ -4,7 +4,7 @@ import type { Book } from '../../types/book'
 import { useAuth } from '../../context/AuthContext'
 import { useAuthModal } from '../../context/AuthModalContext'
 import { useCart } from '../../context/CartContext'
-import { LIGHT_GREY, PRIMARY, RED, WHITE } from '../../constants/theme'
+import { LIGHT_GREY, PRIMARY, RED } from '../../constants/theme'
 import { COVER_FALLBACK } from '../../constants/theme'
 
 interface BookCardProps {
@@ -62,17 +62,15 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
   const btnBg = cartError ? '#b91c1c' : isAdded ? '#245840' : PRIMARY
 
   return (
-    <div className="bg-white border border-gray-100 rounded-lg overflow-hidden hover:shadow-md transition-shadow group flex flex-col h-full">
-
-
-     <Link
+    <div className="bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group flex flex-col h-full">
+      <Link
         to={`/books/${bookId}`}
-        className="relative block overflow-hidden flex-shrink-0 aspect-[2/3]"
+        className="relative flex items-center justify-center flex-shrink-0 h-52 bg-[#f5f0e8] px-6 py-5"
       >
         <img
           src={book.coverUrl ?? COVER_FALLBACK}
           alt={book.title}
-          className="w-full h-full object-cover bg-gray-50 group-hover:scale-105 transition-transform duration-300"  
+          className="h-full w-auto max-w-full object-contain rounded-sm shadow-md group-hover:scale-105 transition-transform duration-300"
           onError={(e) => {
             e.currentTarget.src = COVER_FALLBACK
             e.currentTarget.onerror = null
@@ -100,77 +98,70 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
           </svg>
         </button>
 
-        {book.discountPercent != null && (
-          <span className="absolute bottom-2 left-2 text-xs font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">
-            -{book.discountPercent}%
-          </span>
-        )}
-
-        {book.isAudiobook && (
-          <span className="absolute top-2 left-2 text-xs font-semibold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-full">
-            🎧 Audio
-          </span>
-        )}
-
-        {!book.isAudiobook && book.ebookAccess === 'public_domain' && (
-          <span className="absolute top-2 left-2 text-xs font-semibold text-green-800 bg-green-100 px-2 py-0.5 rounded-full">
-            Pulsuz
-          </span>
-        )}
+        <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
+          {book.discountPercent != null && (
+            <span className="text-[11px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">
+              -{book.discountPercent}%
+            </span>
+          )}
+          {book.isAudiobook && (
+            <span className="text-[11px] font-semibold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-full">
+              🎧 Audio
+            </span>
+          )}
+          {book.ebookAccess === 'public_domain' && (
+            <span className="text-[11px] font-semibold text-green-800 bg-green-100 px-2 py-0.5 rounded-full">
+              Pulsuz
+            </span>
+          )}
+        </div>
       </Link>
 
-      <div className="p-4 flex flex-col flex-1">
+      <div className="p-3.5 flex flex-col flex-1">
         <Link to={`/books/${bookId}`}>
-          <h3  className="text-sm font-semibold text-gray-900 hover:text-[#3d5a6b] transition-colors line-clamp-2 mb-1 leading-snug" >
+          <h3 className="text-sm font-semibold text-gray-900 hover:text-[#3d5a6b] transition-colors line-clamp-2 leading-snug min-h-[2.5rem]">
             {book.title}
           </h3>
         </Link>
 
-        <p className="text-xs text-gray-500 mb-1 line-clamp-1">
+        <p className="text-xs text-gray-500 mt-1 line-clamp-1">
           {book.authors[0] ?? 'Naməlum müəllif'}
         </p>
 
-        {genreLabel && (
-          <span
-            className="self-start text-xs px-2 py-0.5 rounded-full font-medium mb-1"
-            style={{ background: WHITE, color: PRIMARY }}
-          >
-            {genreLabel}
-          </span>
-        )}
-
-        {book.firstPublishYear != null && (
-          <p className="text-xs text-gray-400 mb-1">{book.firstPublishYear}</p>
+        {(genreLabel || book.firstPublishYear != null) && (
+          <p className="text-[11px] text-gray-400 mt-1 line-clamp-1">
+            {[genreLabel, book.firstPublishYear].filter(Boolean).join(' · ')}
+          </p>
         )}
 
         {book.ratingsAverage != null && book.ratingsAverage > 0 && (
-          <div className="flex items-center gap-1 mb-2">
+          <div className="flex items-center gap-1 mt-1">
             <span className="text-yellow-400 text-xs">★</span>
             <span className="text-xs text-gray-600">
               {book.ratingsAverage.toFixed(1)}
-              {book.ratingsCount != null
-                ? ` (${book.ratingsCount.toLocaleString()})`
-                : ''}
+              {book.ratingsCount != null ? ` (${book.ratingsCount.toLocaleString()})` : ''}
             </span>
           </div>
         )}
 
-        {book.price != null && (
-          <p className="mt-auto mb-2 flex items-baseline gap-2">
-            <span className={`text-sm font-bold ${book.originalPrice != null ? 'text-red-600' : 'text-gray-900'}`}>₼{book.price}</span>
-            {book.originalPrice != null && <span className="text-xs text-gray-400 line-through">₼{book.originalPrice}</span>}
-          </p>
-        )}
+        <div className="mt-auto pt-3">
+          {book.price != null && (
+            <p className="mb-2 flex items-baseline gap-2">
+              <span className={`text-base font-bold ${book.originalPrice != null ? 'text-red-600' : 'text-gray-900'}`}>₼{book.price}</span>
+              {book.originalPrice != null && <span className="text-xs text-gray-400 line-through">₼{book.originalPrice}</span>}
+            </p>
+          )}
 
-        <button
-          onClick={handleCart}
-          className="w-full w-full py-2 text-xs font-bold tracking-wider text-white transition-colors"
-          style={{ background: btnBg }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = '#2e4455')}
-          onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}
-        >
-          {cartError || (isAdded ? '✓ SƏBƏTDƏ' : 'SƏBƏTƏ ƏLAVƏ ET')}
-        </button>
+          <button
+            onClick={handleCart}
+            className="w-full py-2 text-xs font-bold tracking-wider text-white rounded-md transition-colors"
+            style={{ background: btnBg }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#2e4455')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}
+          >
+            {cartError || (isAdded ? '✓ SƏBƏTDƏ' : 'SƏBƏTƏ ƏLAVƏ ET')}
+          </button>
+        </div>
       </div>
     </div>
   )
