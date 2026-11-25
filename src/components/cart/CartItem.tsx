@@ -4,7 +4,7 @@ import { QtyControl } from './QtyControl'
 import type { CartItemProps } from '../../types/cart'
 
 
-export default function CartItem({ id, title, author, cover, price, quantity, available = true, onInc, onDec, onRemove }: CartItemProps) {
+export default function CartItem({ id, title, author, cover, price, originalPrice, discountPercent, quantity, available = true, onInc, onDec, onRemove }: CartItemProps) {
   return (
     <div className="grid grid-cols-12 gap-4 py-6 items-center">
       <div className="col-span-12 md:col-span-6 flex gap-4 items-start">
@@ -20,7 +20,7 @@ export default function CartItem({ id, title, author, cover, price, quantity, av
           {!available && <p className="text-xs font-medium text-red-500">Stok azalıb: miqdarı azaldın və ya kitabı silin</p>}
           <div className="flex items-center gap-4 mt-3 md:hidden">
             <QtyControl qty={quantity} onDec={onDec} onInc={onInc} />
-            <span className="text-sm font-semibold text-gray-900">₼{(price * quantity).toFixed(2)}</span>
+            <LinePrice price={price} originalPrice={originalPrice} discountPercent={discountPercent} quantity={quantity} />
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@ export default function CartItem({ id, title, author, cover, price, quantity, av
         <QtyControl qty={quantity} onDec={onDec} onInc={onInc} />
       </div>
       <div className="hidden md:flex col-span-2 justify-end">
-        <span className="text-sm font-semibold text-gray-900">₼{(price * quantity).toFixed(2)}</span>
+        <LinePrice price={price} originalPrice={originalPrice} discountPercent={discountPercent} quantity={quantity} />
       </div>
       <div className="hidden md:flex col-span-1 justify-end">
         <button onClick={onRemove} className="text-gray-300 hover:text-red-400 transition-colors">
@@ -37,6 +37,21 @@ export default function CartItem({ id, title, author, cover, price, quantity, av
           </svg>
         </button>
       </div>
+    </div>
+  )
+}
+
+// Sətir qiyməti: endirim varsa köhnə qiymət üstü xətli, yeni qiymət və faiz göstərilir
+function LinePrice({ price, originalPrice, discountPercent, quantity }: { price: number; originalPrice?: number; discountPercent?: number; quantity: number }) {
+  return (
+    <div className="text-right">
+      <span className={`text-sm font-semibold ${originalPrice != null ? 'text-red-600' : 'text-gray-900'}`}>₼{(price * quantity).toFixed(2)}</span>
+      {originalPrice != null && (
+        <div className="text-xs text-gray-400">
+          <span className="line-through">₼{(originalPrice * quantity).toFixed(2)}</span>
+          {discountPercent != null && <span className="ml-1 font-semibold text-red-500">-{discountPercent}%</span>}
+        </div>
+      )}
     </div>
   )
 }

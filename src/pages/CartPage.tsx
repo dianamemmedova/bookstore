@@ -89,6 +89,8 @@ export default function CartPage() {
                     author={item.author}
                     cover={item.cover}
                     price={item.price}
+                    originalPrice={item.originalPrice}
+                    discountPercent={item.discountPercent}
                     quantity={item.quantity}
                     available={item.available}
                     onInc={() => run(updateQty(item.id, item.quantity + 1))}

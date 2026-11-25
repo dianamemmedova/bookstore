@@ -57,7 +57,7 @@ export default function AudiobooksPage() {
         {books.length === 0 ? (
           <p className="text-center text-gray-400 py-16">Hələlik audio kitab yoxdur.</p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
             {books.map((book) => (
               <AudiobookCard key={book.id} book={book} />
             ))}
@@ -92,11 +92,11 @@ function StatCard({ icon, value, label }: StatCardProps) {
 function AudiobookCard({ book }: { book: Book }) {
   return (
     <div className="group bg-white rounded-xl shadow hover:shadow-lg transition-all overflow-hidden flex flex-col border border-gray-100">
-      <Link to={`/books/${book.id}`} className="relative overflow-hidden bg-gray-100 aspect-[2/3] block">
+      <Link to={`/books/${book.id}`} className="relative overflow-hidden bg-gray-100 aspect-[3/4] block">
         <img
           src={book.coverUrl ?? FALLBACK_COVER}
           alt={book.title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
           onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_COVER }}
         />
         {book.discountPercent != null && (

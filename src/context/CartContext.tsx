@@ -22,6 +22,8 @@ function toCartItems(cart: ApiCart): CartItem[] {
       author: b.authors[0] ?? 'Naməlum müəllif',
       cover: b.coverUrl ?? '',
       price: b.price ?? 0,
+      originalPrice: b.originalPrice,
+      discountPercent: b.discountPercent,
       genre: b.subjects[0] ?? '',
       rating: 0,
       description: b.description ?? '',

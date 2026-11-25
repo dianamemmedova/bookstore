@@ -4,6 +4,8 @@ export interface CartItem {
   author: string
   cover: string
   price: number
+  originalPrice?: number // yalnız endirim varsa: adi qiymət
+  discountPercent?: number
   genre: string
   rating: number
   description: string
@@ -21,6 +23,8 @@ export interface CartItemProps {
   author: string
   cover: string
   price: number
+  originalPrice?: number
+  discountPercent?: number
   quantity: number
   available?: boolean
   onInc: () => void
@@ -29,7 +33,7 @@ export interface CartItemProps {
 }
 
 export interface OrderSummaryProps {
-  items: { id: string; title: string; price: number; quantity: number }[]
+  items: { id: string; title: string; price: number; originalPrice?: number; quantity: number }[]
   total: number
   discountAmount: number
   deliveryFee: number
