@@ -19,7 +19,7 @@ import BookInfo from '../components/book/BookInfo'
 import SimilarBooks from '../components/book/SimilarBooks'
 import BookTabs from '../components/book/BookTabs'
 import BookReviews from '../components/book/BookReviews'
-import { PRIMARY, DARK_BLUE } from '../constants/theme'
+import { PRIMARY } from '../constants/theme'
 
 function subjectToSlug(subject: string): string {
   const s = subject.toLowerCase()
@@ -35,10 +35,10 @@ function Skeleton() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        <div className="lg:col-span-4">
-          <div className="w-full bg-gray-100 animate-pulse rounded-lg aspect-[2/3]" />
+        <div className="lg:col-span-3 flex justify-center lg:justify-start">
+          <div className="w-44 sm:w-52 lg:w-60 bg-gray-100 animate-pulse rounded-xl aspect-[2/3]" />
         </div>
-        <div className="lg:col-span-8 space-y-4">
+        <div className="lg:col-span-9 space-y-4">
           <div className="h-8 bg-gray-100 animate-pulse rounded w-3/4" />
           <div className="h-4 bg-gray-100 animate-pulse rounded w-1/3" />
           <div className="h-4 bg-gray-100 animate-pulse rounded w-1/2" />
@@ -49,7 +49,7 @@ function Skeleton() {
   )
 }
 
-function StickyBar({ book, onRead }: { book: Book; onRead: () => void }) {
+function StickyBar({ book, onAddToCart }: { book: Book; onAddToCart: () => void }) {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function StickyBar({ book, onRead }: { book: Book; onRead: () => void }) {
     return () => window.removeEventListener('scroll', h)
   }, [])
 
-  const readerUrl = book.externalId ? `https://openlibrary.org/works/${book.externalId}` : '#'
+  const inStock = book.inStock !== false
 
   return (
     <div
@@ -74,17 +74,20 @@ function StickyBar({ book, onRead }: { book: Book; onRead: () => void }) {
           <p className="font-semibold text-xs sm:text-sm text-gray-900 truncate">{book.title}</p>
           <p className="text-xs text-gray-500 hidden sm:block">{book.authors[0] ?? ''}</p>
         </div>
-        <button onClick={onRead}
-          className="px-3 sm:px-5 py-1.5 sm:py-2 text-white text-xs sm:text-sm font-semibold rounded flex-shrink-0"
+        {book.price != null && (
+          <p className="flex items-baseline gap-2 flex-shrink-0">
+            <span className="text-sm sm:text-base font-bold text-gray-900">₼{book.price}</span>
+            {book.originalPrice != null && (
+              <span className="hidden sm:inline text-xs text-gray-400 line-through">₼{book.originalPrice}</span>
+            )}
+          </p>
+        )}
+        <button onClick={onAddToCart} disabled={!inStock}
+          className="px-3 sm:px-5 py-1.5 sm:py-2 text-white text-xs sm:text-sm font-semibold rounded-full flex-shrink-0 disabled:opacity-50"
           style={{ background: PRIMARY }}>
-          <span className="hidden sm:inline">OXUMAĞA BAŞ VUR</span>
-          <span className="sm:hidden">OXU</span>
+          <span className="hidden sm:inline">SƏBƏTƏ ƏLAVƏ ET</span>
+          <span className="sm:hidden">SƏBƏT</span>
         </button>
-        <a href={readerUrl} target="_blank" rel="noopener noreferrer"
-          className="hidden md:block px-5 py-2 text-white text-sm font-semibold rounded flex-shrink-0"
-          style={{ background: DARK_BLUE }}>
-          OPEN LIBRARY
-        </a>
       </div>
     </div>
   )
@@ -98,7 +101,6 @@ export default function BookDetailPage() {
   const [similar, setSimilar] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-  const [reading, setReading] = useState(false)
   const [activeTab, setActiveTab] = useState<'details' | 'author'>('details')
   const [reviewForm, setReviewForm] = useState<{ review: BookReview | null } | null>(null)
 
@@ -158,8 +160,24 @@ export default function BookDetailPage() {
     )
   }
 
-  const readerUrl  = book.externalId ? `https://openlibrary.org/works/${book.externalId}` : '#'
   const author     = book.authors[0] ?? 'Naməlum müəllif'
+
+  const handleAddToCart = async () => {
+    const err = await addToCart({
+      id: book.id,
+      title: book.title,
+      author: book.authors[0] ?? '',
+      cover: book.coverUrl ?? '',
+      price: book.price ?? 0,
+      genre: book.subjects[0] ?? '',
+      rating: book.ratingsAverage ?? 0,
+      description: book.description ?? '',
+      year: book.firstPublishYear ?? 0,
+      pages: book.pages ?? 0,
+    })
+    if (err) showError(err)
+    else success(`"${book.title.slice(0, 28)}" səbətə əlavə edildi`)
+  }
   const rawSubject = book.subjects[0] ?? 'Fiction'
   const genreSlug  = subjectToSlug(rawSubject)
   const genreLabel = genres.find((g) => g.slug === genreSlug)?.label ?? rawSubject
@@ -192,7 +210,7 @@ export default function BookDetailPage() {
         />
       )}
 
-      <StickyBar book={book} onRead={() => { setReading(true); window.open(readerUrl, '_blank') }} />
+      <StickyBar book={book} onAddToCart={handleAddToCart} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
 
@@ -207,7 +225,7 @@ export default function BookDetailPage() {
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-16">
-          <BookCover book={book} rawSubject={rawSubject} />
+          <BookCover book={book} />
           <BookInfo
             book={book}
             author={author}
@@ -215,28 +233,9 @@ export default function BookDetailPage() {
             booksUrl={booksUrl}
             avgRating={reviews.summary.avgRating}
             totalReviews={reviews.summary.totalReviews}
-            readerUrl={readerUrl}
-            reading={reading}
             onScrollToReviews={() => reviewsRef.current?.scrollIntoView({ behavior: 'smooth' })}
-            onRead={() => setReading(true)}
-            onAddToCart={async () => {
-              const err = await addToCart({
-                id: book.id,
-                title: book.title,
-                author: book.authors[0] ?? '',
-                cover: book.coverUrl ?? '',
-                price: book.price ?? 0,
-                genre: book.subjects[0] ?? '',
-                rating: book.ratingsAverage ?? 0,
-                description: book.description ?? '',
-                year: book.firstPublishYear ?? 0,
-                pages: book.pages ?? 0,
-              })
-              if (err) showError(err)
-              else success(`"${book.title.slice(0, 28)}" səbətə əlavə edildi`)
-            }}
+            onAddToCart={handleAddToCart}
             onAddToWishlist={() => setWishlistModal(book)}
-
           />
         </div>
 

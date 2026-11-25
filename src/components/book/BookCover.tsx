@@ -1,34 +1,37 @@
 import type { Book } from '../../types/book'
-import { PRIMARY } from '../../constants/theme'
 
-interface Props {
-  book: Book
-  rawSubject: string
-}
-
-export default function BookCover({ book, rawSubject }: Props) {
+export default function BookCover({ book }: { book: Book }) {
   const coverUrl = book.coverUrl ?? ''
 
   return (
-    <div className="lg:col-span-4 flex flex-col items-center lg:items-start">
-      <div className="relative border border-gray-200 rounded-2xl overflow-hidden bg-gray-50 aspect-[2/3] shadow-sm w-40 sm:w-56 lg:w-full">
-        {book.ebookAccess === 'public_domain' && (
-          <div className="absolute top-3 left-3 bg-blue-800 text-white text-xs font-bold px-3 py-1 rounded-full uppercase z-10">
-            Pulsuz
-          </div>
-        )}
-        {coverUrl && (
-          <img src={coverUrl} alt={book.title}
-            className="w-full h-full object-cover"
-            onError={(e) => { e.currentTarget.style.display = 'none' }} />
-        )}
-      </div>
-      <div className="mt-3 space-y-1 w-40 sm:w-56 lg:w-full">
-        {['Open Library', rawSubject].map((l) => (
-          <div key={l} className="flex items-center gap-1.5 text-xs" style={{ color: PRIMARY }}>
-            <span>✓</span><span>{l}</span>
-          </div>
-        ))}
+    <div className="lg:col-span-3 flex justify-center lg:justify-start">
+      <div className="relative w-44 sm:w-52 lg:w-60">
+        {/* Kitabın altındakı yumşaq kölgə */}
+        <div className="absolute inset-x-5 -bottom-3 h-8 rounded-full bg-black/25 blur-xl" aria-hidden="true" />
+
+        <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-gray-100 shadow-xl ring-1 ring-black/10">
+          {coverUrl ? (
+            <img
+              src={coverUrl}
+              alt={book.title}
+              className="h-full w-full object-cover"
+              onError={(e) => { e.currentTarget.style.display = 'none' }}
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-4xl text-gray-300">📖</div>
+          )}
+
+          {book.discountPercent != null && (
+            <span className="absolute left-2.5 top-2.5 rounded-full bg-red-500 px-2.5 py-1 text-xs font-bold text-white shadow">
+              -{book.discountPercent}%
+            </span>
+          )}
+          {book.isAudiobook && (
+            <span className="absolute bottom-2.5 left-2.5 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-gray-800 shadow">
+              🎧 Audio
+            </span>
+          )}
+        </div>
       </div>
     </div>
   )

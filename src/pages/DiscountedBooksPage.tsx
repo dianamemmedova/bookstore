@@ -38,7 +38,7 @@ export default function DiscountedBooksPage() {
           <p className="text-center text-gray-400 py-16">Hazırda endirimli kitab yoxdur.</p>
         ) : (
           <>
-            <main className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <main className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
               {books.map((book) => (
                 <DiscountedCard key={book.id} book={book} />
               ))}
