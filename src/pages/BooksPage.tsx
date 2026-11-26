@@ -188,6 +188,8 @@ export default function BooksPage() {
               <option value="default">Ən populyar</option>
               <option value="rating-desc">Ən yüksək reytinq</option>
               <option value="year-desc">Ən yeni nəşr</option>
+              <option value="price-asc">Qiymət: ucuzdan bahaya</option>
+              <option value="price-desc">Qiymət: bahadan ucuza</option>
               <option value="title">Ada görə (A-Z)</option>
             </select>
           </div>

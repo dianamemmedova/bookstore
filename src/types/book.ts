@@ -85,7 +85,7 @@ export interface StatItem {
 
 
 
-export type BooksSortOption = 'default' | 'title' | 'rating-desc' | 'year-desc'
+export type BooksSortOption = 'default' | 'title' | 'rating-desc' | 'year-desc' | 'price-asc' | 'price-desc'
 
 export interface BookSectionProps {
   title: string
