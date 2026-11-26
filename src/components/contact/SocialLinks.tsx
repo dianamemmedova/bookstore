@@ -2,8 +2,8 @@ import { SOCIAL_LINKS } from '../../data/contactData'
 
 export default function SocialLinks() {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-      <h3 className="text-sm font-bold text-gray-800 mb-4">Bizi izləyin</h3>
+    <div className="bg-white rounded-md border border-line p-5">
+      <h3 className="font-display text-base font-bold text-ink mb-4">Bizi izləyin</h3>
       <div className="flex gap-3">
         {SOCIAL_LINKS.map(({ label, href, color, bgColor, icon }) => (
           <a

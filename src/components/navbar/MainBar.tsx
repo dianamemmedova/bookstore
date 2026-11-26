@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { SearchIcon, CartIcon } from '../../icons'
 import { useCart } from '../../context/CartContext'
@@ -23,7 +23,7 @@ export default function MainBar({ onMenuToggle, menuOpen }: Props) {
   }
 
   return (
-    <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-2 sm:py-2 flex items-center gap-3 sm:gap-6">
+    <div className="max-w-[1480px] mx-auto px-4 sm:px-6 py-2 sm:py-2 flex items-center gap-3 sm:gap-6">
 
       <button
         onClick={onMenuToggle}

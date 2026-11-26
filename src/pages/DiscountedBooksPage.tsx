@@ -1,7 +1,7 @@
-import { useBooks } from '../hooks/useBooks'
+﻿import { useBooks } from '../hooks/useBooks'
 import { fetchDiscounted } from '../services/bookService'
 import { LoadingScreen, ErrorScreen } from '../components/discount/PageStates'
-import DiscountedCard from '../components/discount/DiscountedCard'
+import BookCard from '../components/book/BookCard'
 import PageHero from '../components/shared/PageHero'
 
 export default function DiscountedBooksPage() {
@@ -13,26 +13,25 @@ export default function DiscountedBooksPage() {
   const maxPercent = Math.max(0, ...books.map((b) => b.discountPercent ?? 0))
 
   return (
-    <div className="min-h-screen bg-[#fcfaf6]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 pb-12 sm:pb-16">
-        <PageHero
-          tone="sale"
-          eyebrow="🔥 Məhdud təklif"
-          title="Endirimli Kitablar"
-          subtitle="Seçilmiş kitablara xüsusi endirimlər. Stok bitənə qədər."
-          covers={books.map((b) => b.coverUrl ?? '')}
-          stats={[
-            { value: books.length, label: 'Endirimli kitab' },
-            { value: maxPercent > 0 ? `${maxPercent}%-dək` : '—', label: 'Endirim' },
-          ]}
-        />
+    <div className="min-h-screen bg-surface">
+      <PageHero
+        eyebrow="Kampaniya"
+        title="Endirimli Kitablar"
+        subtitle="Seçilmiş kitablara xüsusi endirimlər. Stok bitənə qədər."
+        covers={books.map((b) => b.coverUrl ?? '')}
+        stats={[
+          { value: books.length, label: 'endirimli kitab', tone: 'sale' },
+          { value: maxPercent > 0 ? `${maxPercent}%-dək` : '—', label: 'endirim' },
+        ]}
+      />
 
+      <div className="mx-auto max-w-[1480px] px-4 py-6 lg:px-6">
         {books.length === 0 ? (
-          <p className="text-center text-gray-400 py-16">Hazırda endirimli kitab yoxdur.</p>
+          <p className="py-16 text-center text-muted">Hazırda endirimli kitab yoxdur.</p>
         ) : (
-          <main className="mt-6 sm:mt-8 grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
+          <main className="grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
             {books.map((book) => (
-              <DiscountedCard key={book.id} book={book} />
+              <BookCard key={book.id} book={book} showWishlist={false} />
             ))}
           </main>
         )}

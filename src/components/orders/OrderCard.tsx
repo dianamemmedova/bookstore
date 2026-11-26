@@ -3,6 +3,7 @@ import { useOrders } from '../../context/OrderContext'
 import OrderHeader from './OrderHeader'
 import OrderThumbnails from './OrderThumbnails'
 import OrderDetails from './OrderDetails'
+import Icon from '../ui/Icon'
 import type { Order } from '../../types/order'
 
 function canCancel(order: Order): boolean {
@@ -40,33 +41,32 @@ export default function OrderCard({ order }: Props) {
   }
 
   return (
-    <div className="bg-white border border-gray-200 overflow-hidden rounded-lg">
+    <article className="overflow-hidden rounded-md border border-line bg-white">
       <OrderHeader order={order} expanded={expanded} onToggle={() => setExpanded(e => !e)} />
       <OrderThumbnails items={order.items} />
       {expanded && <OrderDetails order={order} />}
 
-      {(cancellable || (active && !cancellable)) && (
-        <div className="flex items-center justify-between px-5 py-3 border-t border-gray-100 bg-gray-50">
-          
+      {active && (
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line bg-panel px-4 py-2.5">
           <div>
-            {error && <p className="text-xs text-red-500">{error}</p>}
-            {active && !cancellable && (
-              <p className="text-xs text-amber-600">
-                ⚠️ Çatdırılmaya 2 gün və ya az qaldığı üçün ləğv edilə bilməz
+            {error && <p className="text-xs text-sale">{error}</p>}
+            {!cancellable && (
+              <p className="flex items-center gap-1 text-xs text-muted-gold-text">
+                <Icon name="info" size={14} /> Çatdırılmaya 2 gün və ya az qaldığı üçün ləğv edilə bilməz
               </p>
             )}
           </div>
-
-          <div className="flex items-center gap-3">
-            {cancellable && (
-              <button onClick={handleCancel} disabled={busy}
-                className="text-sm font-medium text-amber-600 hover:text-amber-800 border border-amber-200 hover:border-amber-400 px-4 py-1.5 rounded transition-colors disabled:opacity-60">
-                {busy ? 'Ləğv edilir...' : 'Ləğv et'}
-              </button>
-            )}
-          </div>
+          {cancellable && (
+            <button
+              onClick={handleCancel}
+              disabled={busy}
+              className="rounded-sm border border-line-strong bg-white px-3 py-1.5 text-xs font-medium text-sale transition-colors hover:bg-sale-soft disabled:opacity-60"
+            >
+              {busy ? 'Ləğv edilir...' : 'Ləğv et'}
+            </button>
+          )}
         </div>
       )}
-    </div>
+    </article>
   )
 }

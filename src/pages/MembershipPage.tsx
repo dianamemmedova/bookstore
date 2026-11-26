@@ -2,26 +2,18 @@ import { rewardsBenefits, premiumBenefits, comparisonRows, faqs } from '../data/
 import FaqAccordion from '../components/shared/FaqAccordion'
 import { PlanCard } from '../components/membership/PlanCard'
 
+import PageHero from '../components/shared/PageHero'
+
 export default function MembershipPage() {
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface">
 
-      <section className="relative text-white overflow-hidden bg-gradient-to-br from-[#3d5a6b] via-[#2e4455] to-[#1a2e3d] min-h-[260px] sm:min-h-[340px]">
-        <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-[#c9a454]/10" />
-        <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-[#c9a454]/10" />
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16 text-center">
-          <p className="text-xs uppercase tracking-widest mb-3 text-[#c9a454]/80 font-semibold">
-            Book & Store
-          </p>
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4">
-            Üzvlük & Mükafatlar
-          </h1>
-          <p className="text-sm sm:text-lg opacity-80 max-w-xl mx-auto">
-            Premium üzvlüyə qoşulun — endirimlərdən, pulsuz çatdırılmadan və eksklüziv təkliflərdən yararlananın.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Book & Store"
+        title="Üzvlük & Mükafatlar"
+        subtitle="Premium üzvlüyə qoşulun — endirimlərdən, pulsuz çatdırılmadan və eksklüziv təkliflərdən yararlananın."
+      />
 
       <section className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">

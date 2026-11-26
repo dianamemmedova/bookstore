@@ -1,29 +1,22 @@
-import { PRIMARY, PRIMARY_DARK } from '../../constants/theme'
 import { useAuthModal } from '../../context/AuthModalContext'
+import Icon from '../ui/Icon'
 
 export default function EmptyState() {
   const { openLogin } = useAuthModal()
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="text-center max-w-md">
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-50 flex items-center justify-center">
-          <svg className="w-10 h-10 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
+    <div className="flex min-h-[460px] items-center justify-center bg-surface px-4">
+      <div className="max-w-sm rounded-md border border-line bg-white px-8 py-10 text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-sale-soft text-sale">
+          <Icon name="favorite" size={32} />
         </div>
-        <h1 className="text-2xl font-semibold text-gray-900 mb-3" >
-          Sevimlilərim
-        </h1>
-        <p className="text-gray-500 text-sm mb-6 leading-relaxed">
-          Sevimlilərinizi görmək üçün hesabınıza daxil olun.
-        </p>
-        <button onClick={openLogin}
-          className="px-8 py-3 text-white text-sm font-medium transition-colors"
-          style={{ background: PRIMARY }}
-          onMouseEnter={e => (e.currentTarget.style.background = PRIMARY_DARK)}
-          onMouseLeave={e => (e.currentTarget.style.background = PRIMARY)}>
-          Daxil ol
+        <h1 className="mb-1.5 font-display text-xl font-bold text-ink">Sevimlilərim</h1>
+        <p className="mb-6 text-sm leading-relaxed text-muted">Sevimlilərinizi görmək üçün hesabınıza daxil olun.</p>
+        <button
+          onClick={openLogin}
+          className="rounded-sm bg-primary px-6 py-2.5 text-xs font-bold tracking-widest text-white transition-colors hover:bg-primary-dark"
+        >
+          DAXİL OL
         </button>
       </div>
     </div>

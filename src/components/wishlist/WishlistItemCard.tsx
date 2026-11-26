@@ -1,62 +1,63 @@
 import { Link } from 'react-router-dom'
 import type { ItemCart } from '../../types/wishlistPage'
-import { LIGHT_GREY, PRIMARY, PRIMARY_DARK } from '../../constants/theme';
-import { StarRating } from '../ui/SharedUI'
+import Icon from '../ui/Icon'
 
+export default function WishlistItemCard({ item, onRemove, onAddToCart }: ItemCart) {
+  const bookLink = `/books/${item.originalId ?? item.id}`
+  const unavailable = !item.available
 
-
-export default function WishlistItemCard({ item, index, onRemove, onAddToCart }: ItemCart) {
   return (
-    <div className="flex gap-5 py-6" style={{ borderTop: index === 0 ? 'none' : '1px solid #f3f4f6' }}>
-      <Link to={`/books/${item.originalId ?? item.id}`} className="flex-shrink-0">
-        {item.cover
-          ? <img src={item.cover} alt={item.title} className="w-20 h-28 object-cover bg-gray-100 shadow-sm" />
-          : <div className="w-20 h-28 bg-gray-100 shadow-sm" />}
-      </Link>
-
-      <div className="flex-1 min-w-0">
-        <Link to={`/books/${item.originalId ?? item.id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 hover:underline underline-offset-2 mb-0.5" >
-            {item.title}
-          </h3>
+    <article className={`flex h-full flex-col rounded-md border border-line bg-white p-2 transition-colors hover:border-line-strong ${unavailable ? 'opacity-80' : ''}`}>
+      <div className="relative mb-2 flex aspect-[3/4] items-center justify-center rounded-sm bg-panel p-3">
+        <Link to={bookLink} className="h-full w-full">
+          {item.cover
+            ? <img src={item.cover} alt={item.title} className={`h-full w-full rounded-[2px] object-cover shadow-md ${unavailable ? 'grayscale' : ''}`} />
+            : <div className="h-full w-full rounded-[2px] bg-sunken" />}
         </Link>
-        <p className="text-sm text-gray-600 mb-2">
-          müəllif: <Link to={`/books?author=${item.author}`} className="underline hover:text-gray-900">{item.author}</Link>
-        </p>
-        <div className="flex items-center gap-2 mb-2">
-          <StarRating rating={item.rating} />
-          <span className="text-sm text-gray-600">{item.rating}</span>
-          <span className="text-sm text-gray-400">({item.reviewCount})</span>
-          <Link to={`/books/${item.originalId ?? item.id}`} className="text-sm text-green-700 hover:underline ml-1">Rəy Yaz</Link>
-        </div>
-        <p className="text-sm text-gray-700 mb-1 font-medium">{item.format}</p>
-        <p className="text-lg font-semibold text-gray-900 mb-3">{item.price}</p>
 
         <button
-          onClick={() => item.available && onAddToCart(item.id, item.title)}
-          disabled={!item.available}
-          className="px-6 py-2.5 text-sm font-bold tracking-wider text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
-          style={{ background: item.available ? PRIMARY : LIGHT_GREY, letterSpacing: '0.05em' }}
-          onMouseEnter={e => { if (item.available) e.currentTarget.style.background = PRIMARY_DARK }}
-          onMouseLeave={e => { if (item.available) e.currentTarget.style.background = PRIMARY }}
+          onClick={() => onRemove(item.id)}
+          title="Siyahıdan sil"
+          aria-label="Siyahıdan sil"
+          className="absolute right-1 top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-line bg-white text-sale transition-colors hover:bg-sale-soft"
         >
-          SƏBƏTƏ ƏLAVƏ ET
+          <Icon name="favorite" size={16} filled />
         </button>
-        {item.available && <p className="text-xs text-gray-400 mt-2">Hədiyyə qablaşdırması üçün uyğundur</p>}
+
+        {unavailable && (
+          <span className="absolute bottom-1 left-1 rounded-full bg-sunken px-1.5 py-0.5 text-[11px] font-semibold text-muted">
+            Stokda yoxdur
+          </span>
+        )}
       </div>
 
-      <div className="flex-shrink-0 text-right flex flex-col items-end justify-between">
-        <div>
-          <p className="text-sm text-gray-400 mb-2">Əlavə edilib: {item.addedDate}</p>
-          <button onClick={() => onRemove(item.id)}
-            className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-500 transition-colors ml-auto">
-            Sil
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+      <div className="mb-2 flex flex-1 flex-col gap-1">
+        <Link to={bookLink}>
+          <h3 className="line-clamp-2 min-h-[2.25rem] text-[13px] font-semibold leading-[18px] text-ink hover:underline">{item.title}</h3>
+        </Link>
+        <p className="line-clamp-1 text-xs text-muted">{item.author}</p>
+
+        {item.rating > 0 && (
+          <p className="tabular flex items-center gap-1 text-xs text-ink">
+            <Icon name="star" size={14} filled className="text-muted-gold-text" />
+            {item.rating}
+            <span className="text-muted">({item.reviewCount})</span>
+          </p>
+        )}
+
+        <div className="tabular mt-auto flex items-baseline justify-between gap-2 pt-1">
+          <span className="text-[15px] font-semibold text-ink">{item.price}</span>
+          <span className="text-[11px] text-muted">{item.addedDate}</span>
         </div>
       </div>
-    </div>
+
+      <button
+        onClick={() => item.available && onAddToCart(item.id, item.title)}
+        disabled={unavailable}
+        className="w-full rounded-sm bg-primary px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-sunken disabled:text-muted"
+      >
+        {unavailable ? 'Mövcud deyil' : 'Səbətə əlavə et'}
+      </button>
+    </article>
   )
 }

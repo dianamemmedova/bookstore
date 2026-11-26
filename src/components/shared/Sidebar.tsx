@@ -1,27 +1,27 @@
-import { PRIMARY } from '../../constants/theme'
 import type { SidebarProps } from '../../types/fiction'
 
-
+// Fiction və Nonfiction səhifələrinin yan menyusu
 export function Sidebar({ sections }: SidebarProps) {
   return (
-    <aside className="hidden lg:block w-52 flex-shrink-0 text-sm">
-      {sections.map((section, i) => (
-        <div key={section.title}>
-          <div className="mb-6">
-            <p className="font-bold uppercase tracking-wider text-gray-800 mb-2" style={{ fontSize: 11 }}>
+    <aside className="hidden w-56 flex-shrink-0 lg:block">
+      <div className="sticky top-36 space-y-4 rounded-md border border-line bg-white p-4">
+        {sections.map((section) => (
+          <div key={section.title}>
+            <p className="mb-1.5 border-b border-line pb-1 text-[11px] font-bold uppercase tracking-wider text-muted">
               {section.title}
             </p>
-            {section.links.map(l => (
-              <a key={l} href="#" className="block py-1 hover:underline" style={{ color: PRIMARY }}>
-                {l}
-              </a>
-            ))}
+            <ul className="m-0 list-none space-y-0.5 p-0">
+              {section.links.map((l) => (
+                <li key={l}>
+                  <a href="#" className="block rounded-sm px-2 py-1 text-[13px] text-ink transition-colors hover:bg-panel hover:text-primary">
+                    {l}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
-          {i < sections.length - 1 && <div className="h-px bg-gray-200 mb-4" />}
-        </div>
-      ))}
+        ))}
+      </div>
     </aside>
   )
 }
-
-// nonfinction ve finction seyfesinin sidebari

@@ -10,8 +10,8 @@ export function GiftCardItem({ card, selected, onToggle }: {
   return (
     <button
       onClick={() => onToggle(card.id)}
-      className={`w-full flex flex-col text-left rounded-2xl overflow-hidden transition-transform duration-150 hover:-translate-y-0.5 ${
-        selected ? 'ring-2 ring-[#c9a454]' : 'ring-1 ring-gray-200'
+      className={`w-full flex flex-col text-left rounded-md overflow-hidden transition-transform duration-150 hover:-translate-y-0.5 ${
+        selected ? 'ring-2 ring-[#c9a454]' : 'ring-1 ring-line'
       }`}
     >
       <div className="w-full relative aspect-[5/3]" style={{ background: CARD_COLORS[card.colorIndex].bg }}>
@@ -28,9 +28,9 @@ export function GiftCardItem({ card, selected, onToggle }: {
         )}
       </div>
       <div className="bg-white p-2.5 flex-1">
-        <p className="text-xs font-semibold text-gray-900 leading-snug line-clamp-2">{card.title}</p>
-        <p className="text-xs text-gray-400 mt-0.5">{card.sub}</p>
-        <p className="text-xs font-semibold text-[#c9a454] mt-1">{card.amount}</p>
+        <p className="text-xs font-semibold text-ink leading-snug line-clamp-2">{card.title}</p>
+        <p className="text-xs text-muted mt-0.5">{card.sub}</p>
+        <p className="tabular text-xs font-semibold text-muted-gold-text mt-1">{card.amount}</p>
       </div>
     </button>
   )

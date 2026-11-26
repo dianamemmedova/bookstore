@@ -16,16 +16,16 @@ export default function ContactForm() {
         buttonText="Bağla"
       />
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-5 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900">Mesaj Göndər</h2>
-          <p className="text-sm text-gray-500 mt-1">
+      <div className="bg-white rounded-md border border-line overflow-hidden">
+        <div className="px-4 py-3 border-b border-line">
+          <h2 className="font-display text-lg font-bold text-ink">Mesaj Göndər</h2>
+          <p className="text-sm text-muted mt-1">
             Aşağıdakı formu doldurun, ən qısa zamanda sizinlə əlaqə saxlayaq
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-5 sm:px-6 py-5 sm:py-6 space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <form onSubmit={handleSubmit} className="px-5 py-5 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Adınız"
               placeholder="Əli Həsənov"
@@ -46,11 +46,11 @@ export default function ContactForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Mövzu</label>
+            <label className="block text-sm font-medium text-ink mb-1.5">Mövzu</label>
             <select
               value={form.subject}
               onChange={e => handleChange('subject')(e.target.value)}
-              className={`w-full px-4 py-2.5 rounded-lg border text-sm outline-none transition-colors bg-white ${
+              className={`w-full px-4 py-2.5 rounded-sm border text-sm outline-none transition-colors bg-white ${
                 errors.subject ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-[#3d5a6b]'
               }`}
             >
@@ -67,13 +67,13 @@ export default function ContactForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Mesaj</label>
+            <label className="block text-sm font-medium text-ink mb-1.5">Mesaj</label>
             <textarea
               value={form.message}
               onChange={e => handleChange('message')(e.target.value)}
               placeholder="Mesajınızı yazın..."
               rows={5}
-              className={`w-full px-4 py-2.5 rounded-lg border text-sm outline-none transition-colors resize-none bg-white ${
+              className={`w-full px-4 py-2.5 rounded-sm border text-sm outline-none transition-colors resize-none bg-white ${
                 errors.message ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-[#3d5a6b]'
               }`}
             />
@@ -103,7 +103,7 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 text-sm font-bold tracking-wider text-white rounded-lg transition-all disabled:opacity-60"
+            className="w-full py-3 text-sm font-bold tracking-wider text-white rounded-sm transition-all disabled:opacity-60"
             style={{ background: isSubmitting ? PRIMARY_DISABLED : PRIMARY }}
             onMouseEnter={e => { if (!isSubmitting) e.currentTarget.style.background = PRIMARY_DARK }}
             onMouseLeave={e => { if (!isSubmitting) e.currentTarget.style.background = PRIMARY }}

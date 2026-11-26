@@ -1,60 +1,45 @@
-import { PRIMARY } from '../../constants/theme'
-import { formatShortDate, formatTime, formatDateAz } from '../../utils/date'
+import { formatShortDate, formatTime } from '../../utils/date'
 import { getPayMethodLabel } from '../../utils/orderUtils'
 import StatusBadge from './StatusBadge'
-import type{ OrderHeader } from '../../types/order'
-
-
+import Icon from '../ui/Icon'
+import type { OrderHeader } from '../../types/order'
 
 export default function OrderHeader({ order, expanded, onToggle }: OrderHeader) {
+  const count = order.items.reduce((s, i) => s + i.quantity, 0)
+
   return (
-    <div className="px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
-      <div className="flex items-center gap-4 flex-wrap">
+    <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
         <div>
-          <p className="text-xs text-gray-400 mb-0.5">Sifariş tarixi</p>
-          <p className="text-sm font-medium text-gray-900">
-            {formatShortDate(order.createdAt)} · {formatTime(order.createdAt)}
-          </p>
+          <p className="text-[11px] uppercase tracking-wider text-muted">Sifariş</p>
+          <p className="tabular font-display text-[15px] font-bold text-ink">№{order.id.slice(-6).toUpperCase()}</p>
         </div>
-        <div className="w-px h-8 bg-gray-100 hidden sm:block" />
         <div>
-          <p className="text-xs text-gray-400 mb-0.5">Məbləğ</p>
-          <p className="text-sm font-bold text-gray-900">₼{order.finalTotal.toFixed(2)}</p>
+          <p className="text-[11px] uppercase tracking-wider text-muted">Tarix</p>
+          <p className="tabular text-[13px] font-medium text-ink">{formatShortDate(order.createdAt)} · {formatTime(order.createdAt)}</p>
         </div>
-        <div className="w-px h-8 bg-gray-100 hidden sm:block" />
         <div>
-          <p className="text-xs text-gray-400 mb-0.5">Kitab sayı</p>
-          <p className="text-sm font-medium text-gray-900">
-            {order.items.reduce((s, i) => s + i.quantity, 0)} ədəd
-          </p>
+          <p className="text-[11px] uppercase tracking-wider text-muted">Kitab</p>
+          <p className="tabular text-[13px] font-medium text-ink">{count} ədəd</p>
         </div>
-        <div className="w-px h-8 bg-gray-100 hidden sm:block" />
         <div>
-          <p className="text-xs text-gray-400 mb-0.5">Ödəniş</p>
-          <p className="text-sm font-medium text-gray-900">{getPayMethodLabel(order.payMethod)}</p>
+          <p className="text-[11px] uppercase tracking-wider text-muted">Ödəniş</p>
+          <p className="text-[13px] font-medium text-ink">{getPayMethodLabel(order.payMethod)}</p>
         </div>
-        {order.deliveryDate && (
-          <>
-            <div className="w-px h-8 bg-gray-100 hidden sm:block" />
-            <div>
-              <p className="text-xs text-gray-400 mb-0.5">Çatdırılma tarixi</p>
-              <p className="text-sm font-medium text-gray-900">{formatDateAz(order.deliveryDate)}</p>
-            </div>
-          </>
-        )}
+        <div>
+          <p className="text-[11px] uppercase tracking-wider text-muted">Məbləğ</p>
+          <p className="tabular text-[15px] font-bold text-ink">₼{order.finalTotal.toFixed(2)}</p>
+        </div>
       </div>
 
       <div className="flex items-center gap-3">
         <StatusBadge status={order.status} />
-        <button onClick={onToggle}
-          className="text-xs font-medium transition-colors flex items-center gap-1"
-          style={{ color: PRIMARY }}>
-          {expanded ? 'Bağla' : 'Ətraflı'}
-          <svg className="w-3.5 h-3.5 transition-transform duration-200"
-            style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
-            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
+        <button
+          onClick={onToggle}
+          className="inline-flex items-center gap-0.5 rounded-sm border border-line-strong bg-white px-2.5 py-1 text-xs font-medium text-ink transition-colors hover:bg-panel"
+        >
+          {expanded ? 'Bağla' : 'Detallar'}
+          <Icon name="expand_more" size={16} className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
         </button>
       </div>
     </div>

@@ -1,7 +1,8 @@
-// src/pages/StoresPage.tsx
+﻿// src/pages/StoresPage.tsx
 import { useState, useMemo } from 'react'
 import { useEventFilters } from '../hooks/useEventFilter.ts'
 import { PRIMARY, BACKGROUND_LIGHT, BACKGROUND_SOFT } from '../constants/theme'
+import PageHero from '../components/shared/PageHero'
 import { useStoresData } from '../hooks/useStoresData'
 import type { Store } from '../types/store'
 import { StoreMap }        from '../components/stores/StoreMap'
@@ -39,37 +40,31 @@ export default function StoresPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: BACKGROUND_LIGHT }}>
+    <div className="min-h-screen bg-surface">
 
-      <section className="relative text-white overflow-hidden bg-gradient-to-br from-[#3d5a6b] via-[#2e4455] to-[#1a2e3d] min-h-[300px]">
-        <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-[#c9a454]/10" />
-        <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-[#c9a454]/10" />
-        <div className="relative max-w-4xl mx-auto px-6 py-16 text-center">
-          <p className="text-xs uppercase tracking-widest mb-3 text-[#c9a454]/80 font-semibold">
-            Book &amp; Store
-          </p>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Mağazalar &amp; Tədbirlər
-          </h1>
-          <p className="text-lg opacity-80 max-w-xl mx-auto">
-            Ən yaxın mağazanı tapın, gələcək müəllif tədbirlərini və uşaq hekayə saatlarını kəşf edin.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Book & Store"
+        title="Mağazalar & Tədbirlər"
+        subtitle="Ən yaxın mağazanı tapın, gələcək müəllif tədbirlərini və uşaq hekayə saatlarını kəşf edin."
+        stats={[
+          { value: stores.length, label: 'mağaza' },
+          { value: events.length, label: 'tədbir' },
+        ]}
+      />
 
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-10">
+      <div className="max-w-[1480px] mx-auto px-4 lg:px-6 py-6 space-y-8">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <StoreMap selectedStore={selectedStore} />
           </div>
           <div className="space-y-5">
-            <h2 className="text-lg font-bold text-gray-900">Önə Çıxan Tədbir</h2>
+            <h2 className="font-display text-lg font-bold text-ink">Önə Çıxan Tədbir</h2>
             {featuredEvent
               ? <FeaturedEventCard event={featuredEvent} />
               : <p className="text-sm text-gray-400">{loading ? 'Yüklənir...' : 'Hələlik tədbir yoxdur.'}</p>}
             {selectedStore && (
-              <div className="rounded-2xl p-5 border" style={{ background: BACKGROUND_SOFT, borderColor: `${PRIMARY}33` }}>
+              <div className="rounded-md p-5 border" style={{ background: BACKGROUND_SOFT, borderColor: `${PRIMARY}33` }}>
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0" style={{ background: PRIMARY }}>
                     {selectedStore.num}
@@ -81,7 +76,7 @@ export default function StoresPage() {
                     <p className="text-xs text-gray-500">{selectedStore.hours}</p>
                   </div>
                 </div>
-                <button className="mt-3 w-full text-xs font-semibold py-2 rounded-xl text-white" style={{ background: PRIMARY }}>
+                <button className="mt-3 w-full text-xs font-semibold py-2 rounded-sm text-white" style={{ background: PRIMARY }}>
                   Bu mağazada tədbirləri gör
                 </button>
               </div>
@@ -101,7 +96,7 @@ export default function StoresPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Mağaza adı və ya ünvan axtar..."
-                className="pl-9 pr-4 py-2 rounded-xl text-sm outline-none border border-gray-200 bg-white w-64 focus:border-gray-400 transition-all" />
+                className="pl-9 pr-4 py-2 rounded-sm text-sm outline-none border border-line-strong bg-white w-64 focus:border-primary transition-all" />
             </div>
             {selectedStore && (
               <button onClick={() => setSelectedStore(null)} className="text-xs underline text-gray-400 hover:text-gray-700">
@@ -128,7 +123,7 @@ export default function StoresPage() {
         <div>
           <div className="mb-6">
             <p className="text-xs uppercase tracking-widest text-gray-400 mb-1">Gələcək tədbirlər</p>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="font-display text-2xl font-bold text-ink">
               {selectedStore
                 ? `${selectedStore.name} — ${filteredEvents.length} Tədbir`
                 : `${filteredEvents.length} Gələcək Tədbir`}
@@ -139,7 +134,7 @@ export default function StoresPage() {
           <EventFilterPanel filters={filters} setters={setters} onReset={resetAllFilters} />
 
           {filteredEvents.length === 0 ? (
-            <div className="text-center py-20 rounded-2xl border border-dashed border-gray-200">
+            <div className="text-center py-20 rounded-md border border-dashed border-gray-200">
               <p className="text-4xl mb-3">📅</p>
               <p className="text-gray-500 font-medium">Seçilmiş filtrlərə uyğun tədbir tapılmadı.</p>
               <p className="text-gray-400 text-sm mt-1">Filtrləri dəyişdirməyə cəhd edin.</p>

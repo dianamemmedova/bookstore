@@ -10,7 +10,7 @@ import AudioPlayer from './AudioPlayer'
 type State = { kind: 'loading' } | { kind: 'error' } | { kind: 'ready'; access: AudioAccess }
 
 function Box({ children }: { children: ReactNode }) {
-  return <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-5 py-5 text-sm text-gray-600">{children}</div>
+  return <div className="rounded-md border border-dashed border-audio/40 bg-audio-soft px-4 py-4 text-sm text-on-audio-soft">{children}</div>
 }
 
 // Audio kitabın dinləmə hissəsi: giriş etməyibsə dəvət, almayıbsa kilid, alıbsa pleyer
@@ -40,9 +40,9 @@ export default function AudioSection({ book }: { book: Book }) {
   if (userId === null) {
     return (
       <Box>
-        <p className="font-semibold text-gray-900">🎧 Bu kitabı dinləmək olar</p>
+        <p className="font-semibold text-on-audio-soft">🎧 Bu kitabı dinləmək olar</p>
         <p className="mt-1">Dinləmək üçün hesabınıza daxil olun və kitabı alın.</p>
-        <button onClick={openLogin} className="mt-3 rounded-full bg-gray-900 px-5 py-2 text-xs font-bold tracking-wide text-white hover:bg-gray-700">
+        <button onClick={openLogin} className="mt-3 rounded-sm bg-audio px-5 py-2 text-xs font-bold tracking-widest text-white hover:opacity-90">
           DAXİL OL
         </button>
       </Box>
@@ -50,7 +50,7 @@ export default function AudioSection({ book }: { book: Book }) {
   }
 
   if (state.kind === 'loading') {
-    return <div className="h-28 animate-pulse rounded-2xl bg-gray-100" />
+    return <div className="h-28 animate-pulse rounded-md bg-sunken" />
   }
   if (state.kind === 'error') {
     return (
@@ -63,7 +63,7 @@ export default function AudioSection({ book }: { book: Book }) {
   if (state.access.status === 'locked') {
     return (
       <Box>
-        <p className="font-semibold text-gray-900">🔒 Dinləmək üçün kitabı almalısınız</p>
+        <p className="font-semibold text-on-audio-soft">🔒 Dinləmək üçün kitabı almalısınız</p>
         <p className="mt-1">Sifarişiniz verildikdən dərhal sonra audio kitabı burada dinləyə biləcəksiniz.</p>
       </Box>
     )

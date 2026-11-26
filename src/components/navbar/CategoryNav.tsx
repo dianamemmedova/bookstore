@@ -1,4 +1,4 @@
-import { NavLink, Link, useLocation } from 'react-router-dom'
+﻿import { NavLink, Link, useLocation } from 'react-router-dom'
 import { ACCENT } from '../../constants/theme'
 import { categories, booksDropdown } from '../../data/navbar'
 import { useNavbar } from '../../hooks/useNavbar'
@@ -29,7 +29,7 @@ export default function CategoryNav() {
 
   return (
     <nav className="hidden lg:block border-t border-gray-100 relative" ref={navRef}>
-      <div className="max-w-screen-xl mx-auto px-6 flex items-center overflow-x-auto">
+      <div className="max-w-[1480px] mx-auto px-6 flex items-center overflow-x-auto">
         {categories.map((cat, index) => {
           const isActive = cat.to === '/books'
             ? location.pathname === '/books' && !currentGenre
@@ -54,7 +54,7 @@ export default function CategoryNav() {
 
       {booksOpen && (
         <div className="absolute left-0 right-0 top-full bg-white border-t border-gray-200 shadow-2xl z-50">
-          <div className="max-w-screen-xl mx-auto px-8 py-8">
+          <div className="max-w-[1480px] mx-auto px-8 py-8">
             <div className="flex gap-12">
               {Object.values(booksDropdown).map(col => (
                 <div key={col.title} className="flex-1 min-w-0">

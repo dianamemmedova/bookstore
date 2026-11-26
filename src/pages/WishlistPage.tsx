@@ -4,6 +4,7 @@ import { useWishlistPage } from '../hooks/useWishlistPage'
 import { useToast } from '../hooks/useToast'
 import { ToastContainer } from '../components/ui/ToastContainer'
 import { EmptyState, WishlistFormModal, WishlistSidebar, WishlistItemList } from '../components/wishlist'
+import PageHero from '../components/shared/PageHero'
 
 export default function WishlistPage() {
   const { user } = useAuth()
@@ -31,11 +32,13 @@ export default function WishlistPage() {
 
   if (!user) return <EmptyState />
   if (!activeList) {
-    return <div className="min-h-[50vh] flex items-center justify-center text-sm text-gray-400">{loading ? 'Yüklənir...' : 'Siyahı tapılmadı'}</div>
+    return <div className="min-h-[50vh] flex items-center justify-center text-sm text-muted">{loading ? 'Yüklənir...' : 'Siyahı tapılmadı'}</div>
   }
 
+  const allItems = lists.flatMap((l) => l.items)
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface">
       <ToastContainer toasts={toast.toasts} />
 
       {showCreateModal && (
@@ -51,30 +54,35 @@ export default function WishlistPage() {
         />
       )}
 
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        <div className="text-center mb-8 border-b border-gray-200 pb-6">
-          <h1 className="text-3xl text-gray-900" >Sevimlilərim</h1>
-        </div>
+      <PageHero
+        eyebrow="Kolleksiya"
+        title="Sevimlilərim"
+        subtitle="Bəyəndiyiniz kitabları siyahılara bölün və sonra səbətə əlavə edin."
+        covers={allItems.map((i) => i.cover)}
+        stats={[
+          { value: lists.length, label: 'siyahı' },
+          { value: allItems.length, label: 'kitab' },
+        ]}
+      />
 
-        <div className="flex gap-10">
-          <WishlistSidebar
-            lists={lists}
-            activeListId={activeListId}
-            onSelect={setActiveListId}
-            onCreateClick={() => setShowCreateModal(true)}
-          />
-          <WishlistItemList
-            activeList={activeList}
-            sortedItems={sortedItems}
-            sortBy={sortBy}
-            results={results}
-            onSortChange={setSortBy}
-            onResultsChange={setResults}
-            onEditClick={() => setShowEditModal(true)}
-            onRemove={removeItem}
-            onAddToCart={handleAddToCart}
-          />
-        </div>
+      <div className="mx-auto flex max-w-[1480px] flex-col items-start gap-6 px-4 py-6 lg:flex-row lg:px-6">
+        <WishlistSidebar
+          lists={lists}
+          activeListId={activeListId}
+          onSelect={setActiveListId}
+          onCreateClick={() => setShowCreateModal(true)}
+        />
+        <WishlistItemList
+          activeList={activeList}
+          sortedItems={sortedItems}
+          sortBy={sortBy}
+          results={results}
+          onSortChange={setSortBy}
+          onResultsChange={setResults}
+          onEditClick={() => setShowEditModal(true)}
+          onRemove={removeItem}
+          onAddToCart={handleAddToCart}
+        />
       </div>
     </div>
   )

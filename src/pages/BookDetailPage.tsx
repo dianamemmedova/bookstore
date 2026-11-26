@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+﻿import { useState, useRef, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { fetchBookDetail, fetchBySubject } from '../services/bookService'
 import type { Book } from '../types/book'
@@ -19,7 +19,7 @@ import BookInfo from '../components/book/BookInfo'
 import SimilarBooks from '../components/book/SimilarBooks'
 import BookTabs from '../components/book/BookTabs'
 import BookReviews from '../components/book/BookReviews'
-import { PRIMARY } from '../constants/theme'
+import Icon from '../components/ui/Icon'
 
 function subjectToSlug(subject: string): string {
   const s = subject.toLowerCase()
@@ -33,16 +33,18 @@ function subjectToSlug(subject: string): string {
 
 function Skeleton() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        <div className="lg:col-span-3 flex justify-center lg:justify-start">
-          <div className="w-44 sm:w-52 lg:w-60 bg-gray-100 animate-pulse rounded-xl aspect-[2/3]" />
-        </div>
-        <div className="lg:col-span-9 space-y-4">
-          <div className="h-8 bg-gray-100 animate-pulse rounded w-3/4" />
-          <div className="h-4 bg-gray-100 animate-pulse rounded w-1/3" />
-          <div className="h-4 bg-gray-100 animate-pulse rounded w-1/2" />
-          <div className="h-24 bg-gray-100 animate-pulse rounded mt-6" />
+    <div className="min-h-screen bg-surface">
+      <div className="mx-auto max-w-[1480px] px-4 py-6 lg:px-6">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4 xl:col-span-3">
+            <div className="aspect-[3/4] w-full animate-pulse rounded-md bg-sunken" />
+          </div>
+          <div className="space-y-4 lg:col-span-8 xl:col-span-9">
+            <div className="h-8 w-3/4 animate-pulse rounded bg-sunken" />
+            <div className="h-4 w-1/3 animate-pulse rounded bg-sunken" />
+            <div className="h-4 w-1/2 animate-pulse rounded bg-sunken" />
+            <div className="mt-6 h-24 animate-pulse rounded bg-sunken" />
+          </div>
         </div>
       </div>
     </div>
@@ -62,31 +64,32 @@ function StickyBar({ book, onAddToCart }: { book: Book; onAddToCart: () => void 
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm transition-transform duration-300"
+      className="fixed left-0 right-0 top-0 z-50 border-b border-line bg-white shadow-sm transition-transform duration-300"
       style={{ transform: visible ? 'translateY(0)' : 'translateY(-100%)' }}
     >
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-2 sm:gap-4">
+      <div className="mx-auto flex max-w-[1480px] items-center gap-3 px-4 py-2 lg:px-6">
         {book.coverUrl && (
-          <img src={book.coverUrl} alt={book.title}
-            className="w-8 h-12 sm:w-10 sm:h-14 object-cover rounded flex-shrink-0 bg-gray-100" />
+          <img src={book.coverUrl} alt={book.title} className="h-12 w-9 flex-shrink-0 rounded-[2px] bg-panel object-cover" />
         )}
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-xs sm:text-sm text-gray-900 truncate">{book.title}</p>
-          <p className="text-xs text-gray-500 hidden sm:block">{book.authors[0] ?? ''}</p>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[13px] font-semibold text-ink">{book.title}</p>
+          <p className="hidden text-xs text-muted sm:block">{book.authors[0] ?? ''}</p>
         </div>
         {book.price != null && (
-          <p className="flex items-baseline gap-2 flex-shrink-0">
-            <span className="text-sm sm:text-base font-bold text-gray-900">₼{book.price}</span>
+          <p className="tabular flex flex-shrink-0 items-baseline gap-2">
+            <span className="text-base font-bold text-ink">₼{book.price}</span>
             {book.originalPrice != null && (
-              <span className="hidden sm:inline text-xs text-gray-400 line-through">₼{book.originalPrice}</span>
+              <span className="hidden text-xs text-muted line-through sm:inline">₼{book.originalPrice}</span>
             )}
           </p>
         )}
-        <button onClick={onAddToCart} disabled={!inStock}
-          className="px-3 sm:px-5 py-1.5 sm:py-2 text-white text-xs sm:text-sm font-semibold rounded-full flex-shrink-0 disabled:opacity-50"
-          style={{ background: PRIMARY }}>
-          <span className="hidden sm:inline">SƏBƏTƏ ƏLAVƏ ET</span>
-          <span className="sm:hidden">SƏBƏT</span>
+        <button
+          onClick={onAddToCart}
+          disabled={!inStock}
+          className="flex-shrink-0 rounded-sm bg-primary px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-white transition-colors hover:bg-primary-dark disabled:opacity-50"
+        >
+          <span className="hidden sm:inline">Səbətə əlavə et</span>
+          <span className="sm:hidden">Səbət</span>
         </button>
       </div>
     </div>
@@ -152,10 +155,12 @@ export default function BookDetailPage() {
   if (loading) return <Skeleton />
   if (error || !book) {
     return (
-      <div className="text-center py-20">
-        <span className="text-5xl">📭</span>
-        <h2 className="text-2xl font-bold text-gray-700 mt-4">Kitab tapılmadı</h2>
-        <Link to="/books" className="text-indigo-600 hover:underline mt-2 inline-block">Kitablara qayıt</Link>
+      <div className="flex min-h-[60vh] items-center justify-center bg-surface px-4">
+        <div className="rounded-md border border-line bg-white px-8 py-10 text-center">
+          <Icon name="search_off" size={40} className="text-muted" />
+          <h2 className="mt-2 font-display text-xl font-bold text-ink">Kitab tapılmadı</h2>
+          <Link to="/books" className="mt-3 inline-block text-sm font-semibold text-primary hover:underline">Kitablara qayıt</Link>
+        </div>
       </div>
     )
   }
@@ -212,19 +217,20 @@ export default function BookDetailPage() {
 
       <StickyBar book={book} onAddToCart={handleAddToCart} />
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="min-h-screen bg-surface">
+      <div className="mx-auto max-w-[1480px] px-4 py-5 lg:px-6">
 
-        <nav className="text-xs text-gray-500 mb-6 flex items-center gap-1">
-          <Link to="/" className="hover:text-gray-900">Ana səhifə</Link>
-          <span>›</span>
-          <Link to="/books" className="hover:text-gray-900">Kitablar</Link>
-          <span>›</span>
-          <Link to={booksUrl} className="hover:text-gray-900" style={{ color: PRIMARY }}>{genreLabel}</Link>
-          <span>›</span>
-          <span className="text-gray-700 truncate max-w-xs">{book.title}</span>
+        <nav className="mb-4 flex flex-wrap items-center gap-1 text-xs text-muted">
+          <Link to="/" className="hover:text-ink">Ana səhifə</Link>
+          <Icon name="chevron_right" size={14} />
+          <Link to="/books" className="hover:text-ink">Kitablar</Link>
+          <Icon name="chevron_right" size={14} />
+          <Link to={booksUrl} className="hover:text-ink">{genreLabel}</Link>
+          <Icon name="chevron_right" size={14} />
+          <span className="max-w-xs truncate text-ink">{book.title}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-16">
+        <div className="mb-10 grid grid-cols-1 gap-8 lg:grid-cols-12">
           <BookCover book={book} />
           <BookInfo
             book={book}
@@ -272,11 +278,14 @@ export default function BookDetailPage() {
         />
 
         <div className="text-center">
-          <button onClick={() => navigate(booksUrl)}
-            className="text-sm text-gray-500 hover:text-gray-900 underline transition-colors">
-            ← {genreLabel} kitablarına qayıt
+          <button
+            onClick={() => navigate(booksUrl)}
+            className="inline-flex items-center gap-1 text-[13px] font-medium text-muted transition-colors hover:text-ink"
+          >
+            <Icon name="arrow_back" size={16} /> {genreLabel} kitablarına qayıt
           </button>
         </div>
+      </div>
       </div>
     </>
   )

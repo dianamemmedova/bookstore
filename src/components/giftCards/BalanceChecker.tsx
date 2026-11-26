@@ -46,15 +46,15 @@ export function BalanceChecker() {
   }
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-[#3d5a6b] via-[#2e4455] to-[#1a2e3d] px-8 py-8 mt-4 relative overflow-hidden">
+    <div className="rounded-md bg-primary-dark px-8 py-7 mt-4 relative overflow-hidden">
       <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-[#c9a454]/10" />
       <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-[#c9a454]/10" />
 
       <div className="relative text-center">
-        <h2 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Georgia,serif' }}>
+        <h2 className="font-display text-xl font-bold text-white mb-2">
           Kart Balansını Yoxla
         </h2>
-        <p className="text-sm text-white/60 mb-5">Kartınızdakı mövcud balansı dərhal öyrənin</p>
+        <p className="text-sm text-white/60 mb-4">Kartınızdakı mövcud balansı dərhal öyrənin</p>
 
         <div className="max-w-sm mx-auto">
           <div className="relative mb-2">
@@ -65,7 +65,7 @@ export function BalanceChecker() {
               value={formatted}
               onChange={handleChange}
               onBlur={() => setTouched(true)}
-              className={`w-full text-sm outline-none px-4 py-3 rounded-xl bg-white/10 border text-white placeholder:text-white/30 transition-colors tracking-widest font-mono ${
+              className={`w-full text-sm outline-none px-4 py-3 rounded-sm bg-white/10 border text-white placeholder:text-white/30 transition-colors tracking-widest font-mono ${
                 isEmpty || showError
                   ? 'border-red-400/70'
                   : isValid
@@ -87,7 +87,7 @@ export function BalanceChecker() {
           <button
             onClick={handleCheck}
             disabled={!isValid || checking}
-            className={`w-full py-3 text-sm font-bold rounded-xl transition-all ${
+            className={`w-full py-3 text-sm font-bold rounded-sm transition-all ${
               isValid ? 'bg-[#c9a454] text-[#1a2e3d] hover:opacity-90' : 'bg-white/10 text-white/30 cursor-not-allowed'
             }`}
           >
@@ -95,7 +95,7 @@ export function BalanceChecker() {
           </button>
 
           {result === 'found' && (
-            <div className="mt-4 bg-green-500/15 border border-green-400/30 rounded-xl px-4 py-3 text-left">
+            <div className="mt-4 bg-green-500/15 border border-green-400/30 rounded-sm px-4 py-3 text-left">
               <p className="text-green-300 text-sm font-semibold mb-1">✓ Kart tapıldı</p>
               <p className="text-white/70 text-xs">Mövcud balans:</p>
               <p className="text-white text-2xl font-bold mt-1">₼ {balance.toFixed(2)}</p>
@@ -107,13 +107,13 @@ export function BalanceChecker() {
             </div>
           )}
           {result === 'error' && (
-            <div className="mt-4 bg-red-500/15 border border-red-400/30 rounded-xl px-4 py-3 text-left">
+            <div className="mt-4 bg-red-500/15 border border-red-400/30 rounded-sm px-4 py-3 text-left">
               <p className="text-red-300 text-sm font-semibold">✗ Yoxlama alınmadı</p>
               <p className="text-white/50 text-xs mt-1">{errorMsg}</p>
             </div>
           )}
           {result === 'notfound' && (
-            <div className="mt-4 bg-red-500/15 border border-red-400/30 rounded-xl px-4 py-3 text-left">
+            <div className="mt-4 bg-red-500/15 border border-red-400/30 rounded-sm px-4 py-3 text-left">
               <p className="text-red-300 text-sm font-semibold">✗ Kart tapılmadı</p>
               <p className="text-white/50 text-xs mt-1">Kart nömrəsini yoxlayın və yenidən cəhd edin.</p>
             </div>

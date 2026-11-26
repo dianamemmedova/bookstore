@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+/* Book & Store dizayn sistemi (Stitch): rənglər və şriftlər */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary: #3d5a6b;
+  --color-primary-dark: #2e4455;
+  --color-primary-container: #e3f3ff;
+  --color-on-primary-container: #153443;
+
+  --color-gold: #c9a454;
+  --color-gold-light: #e5c878;
+  --color-muted-gold: #a08c5b;
+  --color-muted-gold-text: #736137;
+  --color-gold-container: #ffefcf;
+  --color-on-gold-container: #3c2f06;
+
+  --color-surface: #faf9f6;
+  --color-panel: #f3f2ee;
+  --color-sunken: #e9e8e3;
+  --color-line: #e5e7eb;
+  --color-line-strong: #cbd5e1;
+  --color-ink: #1f2a33;
+  --color-muted: #5a6570;
+
+  --color-sale: #dc2626;
+  --color-sale-soft: #fef2f2;
+  --color-on-sale-soft: #991b1b;
+  --color-audio: #4338ca;
+  --color-audio-soft: #eef2ff;
+  --color-on-audio-soft: #312e81;
+  --color-free: #15803d;
+  --color-free-soft: #dcfce7;
+  --color-on-free-soft: #14532d;
+}
+
+body {
+  background: #faf9f6;
+  color: #1f2a33;
+  font-family: var(--font-sans);
+}
+
+.tabular { font-variant-numeric: tabular-nums; }

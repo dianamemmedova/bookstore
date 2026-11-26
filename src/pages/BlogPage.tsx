@@ -10,7 +10,7 @@ import { BookCard } from '../components/blog/BookCard'
 import { SkeletonCard } from '../components/blog/SkeletonCard'
 
 function Divider() {
-  return <hr className="border-t border-gray-100 my-8 sm:my-10" />
+  return <hr className="border-t border-line my-8 sm:my-10" />
 }
 
 export default function BlogPage() {
@@ -21,10 +21,10 @@ export default function BlogPage() {
   } = useBlogData()
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface">
       <BlogHero />
 
-      <div className="max-w-5xl mx-auto px-4 py-8 sm:py-10">
+      <div className="max-w-[1480px] mx-auto px-4 lg:px-6 py-8 sm:py-10">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-10">
           <div className="lg:col-span-2 flex gap-6 items-start">
@@ -72,7 +72,7 @@ export default function BlogPage() {
         <Divider />
 
         <div className="text-center">
-          <Link to="/" className="text-xs text-gray-400 hover:text-gray-600 hover:underline transition-colors">
+          <Link to="/" className="text-xs text-muted hover:text-ink hover:underline transition-colors">
             ← Ana səhifəyə qayıt
           </Link>
         </div>

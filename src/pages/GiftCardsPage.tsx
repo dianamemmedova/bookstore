@@ -4,6 +4,8 @@ import { categories, topNav } from '../data/giftCards'
 import { CategorySection } from '../components/giftCards/CategorySection'
 import { BalanceChecker } from '../components/giftCards/BalanceChecker'
 
+import PageHero from '../components/shared/PageHero'
+
 export default function GiftCardsPage() {
   const [selected, setSelected] = useState<Set<number>>(new Set())
 
@@ -17,38 +19,28 @@ export default function GiftCardsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface">
 
-      <section className="relative text-white overflow-hidden bg-gradient-to-br from-[#3d5a6b] via-[#2e4455] to-[#1a2e3d] min-h-[280px]">
-        <div className="absolute -top-14 -right-14 w-64 h-64 rounded-full bg-[#c9a454]/10" />
-        <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-[#c9a454]/10" />
-        <div className="relative max-w-4xl mx-auto px-6 py-14 text-center">
-          <p className="text-xs uppercase tracking-widest mb-3 text-[#c9a454]/80 font-semibold">
-            Book & Store
-          </p>
-          <h1 className="text-4xl font-bold mb-4">Hədiyyə Kartları</h1>
-          <p className="text-lg opacity-80 max-w-xl mx-auto">
-            Ailə və dostlarınıza həqiqətən istədikləri hədiyyəni verin. Poçtla və ya <br />e-poçtla göndərilə bilər.
-          </p>
-          <a
-            href="#"
-            className="inline-block mt-4 text-xs text-[#c9a454] border-b border-[#c9a454]/40 pb-px hover:border-[#c9a454] transition-colors"
-          >
-            Hədiyyə Kartı Şərtləri və Qaydaları
-          </a>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Book & Store"
+        title="Hədiyyə Kartları"
+        subtitle="Ailə və dostlarınıza həqiqətən istədikləri hədiyyəni verin. Poçtla və ya e-poçtla göndərilə bilər."
+      >
+        <a href="#" className="mt-1 w-fit border-b border-gold-light/40 pb-px text-xs text-gold-light transition-colors hover:border-gold-light">
+          Hədiyyə Kartı Şərtləri və Qaydaları
+        </a>
+      </PageHero>
 
-      <div className="max-w-5xl mx-auto px-6 py-10">
+      <div className="max-w-[1100px] mx-auto px-4 lg:px-6 py-8">
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
           {topNav.map((nav) => (
             <button
               key={nav.label}
-              className="flex flex-col items-center gap-2.5 py-4 px-3 bg-white rounded-2xl border border-gray-200 hover:border-[#3d5a6b] transition-colors cursor-pointer"
+              className="flex flex-col items-center gap-2.5 py-4 px-3 bg-white rounded-md border border-line hover:border-[#3d5a6b] transition-colors cursor-pointer"
             >
               <span
-                className="w-11 h-11 rounded-full flex items-center justify-center"
+                className="w-10 h-10 rounded-full flex items-center justify-center"
                 style={{ background: nav.color + '1a' }}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={nav.color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

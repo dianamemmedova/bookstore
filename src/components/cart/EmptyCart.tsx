@@ -1,21 +1,19 @@
 import { Link } from 'react-router-dom'
-import { PRIMARY } from '../../constants/theme'
-import { CartIcon } from '../../icons/cart'
+import Icon from '../ui/Icon'
 
 export default function EmptyCart() {
   return (
-    <div className="min-h-[515px] bg-gray-50 flex items-center justify-center px-4">
-      <div className="text-center max-w-sm">
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center bg-[#eef2f5]">
-         <CartIcon color={PRIMARY} />
+    <div className="flex min-h-[460px] items-center justify-center bg-surface px-4">
+      <div className="max-w-sm rounded-md border border-line bg-white px-8 py-10 text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-panel text-primary">
+          <Icon name="shopping_cart" size={32} />
         </div>
-            <h1 className="text-2xl font-semibold text-gray-900 mb-3">
-              Səbətiniz boşdur
-            </h1>
-            <p className="text-sm text-gray-500 mb-8 leading-relaxed">
-              Bəyəndiyiniz kitabları səbətə əlavə edin.
-            </p>
-        <Link to="/books" className="inline-block px-8 py-3 text-sm font-bold tracking-wider text-white" style={{ background: PRIMARY }}>
+        <h1 className="mb-1.5 font-display text-xl font-bold text-ink">Səbətiniz boşdur</h1>
+        <p className="mb-6 text-sm leading-relaxed text-muted">Bəyəndiyiniz kitabları səbətə əlavə edin.</p>
+        <Link
+          to="/books"
+          className="inline-block rounded-sm bg-primary px-6 py-2.5 text-xs font-bold tracking-widest text-white transition-colors hover:bg-primary-dark"
+        >
           KİTABLARA BAX
         </Link>
       </div>

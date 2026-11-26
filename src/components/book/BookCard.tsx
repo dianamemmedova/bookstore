@@ -1,19 +1,20 @@
-import { useState, useCallback } from 'react'
+﻿import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import type { Book } from '../../types/book'
 import { useAuth } from '../../context/AuthContext'
 import { useAuthModal } from '../../context/AuthModalContext'
 import { useCart } from '../../context/CartContext'
-import { LIGHT_GREY, PRIMARY, RED } from '../../constants/theme'
 import { COVER_FALLBACK } from '../../constants/theme'
+import Icon from '../ui/Icon'
 
 interface BookCardProps {
   book: Book
   onWishlist?: (book: Book) => void
   genreLabel?: string
+  showWishlist?: boolean // false: ürək düyməsini səhifənin özü idarə edir
 }
 
-export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps) {
+export default function BookCard({ book, onWishlist, genreLabel, showWishlist = true }: BookCardProps) {
   const { user } = useAuth()
   const { openLogin } = useAuthModal()
   const { addToCart, isInCart } = useCart()
@@ -59,110 +60,91 @@ export default function BookCard({ book, onWishlist, genreLabel }: BookCardProps
   }, [user, openLogin, addToCart, bookId, book])
 
   const isAdded = cartAdded || inCart
-  const btnBg = cartError ? '#b91c1c' : isAdded ? '#245840' : PRIMARY
+  const btnCls = cartError
+    ? 'bg-red-700'
+    : isAdded
+      ? 'bg-free hover:bg-free'
+      : 'bg-primary hover:bg-primary-dark'
 
   return (
-    <div className="bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group flex flex-col h-full">
+    <article className="flex h-full flex-col rounded-md border border-line bg-white p-2 transition-colors duration-200 hover:border-line-strong">
       <Link
         to={`/books/${bookId}`}
-        className="relative flex items-center justify-center flex-shrink-0 h-52 bg-[#f5f0e8] px-6 py-5"
+        className="relative mb-2 flex aspect-[3/4] items-center justify-center rounded-sm bg-panel p-3"
       >
         <img
           src={book.coverUrl ?? COVER_FALLBACK}
           alt={book.title}
-          className="h-full w-auto max-w-full object-contain rounded-sm shadow-md group-hover:scale-105 transition-transform duration-300"
+          className="h-full w-full rounded-[2px] object-cover shadow-md"
           onError={(e) => {
             e.currentTarget.src = COVER_FALLBACK
             e.currentTarget.onerror = null
           }}
         />
 
-        <button
-          onClick={handleWishlist}
-          title="İstək siyahısına əlavə et"
-          className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow transition-all"
-        >
-          <svg
-            className="w-4 h-4 transition-colors"
-            style={{ color: wishlisted ? RED : LIGHT_GREY }}
-            fill={wishlisted ? 'currentColor' : 'none'}
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-            />
-          </svg>
-        </button>
+        {book.discountPercent != null && (
+          <span className="tabular absolute left-1 top-1 z-10 rounded-full bg-sale px-1.5 py-0.5 text-[11px] font-semibold text-white">
+            -{book.discountPercent}%
+          </span>
+        )}
+        {book.ebookAccess === 'public_domain' && (
+          <span className="absolute bottom-1 left-1 z-10 rounded-full bg-free-soft px-1.5 py-0.5 text-[11px] font-semibold text-on-free-soft">
+            Pulsuz
+          </span>
+        )}
+        {book.isAudiobook && (
+          <span className="absolute bottom-1 right-1 z-10 inline-flex items-center gap-0.5 rounded-full bg-audio-soft px-1.5 py-0.5 text-[11px] font-semibold text-on-audio-soft">
+            <Icon name="headphones" size={13} />Audio
+          </span>
+        )}
 
-        <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
-          {book.discountPercent != null && (
-            <span className="text-[11px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">
-              -{book.discountPercent}%
-            </span>
-          )}
-          {book.isAudiobook && (
-            <span className="text-[11px] font-semibold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-full">
-              🎧 Audio
-            </span>
-          )}
-          {book.ebookAccess === 'public_domain' && (
-            <span className="text-[11px] font-semibold text-green-800 bg-green-100 px-2 py-0.5 rounded-full">
-              Pulsuz
-            </span>
-          )}
-        </div>
+        {showWishlist && (
+          <button
+            onClick={handleWishlist}
+            title="İstək siyahısına əlavə et"
+            className="absolute right-1 top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-line bg-white text-muted transition-colors hover:text-sale"
+          >
+            <Icon name="favorite" size={16} filled={wishlisted} className={wishlisted ? 'text-sale' : ''} />
+          </button>
+        )}
       </Link>
 
-      <div className="p-3.5 flex flex-col flex-1">
+      <div className="mb-2 flex flex-1 flex-col gap-1">
         <Link to={`/books/${bookId}`}>
-          <h3 className="text-sm font-semibold text-gray-900 hover:text-[#3d5a6b] transition-colors line-clamp-2 leading-snug min-h-[2.5rem]">
+          <h3 className="line-clamp-2 min-h-[2.25rem] text-[13px] font-semibold leading-[18px] text-ink hover:underline">
             {book.title}
           </h3>
         </Link>
-
-        <p className="text-xs text-gray-500 mt-1 line-clamp-1">
-          {book.authors[0] ?? 'Naməlum müəllif'}
-        </p>
+        <p className="line-clamp-1 text-xs text-muted">{book.authors[0] ?? 'Naməlum müəllif'}</p>
 
         {(genreLabel || book.firstPublishYear != null) && (
-          <p className="text-[11px] text-gray-400 mt-1 line-clamp-1">
+          <p className="line-clamp-1 text-[11px] text-muted/80">
             {[genreLabel, book.firstPublishYear].filter(Boolean).join(' · ')}
           </p>
         )}
 
         {book.ratingsAverage != null && book.ratingsAverage > 0 && (
-          <div className="flex items-center gap-1 mt-1">
-            <span className="text-yellow-400 text-xs">★</span>
-            <span className="text-xs text-gray-600">
-              {book.ratingsAverage.toFixed(1)}
-              {book.ratingsCount != null ? ` (${book.ratingsCount.toLocaleString()})` : ''}
-            </span>
-          </div>
+          <p className="tabular flex items-center gap-1 text-xs text-ink">
+            <Icon name="star" size={14} filled className="text-muted-gold-text" />
+            {book.ratingsAverage.toFixed(1)}
+            {book.ratingsCount != null && <span className="text-muted">({book.ratingsCount.toLocaleString()})</span>}
+          </p>
         )}
 
-        <div className="mt-auto pt-3">
-          {book.price != null && (
-            <p className="mb-2 flex items-baseline gap-2">
-              <span className={`text-base font-bold ${book.originalPrice != null ? 'text-red-600' : 'text-gray-900'}`}>₼{book.price}</span>
-              {book.originalPrice != null && <span className="text-xs text-gray-400 line-through">₼{book.originalPrice}</span>}
-            </p>
-          )}
-
-          <button
-            onClick={handleCart}
-            className="w-full py-2 text-xs font-bold tracking-wider text-white rounded-md transition-colors"
-            style={{ background: btnBg }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = '#2e4455')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}
-          >
-            {cartError || (isAdded ? '✓ SƏBƏTDƏ' : 'SƏBƏTƏ ƏLAVƏ ET')}
-          </button>
-        </div>
+        {book.price != null && (
+          <p className="tabular mt-auto flex items-baseline gap-1.5 pt-1">
+            <span className={`text-[15px] font-semibold ${book.originalPrice != null ? 'text-sale' : 'text-ink'}`}>₼{book.price}</span>
+            {book.originalPrice != null && <span className="text-xs text-muted line-through">₼{book.originalPrice}</span>}
+          </p>
+        )}
       </div>
-    </div>
+
+      <button
+        onClick={handleCart}
+        className={`w-full rounded-sm px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-white transition-colors ${btnCls}`}
+      >
+        {cartError || (isAdded ? '✓ Səbətdə' : 'Səbətə əlavə et')}
+      </button>
+    </article>
   )
 }

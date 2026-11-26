@@ -1,86 +1,55 @@
-import { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { PRIMARY } from '../../constants/theme';
-import { useAudiobooks } from '../../hooks/useAudiobooks';
-import type { Book } from '../../types/book';
-import { FALLBACK_COVER } from '../../constants/link';
-
+﻿import { useRef } from 'react'
+import { Link } from 'react-router-dom'
+import { useAudiobooks } from '../../hooks/useAudiobooks'
+import { MiniBookCard } from './MiniBookCard'
+import Icon from '../ui/Icon'
 
 export default function AudiobooksSlider() {
-  const { books, loading } = useAudiobooks(10);
-  const navigate = useNavigate();
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const { books, loading } = useAudiobooks(12)
+  const sliderRef = useRef<HTMLDivElement>(null)
 
   const scroll = (dir: 'left' | 'right') => {
-    if (!sliderRef.current) return;
-    sliderRef.current.scrollBy({ left: dir === 'right' ? 280 : -280, behavior: 'smooth' });
-  };
+    sliderRef.current?.scrollBy({ left: dir === 'right' ? 320 : -320, behavior: 'smooth' })
+  }
 
   // Admin hələ audio kitab əlavə etməyibsə, bölmə göstərilmir
-  if (!loading && books.length === 0) return null;
+  if (!loading && books.length === 0) return null
+
+  const arrow = 'absolute top-1/3 z-10 hidden h-9 w-9 items-center justify-center rounded-full border border-line bg-white text-muted shadow-sm transition-colors hover:text-ink sm:flex'
 
   return (
-    <section className="py-12 bg-white">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="mx-auto max-w-[1480px] px-4 py-6 lg:px-6">
+      <div className="mb-4 flex items-end justify-between gap-4 border-b border-line pb-2">
+        <h2 className="flex items-center gap-2 font-display text-xl font-bold text-ink">
+          <span className="h-4 w-1 rounded-full bg-audio" />
+          Səsli Kitablar
+        </h2>
+        <Link to="/audiobooks" className="inline-flex items-center gap-0.5 whitespace-nowrap text-xs font-semibold text-primary hover:underline">
+          Hamısına bax <Icon name="arrow_forward" size={14} />
+        </Link>
+      </div>
 
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">🎧 Səsli Kitablar</h2>
-            <p className="text-sm text-gray-500 mt-1">Ən populyar audiokitablar</p>
-          </div>
-          <button onClick={() => navigate('/audiobooks')}
-            className="text-sm font-semibold hover:underline" style={{ color: PRIMARY }}>
-            Hamısına bax →
-          </button>
+      <div className="relative">
+        <button onClick={() => scroll('left')} aria-label="Geri" className={`${arrow} left-0 -translate-x-3`}>
+          <Icon name="chevron_left" size={20} />
+        </button>
+
+        <div ref={sliderRef} className="flex gap-3 overflow-x-auto scroll-smooth pb-2" style={{ scrollbarWidth: 'none' }}>
+          {loading
+            ? Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="w-[160px] flex-shrink-0 sm:w-[180px]">
+                  <div className="mb-2 aspect-[3/4] animate-pulse rounded-md bg-sunken" />
+                  <div className="mb-1.5 h-3 w-3/4 animate-pulse rounded bg-sunken" />
+                  <div className="h-3 w-1/2 animate-pulse rounded bg-sunken" />
+                </div>
+              ))
+            : books.map((book) => <MiniBookCard key={book.id} book={book} />)}
         </div>
 
-        <div className="relative">
-          <button onClick={() => scroll('left')}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-shadow">
-            ‹
-          </button>
-
-          <div ref={sliderRef}
-            className="flex gap-4 overflow-x-auto scroll-smooth pb-2" style={{ scrollbarWidth: 'none' }}>
-            {loading
-              ? Array.from({ length: 10 }).map((_, i) => <SkeletonCard key={i} />)
-              : books.map((book) => <SliderCard key={book.id} book={book} />) }
-          </div>
-
-          <button onClick={() => scroll('right')}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-shadow">
-            ›
-          </button>
-        </div>
-
+        <button onClick={() => scroll('right')} aria-label="İrəli" className={`${arrow} right-0 translate-x-3`}>
+          <Icon name="chevron_right" size={20} />
+        </button>
       </div>
     </section>
-  );
-}
-
-function SliderCard({ book }: { book: Book }) {
-  const navigate = useNavigate();
-
-  return (
-    <div onClick={() => navigate(`/books/${book.id}`)}
-      className="flex-shrink-0 w-40 cursor-pointer group" >
-      <div className="rounded-xl overflow-hidden bg-gray-100 border border-gray-100 group-hover:shadow-md transition-shadow" style={{ aspectRatio: '3/4' }}>
-        <img src={book.coverUrl ?? FALLBACK_COVER} alt={book.title}
-          className="w-full h-full object-contain group-hover:scale-105 transition-transform"
-          onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_COVER; }}/>
-      </div>
-      <p className="mt-2 text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">{book.title}</p>
-      <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{book.authors[0] ?? ''}</p>
-    </div>
-  );
-}
-
-function SkeletonCard() {
-  return (
-    <div className="flex-shrink-0 w-40 animate-pulse">
-      <div className="rounded-xl bg-gray-200  aspect-[3/4]"  />
-      <div className="mt-2 h-3 bg-gray-200 rounded w-3/4" />
-      <div className="mt-1 h-3 bg-gray-200 rounded w-1/2" />
-    </div>
-  );
+  )
 }

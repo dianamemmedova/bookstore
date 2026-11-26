@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { StarRating } from '../ui/SharedUI'
-import { PRIMARY, GOLD } from '../../constants/theme'
+import Icon from '../ui/Icon'
 import type { Book } from '../../types/book'
 import AudioSection from './AudioSection'
 
@@ -31,142 +31,133 @@ export default function BookInfo({
   const inStock = book.inStock !== false
 
   const facts = [
-    book.firstPublishYear ? { icon: '📅', label: 'Nəşr ili', value: String(book.firstPublishYear) } : null,
-    book.pages ? { icon: '📄', label: 'Səhifə sayı', value: String(book.pages) } : null,
-    { icon: book.isAudiobook ? '🎧' : '📖', label: 'Format', value: book.isAudiobook ? 'Audio kitab' : 'Çap kitabı' },
-    { icon: '📦', label: 'Stok', value: inStock ? 'Stokda var' : 'Qurtarıb' },
+    book.firstPublishYear ? { icon: 'calendar_today', label: 'Nəşr ili', value: String(book.firstPublishYear) } : null,
+    book.pages ? { icon: 'description', label: 'Səhifə sayı', value: String(book.pages) } : null,
+    { icon: book.isAudiobook ? 'headphones' : 'menu_book', label: 'Format', value: book.isAudiobook ? 'Audio kitab' : 'Çap kitabı' },
+    { icon: 'inventory_2', label: 'Stok', value: inStock ? 'Stokda var' : 'Qurtarıb' },
   ].filter((f): f is { icon: string; label: string; value: string } => f !== null)
 
+  const sectionTitle = 'mb-3 flex items-center gap-2 font-display text-lg font-bold text-ink'
+
   return (
-    <div className="lg:col-span-9">
-      {/* Başlıq hissəsi */}
-      <div className="mb-5">
-        <div className="mb-3 flex items-center gap-2">
-          <Link to={booksUrl}
-            className="rounded-full px-3 py-1 text-xs font-semibold text-white transition-opacity hover:opacity-80"
-            style={{ background: PRIMARY }}>
+    <div className="lg:col-span-8 xl:col-span-9">
+      <div className="mb-4">
+        <div className="mb-2 flex items-center gap-2">
+          <Link to={booksUrl} className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-semibold text-white transition-colors hover:bg-primary-dark">
             {genreLabel}
           </Link>
           {book.isAudiobook && (
-            <span className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800">🎧 Audio</span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-audio-soft px-2.5 py-0.5 text-[11px] font-semibold text-on-audio-soft">
+              <Icon name="headphones" size={13} /> Audio
+            </span>
           )}
         </div>
-        <h1 className="text-2xl font-bold leading-tight text-gray-900 sm:text-4xl">{book.title}</h1>
-        <p className="mt-2 text-sm text-gray-500 sm:text-base">
-          Müəllif: <span className="font-semibold text-gray-800">{author}</span>
+        <h1 className="font-display text-2xl font-extrabold leading-tight tracking-tight text-ink sm:text-[34px]">{book.title}</h1>
+        <p className="mt-1.5 text-sm text-muted">
+          Müəllif: <span className="font-semibold text-ink">{author}</span>
         </p>
-        <div className="mt-3 flex items-center gap-2.5">
+        <div className="mt-2 flex items-center gap-2">
           <StarRating rating={avgRating} />
-          <span className="font-semibold text-yellow-600">{avgRating.toFixed(1)}</span>
-          <button onClick={onScrollToReviews}
-            className="text-sm underline hover:text-gray-900" style={{ color: PRIMARY }}>
+          <span className="tabular text-sm font-semibold text-muted-gold-text">{avgRating.toFixed(1)}</span>
+          <button onClick={onScrollToReviews} className="text-[13px] text-primary underline hover:text-primary-dark">
             ({totalReviews} rəy)
           </button>
         </div>
       </div>
 
-      {/* Qiymət və əməliyyatlar */}
-      <div
-        className="mb-6 rounded-2xl border border-[#ebe4d3] p-5 sm:p-6"
-        style={{ background: 'linear-gradient(120deg, #f8f4ea 0%, #eef2f4 100%)' }}
-      >
-        <div className="flex flex-wrap items-end justify-between gap-5">
-          <div>
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-gray-500">Qiymət</p>
-            <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <span className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                {book.price != null ? `₼${book.price}` : '—'}
-              </span>
-              {book.originalPrice != null && (
-                <>
-                  <span className="text-base text-gray-400 line-through">₼{book.originalPrice}</span>
-                  <span className="rounded-full bg-red-500 px-2.5 py-0.5 text-xs font-bold text-white">-{book.discountPercent}%</span>
-                </>
-              )}
-            </p>
-            <p className={`mt-2 flex items-center gap-1.5 text-xs font-medium ${inStock ? 'text-green-700' : 'text-red-600'}`}>
-              <span className={`h-2 w-2 rounded-full ${inStock ? 'bg-green-500' : 'bg-red-500'}`} />
-              {inStock ? 'Stokda var' : 'Hazırda stokda yoxdur'}
-            </p>
-          </div>
-
-          <div className="flex w-full items-center gap-3 sm:w-auto">
-            <button
-              onClick={onAddToCart}
-              disabled={!inStock}
-              className="flex-1 rounded-full px-7 py-3 text-sm font-bold tracking-wide text-white shadow transition-all hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:flex-none"
-              style={{ background: PRIMARY }}
-            >
-              🛒 Səbətə əlavə et
-            </button>
-            <button
-              onClick={onAddToWishlist}
-              aria-label="Sevimlilərə əlavə et"
-              title="Sevimlilərə əlavə et"
-              className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm transition-colors hover:border-red-200 hover:text-red-500"
-            >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Qısa məlumatlar */}
-      <div className={`mb-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-gray-100 bg-gray-100 max-sm:[&>*:last-child:nth-child(odd)]:col-span-2 ${GRID_COLS[facts.length] ?? 'sm:grid-cols-4'}`}>
+      <div className={`mb-5 grid grid-cols-2 gap-px overflow-hidden rounded-md border border-line bg-line max-sm:[&>*:last-child:nth-child(odd)]:col-span-2 ${GRID_COLS[facts.length] ?? 'sm:grid-cols-4'}`}>
         {facts.map((f) => (
-          <div key={f.label} className="flex items-center gap-3 bg-white px-4 py-3.5">
-            <span className="text-xl" aria-hidden="true">{f.icon}</span>
+          <div key={f.label} className="flex items-center gap-3 bg-white px-3 py-2.5">
+            <Icon name={f.icon} size={20} className="text-muted-gold-text" />
             <div className="min-w-0">
-              <p className="text-[11px] uppercase tracking-wide text-gray-400">{f.label}</p>
-              <p className="truncate text-sm font-semibold text-gray-900">{f.value}</p>
+              <p className="text-[11px] uppercase tracking-wide text-muted">{f.label}</p>
+              <p className="tabular truncate text-[13px] font-semibold text-ink">{f.value}</p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Audio kitab: dinləmə */}
+      <div className="mb-5 rounded-md border border-line bg-white p-4 sm:p-5">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-muted">Qiymət</p>
+            <p className="tabular flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span className={`font-display text-3xl font-bold ${book.originalPrice != null ? 'text-sale' : 'text-ink'}`}>
+                {book.price != null ? `₼${book.price}` : '—'}
+              </span>
+              {book.originalPrice != null && (
+                <>
+                  <span className="text-base text-muted line-through">₼{book.originalPrice}</span>
+                  <span className="rounded-full bg-sale px-2 py-0.5 text-xs font-semibold text-white">-{book.discountPercent}%</span>
+                </>
+              )}
+            </p>
+            <p className={`mt-2 flex items-center gap-1.5 text-xs font-medium ${inStock ? 'text-free' : 'text-sale'}`}>
+              <span className={`h-2 w-2 rounded-full ${inStock ? 'bg-free' : 'bg-sale'}`} />
+              {inStock ? 'Stokda var' : 'Hazırda stokda yoxdur'}
+            </p>
+          </div>
+
+          <div className="flex w-full items-center gap-2 sm:w-auto">
+            <button
+              onClick={onAddToCart}
+              disabled={!inStock}
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-sm bg-primary px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+            >
+              <Icon name="shopping_cart" size={18} /> Səbətə əlavə et
+            </button>
+            <button
+              onClick={onAddToWishlist}
+              aria-label="Sevimlilərə əlavə et"
+              title="Sevimlilərə əlavə et"
+              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-sm border border-line-strong bg-white text-muted transition-colors hover:text-sale"
+            >
+              <Icon name="favorite" size={20} />
+            </button>
+          </div>
+        </div>
+      </div>
+
       {book.isAudiobook && (
-        <div className="mb-8">
+        <div className="mb-6">
           <AudioSection book={book} />
         </div>
       )}
 
-      {/* Kitab haqqında */}
-      <section className="mb-8">
-        <h2 className="mb-3 flex items-center gap-2.5 text-lg font-bold text-gray-900">
-          <span className="h-5 w-1 rounded-full" style={{ background: GOLD }} />
+      <section className="mb-6">
+        <h2 className={sectionTitle}>
+          <span className="h-4 w-1 rounded-full bg-gold" />
           Kitab haqqında
         </h2>
         {description ? (
           <>
-            <p className={`whitespace-pre-line text-sm leading-7 text-gray-600 sm:text-[15px] ${expanded || !isLong ? '' : 'line-clamp-5'}`}>
+            <p className={`whitespace-pre-line text-sm leading-7 text-muted sm:text-[15px] ${expanded || !isLong ? '' : 'line-clamp-5'}`}>
               {description}
             </p>
             {isLong && (
-              <button onClick={() => setExpanded((v) => !v)}
-                className="mt-2 text-sm font-semibold hover:underline" style={{ color: PRIMARY }}>
+              <button onClick={() => setExpanded((v) => !v)} className="mt-2 text-sm font-semibold text-primary hover:underline">
                 {expanded ? 'Daha az göstər' : 'Daha çox oxu'}
               </button>
             )}
           </>
         ) : (
-          <p className="text-sm italic text-gray-400">Bu kitab üçün təsvir hələ əlavə olunmayıb.</p>
+          <p className="text-sm italic text-muted">Bu kitab üçün təsvir hələ əlavə olunmayıb.</p>
         )}
       </section>
 
-      {/* Mövzular */}
       {book.subjects.length > 0 && (
         <section>
-          <h2 className="mb-3 flex items-center gap-2.5 text-lg font-bold text-gray-900">
-            <span className="h-5 w-1 rounded-full" style={{ background: GOLD }} />
+          <h2 className={sectionTitle}>
+            <span className="h-4 w-1 rounded-full bg-gold" />
             Mövzular
           </h2>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {book.subjects.map((s) => (
-              <Link key={s} to={`/books?q=${encodeURIComponent(s)}`}
-                className="rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-xs capitalize text-gray-600 transition-colors hover:border-gray-400 hover:text-gray-900">
+              <Link
+                key={s}
+                to={`/books?q=${encodeURIComponent(s)}`}
+                className="rounded-full border border-line-strong bg-white px-3 py-1 text-xs capitalize text-muted transition-colors hover:border-primary hover:text-primary"
+              >
                 {s}
               </Link>
             ))}

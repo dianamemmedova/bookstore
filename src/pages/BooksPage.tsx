@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { fetchBySubject, fetchTrending } from '../services/bookService'
 import { filterGenres, genreQuery } from '../data/genres'
@@ -10,17 +10,15 @@ import { ToastContainer } from '../components/ui/ToastContainer'
 import AddToWishlistModal from '../components/wishlist/AddToWishlistModal'
 import BookCard from '../components/book/BookCard'
 import { LoadingGrid, EmptyBooks } from '../components/ui/SharedUI'
-import CustomDropdown from '../components/ui/CustomDropdown'
-import { BORDER_LIGHT, PRIMARY, RED, TEXT_DARK, WHITE } from '../constants/theme'
-import { HeartIcon } from '../icons/bookspage'
+import Icon from '../components/ui/Icon'
 import { applySort } from '../utils/bookSort'
+import PageHero from '../components/shared/PageHero'
 
 export default function BooksPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const urlGenre = searchParams.get('genre') ?? 'all'
   const urlQuery = searchParams.get('q') ?? ''
 
-  const [search, setSearch] = useState(urlQuery)
   const [query, setQuery] = useState(urlQuery)
   const [sort, setSort] = useState<BooksSortOption>('default')
 
@@ -52,29 +50,51 @@ export default function BooksPage() {
 
   useEffect(() => {
     const q = searchParams.get('q') ?? ''
-    setSearch(q)
     setQuery(q)
   }, [searchParams])
 
-  const displayed = applySort(books, sort)
-  const hasFilter = query || activeGenre !== 'all' || sort !== 'default'
+  const [minPrice, setMinPrice] = useState('')
+  const [maxPrice, setMaxPrice] = useState('')
+  const [onlyAudio, setOnlyAudio] = useState(false)
+  const [onlyDiscount, setOnlyDiscount] = useState(false)
+
+  const min = minPrice === '' ? null : Number(minPrice)
+  const max = maxPrice === '' ? null : Number(maxPrice)
+
+  const displayed = applySort(books, sort).filter((b) => {
+    if (onlyAudio && !b.isAudiobook) return false
+    if (onlyDiscount && b.originalPrice == null) return false
+    if (min != null && (b.price ?? 0) < min) return false
+    if (max != null && (b.price ?? 0) > max) return false
+    return true
+  })
+  const hasFilter = query || activeGenre !== 'all' || sort !== 'default' ||
+    minPrice !== '' || maxPrice !== '' || onlyAudio || onlyDiscount
 
   const handleGenre = (slug: string) => {
-    setSearch('')
     setQuery('')
     if (slug === 'all') setSearchParams({})
     else setSearchParams({ genre: slug })
   }
 
   const handleReset = () => {
-    setSearch('')
     setQuery('')
     setSort('default')
+    setMinPrice('')
+    setMaxPrice('')
+    setOnlyAudio(false)
+    setOnlyDiscount(false)
     setSearchParams({})
   }
 
+  const audioCount = books.filter((b) => b.isAudiobook).length
+  const saleCount = books.filter((b) => b.originalPrice != null).length
+
+  const selectCls = 'w-full rounded-sm border border-line bg-panel px-2 py-1.5 text-[13px] text-ink outline-none focus:border-primary'
+  const sectionTitle = 'mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted'
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface">
       <ToastContainer toasts={toasts} />
 
       {wishlistModal && (
@@ -87,111 +107,130 @@ export default function BooksPage() {
         />
       )}
 
-      <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl text-gray-900 font-semibold">
-              {activeGenre === 'all' ? 'Kitablar' : activeGenreLabel}
-            </h1>
-            {activeGenre !== 'all' && (
-              <p className="text-sm text-gray-400 mt-1">Kitablar › {activeGenreLabel}</p>
-            )}
-          </div>
-          <span className="text-sm text-gray-400">
-            {loading ? '...' : `${displayed.length} kitab tapıldı`}
-          </span>
-        </div>
+      <PageHero
+        eyebrow="Kataloq"
+        title={activeGenre === 'all' ? 'Kitablar' : activeGenreLabel}
+        subtitle={query ? `“${query}” üçün axtarış nəticələri` : 'Bütün janrlarda seçilmiş çap, elektron və səsli kitab nəşrləri.'}
+        covers={books.map((b) => b.coverUrl ?? '')}
+        stats={loading ? [] : [
+          { value: books.length, label: 'kitab' },
+          { value: audioCount, label: 'səsli kitab' },
+          { value: saleCount, label: 'endirimli', tone: 'sale' },
+        ]}
+      />
 
-        <div className="mb-5">
-          <input
-            type="text"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                const trimmed = search.trim()
-                setQuery(trimmed)
-                if (trimmed) setSearchParams({ q: trimmed })
-                else setSearchParams({})
-              }
-            }}
-            placeholder="Kitab adı, müəllif, mövzu axtar..."
-            className="w-full border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-gray-500 transition-colors rounded"
-          />
-        </div>
-
-        <div className="flex flex-col gap-4 mb-6 sm:mb-8">
-          <div className="flex flex-wrap gap-2">
-            {filterGenres.map(g => (
-              <button
-                key={g.slug}
-                onClick={() => handleGenre(g.slug)}
-                className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-medium transition-colors border whitespace-nowrap"
-                style={{
-                  background: activeGenre === g.slug ? PRIMARY : WHITE,
-                  color: activeGenre === g.slug ? WHITE : TEXT_DARK,
-                  borderColor: activeGenre === g.slug ? PRIMARY : BORDER_LIGHT,
-                }}>
-                {g.label}
-              </button>
-            ))}
+      <div className="mx-auto grid max-w-[1480px] grid-cols-1 items-start gap-6 px-4 py-6 lg:grid-cols-12 lg:px-6">
+        <aside className="flex flex-col gap-4 rounded-md border border-line bg-white p-4 lg:sticky lg:top-36 lg:col-span-3 xl:col-span-2">
+          <div className="flex items-center justify-between border-b border-line pb-2">
+            <h2 className="font-display text-[17px] font-bold text-ink">Filtrlər</h2>
             {hasFilter && (
-              <button onClick={handleReset}
-                className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-medium border border-red-200 text-red-500 hover:bg-red-50 transition-colors whitespace-nowrap">
-                ✕ Sıfırla
+              <button onClick={handleReset} className="text-[11px] font-semibold text-primary hover:underline">
+                Sıfırla
               </button>
             )}
           </div>
-          <div className="flex justify-end">
-            <CustomDropdown
-              value={sort}
-              onChange={v => setSort(v as BooksSortOption)}
-              options={[
-                { value: 'default',     label: 'Standart (Trend)'  },
-                { value: 'rating-desc', label: 'Ən yüksək reytinq' },
-                { value: 'year-desc',   label: 'Ən yeni nəşr'      },
-                { value: 'title',       label: 'Ada görə (A-Z)'    },
-              ]}
-            />
-          </div>
-        </div>
 
-        {loading ? (
-          <>
-            <div className="flex items-center justify-center gap-2 mb-6 text-sm text-gray-400">
-              <div className="w-4 h-4 border-2 border-gray-200 border-t-[#2e6b4f] rounded-full animate-spin" />
-              Kitablar yüklənir...
+          <div>
+            <h3 className={sectionTitle}>Janr</h3>
+            <ul className="flex flex-col">
+              {filterGenres.map((g) => (
+                <li key={g.slug}>
+                  <label className="flex cursor-pointer items-center gap-2 py-1 text-[13px] text-ink">
+                    <input
+                      type="radio"
+                      name="genre"
+                      checked={activeGenre === g.slug}
+                      onChange={() => handleGenre(g.slug)}
+                      className="h-3.5 w-3.5 accent-[#3d5a6b]"
+                    />
+                    <span className={activeGenre === g.slug ? 'font-semibold' : ''}>{g.label}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="border-t border-line pt-3">
+            <h3 className={sectionTitle}>Qiymət aralığı (₼)</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                type="number" min={0} inputMode="decimal" placeholder="Min"
+                value={minPrice} onChange={e => setMinPrice(e.target.value)}
+                className={`${selectCls} tabular`}
+              />
+              <input
+                type="number" min={0} inputMode="decimal" placeholder="Maks"
+                value={maxPrice} onChange={e => setMaxPrice(e.target.value)}
+                className={`${selectCls} tabular`}
+              />
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2 border-t border-line pt-3">
+            <label className="flex cursor-pointer items-center gap-2 text-[13px] text-ink">
+              <input type="checkbox" checked={onlyAudio} onChange={e => setOnlyAudio(e.target.checked)} className="h-3.5 w-3.5 accent-[#4338ca]" />
+              <span className="inline-flex items-center gap-1"><Icon name="headphones" size={16} className="text-audio" /> Yalnız audio</span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-2 text-[13px] text-ink">
+              <input type="checkbox" checked={onlyDiscount} onChange={e => setOnlyDiscount(e.target.checked)} className="h-3.5 w-3.5 accent-[#dc2626]" />
+              Yalnız endirimli
+            </label>
+          </div>
+
+          <div className="border-t border-line pt-3">
+            <label htmlFor="sort-select" className={sectionTitle + ' block'}>Sıralama</label>
+            <select
+              id="sort-select"
+              value={sort}
+              onChange={e => setSort(e.target.value as BooksSortOption)}
+              className={selectCls}
+            >
+              <option value="default">Ən populyar</option>
+              <option value="rating-desc">Ən yüksək reytinq</option>
+              <option value="year-desc">Ən yeni nəşr</option>
+              <option value="title">Ada görə (A-Z)</option>
+            </select>
+          </div>
+        </aside>
+
+        <div className="flex min-w-0 flex-col gap-3 lg:col-span-9 xl:col-span-10">
+          {!loading && !error && (
+            <p className="tabular text-[13px] text-muted">
+              {books.length} kitabdan {displayed.length}-i göstərilir
+            </p>
+          )}
+
+          {loading ? (
             <LoadingGrid cols={5} count={10} />
-          </>
-        ) : error ? (
-          <div className="text-center py-20 text-gray-400 px-4">
-            <p className="text-lg mb-2">⚠️ Xəta baş verdi</p>
-            <p className="text-sm">Kitablar yüklənə bilmədi. Bir az sonra yenidən cəhd edin.</p>
-            <button onClick={refetch} className="mt-4 text-sm underline text-gray-500 hover:text-gray-700">
-              Yenidən cəhd et
-            </button>
-          </div>
-        ) : displayed.length === 0 ? (
-          <EmptyBooks />
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5 items-stretch">
-            {displayed.map((book, index) => (
-              <div key={`${book.id}-${index}`} className="relative group">
-                <BookCard book={book} genreLabel={activeGenre !== 'all' ? activeGenreLabel : undefined} />
-                <button
-                  onClick={() => setWishlistModal(book)}
-                  title={savedIds.has(book.id) ? 'İstək siyahısında var' : 'İstək siyahısına əlavə et'}
-                  className={`absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center transition-all hover:scale-110 ${
-                    savedIds.has(book.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                  }`}
-                >
-                  <HeartIcon filled={savedIds.has(book.id)} fillColor={RED} strokeColor={PRIMARY} />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+          ) : error ? (
+            <div className="px-4 py-20 text-center text-muted">
+              <p className="mb-2 text-lg">Xəta baş verdi</p>
+              <p className="text-sm">Kitablar yüklənə bilmədi. Bir az sonra yenidən cəhd edin.</p>
+              <button onClick={refetch} className="mt-4 text-sm text-primary underline">
+                Yenidən cəhd et
+              </button>
+            </div>
+          ) : displayed.length === 0 ? (
+            <EmptyBooks />
+          ) : (
+            <div className="grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 md:grid-cols-4 2xl:grid-cols-5">
+              {displayed.map((book, index) => (
+                <div key={`${book.id}-${index}`} className="group relative">
+                  <BookCard book={book} showWishlist={false} genreLabel={activeGenre !== 'all' ? activeGenreLabel : undefined} />
+                  <button
+                    onClick={() => setWishlistModal(book)}
+                    title={savedIds.has(book.id) ? 'İstək siyahısında var' : 'İstək siyahısına əlavə et'}
+                    className={`absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-line bg-white text-muted transition-opacity hover:text-sale ${
+                      savedIds.has(book.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                    }`}
+                  >
+                    <Icon name="favorite" size={16} filled={savedIds.has(book.id)} className={savedIds.has(book.id) ? 'text-sale' : ''} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

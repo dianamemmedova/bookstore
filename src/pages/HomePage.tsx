@@ -1,38 +1,32 @@
-import { ImageSlider } from '../components/home/ImageSlider'
-import { ScrollRow   } from '../components/home/ScrollRow'
+﻿import { HeroBand } from '../components/home/HeroBand'
+import { CategoryTiles } from '../components/home/CategoryTiles'
+import { ScrollRow } from '../components/home/ScrollRow'
 import { PromoCardGrid } from '../components/home/PromoCardGrid'
-import { GenreNav }     from '../components/home/GenreNav'
-import { ServiceNav }   from '../components/home/ServiceNav'
-import { AboutSection }  from '../components/home/AboutSection'
-import { Link }      from 'react-router-dom'
+import { PromoSplit } from '../components/home/PromoSplit'
+import { ServiceNav } from '../components/home/ServiceNav'
+import { AboutSection } from '../components/home/AboutSection'
 import { homeSections } from '../data/sections'
-import  AudiobooksSlider from '../components/home/AudiobooksSlider'
-import { DARK_ALT } from '../constants/theme'
-
+import AudiobooksSlider from '../components/home/AudiobooksSlider'
 
 export default function HomePage() {
   return (
-    <div>  
-      <Link to="/membership" className="block w-full mb-[10px]"  style={{ backgroundColor: DARK_ALT }}>
-        <img  src="/header_img1.jpg"  alt="Premium Üzvlük"
-          className="w-full block max-h-[120px] object-contain object-center" />
-      </Link>
+    <div className="bg-surface">
+      <HeroBand />
+      <CategoryTiles />
 
-      <ImageSlider />
-
-      {homeSections.map((section) => (
+      {homeSections.map((section, i) => (
         <div key={section.key}>
-          <div className="max-w-7xl mx-auto px-4 border-b border-gray-100">
+          <div className="mx-auto max-w-[1480px] px-4 lg:px-6">
             <ScrollRow section={section} />
           </div>
           {section.cards && <PromoCardGrid cards={section.cards} />}
+          {i === 0 && <PromoSplit />}
         </div>
       ))}
 
-      <GenreNav />
       <AudiobooksSlider />
+      <ServiceNav />
       <AboutSection />
-      <ServiceNav />   
     </div>
   )
 }

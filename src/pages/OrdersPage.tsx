@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { useOrders } from '../context/OrderContext'
 import { useAuth } from '../context/AuthContext'
 import OrderCard from '../components/orders/OrderCard'
 import EmptyOrdersState from '../components/orders/EmptyOrdersState'
+import PageHero from '../components/shared/PageHero'
 
 export default function OrdersPage() {
   const { orders, loading, reloadOrders } = useOrders()
@@ -14,29 +14,32 @@ export default function OrdersPage() {
 
   if (!user) return <EmptyOrdersState variant="no-auth" />
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-semibold text-gray-900">Sifarişlərim</h1>
-            <p className="text-sm text-gray-400 mt-1">
-              {orders.length > 0 ? `${orders.length} sifariş tapıldı` : loading ? 'Yüklənir...' : 'Hələ sifariş yoxdur'}
-            </p>
-          </div>
-          <Link to="/books"
-            className="text-sm font-medium px-4 py-2 border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors rounded-md">
-            Kitablara bax
-          </Link>
-        </div>
+  const active = orders.filter((o) => o.status === 'pending' || o.status === 'confirmed').length
+  const delivered = orders.filter((o) => o.status === 'delivered').length
+  const covers = orders.flatMap((o) => o.items.map((i) => i.cover))
 
-        {orders.length === 0 && loading ? null : orders.length === 0 ? (
+  return (
+    <div className="min-h-screen bg-surface">
+      <PageHero
+        eyebrow="Hesabım"
+        title="Sifarişlərim"
+        subtitle="Sifarişlərinizin vəziyyətini izləyin və detallara baxın."
+        covers={covers}
+        stats={orders.length > 0 ? [
+          { value: orders.length, label: 'sifariş' },
+          { value: active, label: 'aktiv' },
+          { value: delivered, label: 'çatdırılıb' },
+        ] : []}
+      />
+
+      <div className="mx-auto max-w-[1100px] px-4 py-6 lg:px-6">
+        {orders.length === 0 && loading ? (
+          <p className="py-16 text-center text-sm text-muted">Yüklənir...</p>
+        ) : orders.length === 0 ? (
           <EmptyOrdersState variant="no-orders" />
         ) : (
-          <div className="space-y-4">
-            {orders.map(order => (
-              <OrderCard key={order.id} order={order} />
-            ))}
+          <div className="flex flex-col gap-3">
+            {orders.map(order => <OrderCard key={order.id} order={order} />)}
           </div>
         )}
       </div>
